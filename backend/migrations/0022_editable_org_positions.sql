@@ -25,7 +25,7 @@
 -- rest of the product runs on: team scope, leave approval, who may see whose
 -- attendance. It must stay single-valued or those rules become ambiguous. But a
 -- real organisation has people who genuinely answer to more than one person -
--- Client's interns report to every executive above them - and drawing only one
+-- interns who report to every executive above them - and drawing only one
 -- of those lines is a false chart. So the extra lines live here, are shown on
 -- the chart, and are deliberately invisible to every operational rule.
 

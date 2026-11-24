@@ -23,8 +23,8 @@
 -- reports to whom, and nothing here is read by any authorisation check.
 --
 -- WHY A SECOND TABLE FOR LINKS. A chart can draw a line that a reporting line
--- cannot hold. The Client chart runs two lines out of one intern box, one into
--- each of two managers; employees.manager_id holds one. Rather than throw the
+-- cannot hold. A hand-drawn chart can run two lines out of one intern box, one
+-- into each of two managers; employees.manager_id holds one. Rather than throw the
 -- second away or invent a second manager column, it is recorded here as what it
 -- is - a line on the source drawing - and the chart draws it as a reference,
 -- visibly different from the reporting line it is not.

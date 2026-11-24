@@ -297,7 +297,7 @@ export default function OrgChartPage() {
   /**
    * Whether this company's chart has a saved layout covering every card. A
    * company without one - Meridian, or any new customer - keeps the automatic
-   * tree, so nothing about Client's arrangement reaches it.
+   * tree, so no imported drawing's arrangement reaches it.
    */
   const placed = useMemo(
     () => layout.length > 0 && nodes !== null && nodes.every((node) => layout.some((box) => box.id === node.id)),
@@ -398,8 +398,8 @@ export default function OrgChartPage() {
                 Reporting line unconfirmed
               </p>
             )}
-            {/* Three lines: long titles ("LMS, SMS, Automation,
-                Platforms") do not fit in two, and the full text is in `title`
+            {/* Three lines: long combined titles ("Platform, Billing and
+                Reporting Services") do not fit in two, and the full text is in `title`
                 and in the printed copy either way. */}
             <p className="mt-0.5 line-clamp-3 text-xs leading-4 text-fg-muted print:line-clamp-none" title={node.jobTitle ?? undefined}>
               {node.jobTitle ?? (staff ? "No title recorded" : "")}

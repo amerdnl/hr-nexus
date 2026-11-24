@@ -9,7 +9,7 @@ export const UNAUTHORIZED_EVENT = "hr-nexus:unauthorized";
  *
  * It is a real environment's address, which is the danger. More than one HR
  * Nexus environment runs on this machine at once - the presentation company on
- * 5001 and the Client review environment on 5002 - so falling back silently
+ * 5001 and the public demo on 5003 - so falling back silently
  * does not produce an app that is obviously broken. It produces an app that
  * works while talking to the wrong company's backend, and the sign-in failure
  * that follows looks like a credential problem rather than a wiring one.

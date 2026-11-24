@@ -5,8 +5,8 @@
 -- involved. The runner owns the transaction and sets lock_timeout=5s /
 -- statement_timeout=60s.
 --
--- WHY. A chart drawn by hand carries more than its boxes of people. The Client
--- chart has a reference box between two columns listing the four streams its
+-- WHY. A chart drawn by hand carries more than its boxes of people. A source
+-- chart can have a reference box between two columns listing the four streams its
 -- business development function sells into. It names no post and describes
 -- nobody, so it must never become an employee record - that would invent four
 -- jobs out of a caption. But dropping it leaves a hole exactly where the author

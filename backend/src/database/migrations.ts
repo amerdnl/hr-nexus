@@ -89,6 +89,86 @@ export function checkTransactionBoundaries(sql: string): void {
   }
 }
 
+/**
+ * The SQL with every comment removed and whitespace collapsed: what the server
+ * actually executes, ignoring how it is annotated. Quoted strings, quoted
+ * identifiers and dollar-quoted bodies are kept byte for byte, so a comment
+ * marker inside one is not mistaken for a comment.
+ */
+export function executableSql(sql: string): string {
+  let out = "";
+  let i = 0;
+  while (i < sql.length) {
+    if (sql.startsWith("--", i)) {
+      const end = sql.indexOf("\n", i);
+      i = end < 0 ? sql.length : end + 1;
+      out += " ";
+      continue;
+    }
+    if (sql.startsWith("/*", i)) {
+      let depth = 1;
+      i += 2;
+      while (depth && i < sql.length) {
+        if (sql.startsWith("/*", i)) { depth++; i += 2; }
+        else if (sql.startsWith("*/", i)) { depth--; i += 2; }
+        else i++;
+      }
+      out += " ";
+      continue;
+    }
+    const quote = sql[i];
+    if (quote === "'" || quote === '"') {
+      const start = i;
+      i++;
+      while (i < sql.length) {
+        if (sql[i] === quote) {
+          if (sql[i + 1] === quote) { i += 2; continue; }
+          i++; break;
+        }
+        i++;
+      }
+      out += sql.slice(start, i);
+      continue;
+    }
+    const dollar = sql.slice(i).match(/^\$(?:[A-Za-z_][A-Za-z_0-9]*)?\$/)?.[0];
+    if (dollar) {
+      const end = sql.indexOf(dollar, i + dollar.length);
+      const stop = end < 0 ? sql.length : end + dollar.length;
+      out += sql.slice(i, stop);
+      i = stop;
+      continue;
+    }
+    out += sql[i];
+    i++;
+  }
+  return out.replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Checksums a migration file held before a comment-only edit.
+ *
+ * An applied migration is never changed. Its comments, though, are notes for
+ * reviewers, and a note that named a client had to go. Each entry records the
+ * file's previous byte checksum, so a database migrated before the edit still
+ * verifies, and the hash of its executable SQL, which
+ * `migration-files.test.ts` recomputes from the current file to prove the edit
+ * touched nothing the server runs.
+ */
+export const COMMENT_ONLY_REVISIONS: Record<string, { previousChecksum: string; executableSha256: string }> = {
+  "0020": {
+    previousChecksum: "5747c896fb77207f0da948aa9200f612998e5590a558fc7013ef08d586c54f2c",
+    executableSha256: "b52794c23494d4d7e1306cab2bab1b6c5c8af6a8456c7edf12fa403bbd48a463",
+  },
+  "0021": {
+    previousChecksum: "e1252eaca6b48c05a300bfe70e1d4fbb7269653da8adcf4d2d01de5fccded1a5",
+    executableSha256: "f8bc01113185daf036b8173d4e4233969da80ef603164f257d068c05530e35af",
+  },
+  "0022": {
+    previousChecksum: "007d709fdbea50f9ab02dae2c57adb050303810f077189cdc4e0e220c4313b49",
+    executableSha256: "3753d6151a2f6c6dc7993f5bf51ed77e805e5d4d5f1dad083870b8d8203d5243",
+  },
+};
+
 export async function loadMigrations(directory: string | URL = defaultMigrationDirectory): Promise<Migration[]> {
   const entries = await readdir(directory, { withFileTypes: true });
   const names = entries.filter((entry) => entry.name.endsWith(".sql")).map((entry) => {
@@ -126,7 +206,11 @@ async function readHistory(client: PoolClient): Promise<AppliedMigration[]> {
 function verifyHistory(migrations: Migration[], applied: AppliedMigration[]): void {
   for (const [index, row] of applied.entries()) {
     const file = migrations[index];
-    if (!file || file.version !== row.version || file.filename !== row.filename || file.checksum !== row.checksum) {
+    const checksumMatches = file !== undefined && (
+      file.checksum === row.checksum ||
+      COMMENT_ONLY_REVISIONS[file.version]?.previousChecksum === row.checksum
+    );
+    if (!file || file.version !== row.version || file.filename !== row.filename || !checksumMatches) {
       throw new MigrationError(`Applied migration ${row.version} is missing, reordered, renamed or has a checksum mismatch`, "HISTORY_MISMATCH");
     }
   }
