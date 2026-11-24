@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import type { AuthenticatedUser, UserRole } from "../types/auth.js";
 import { findSessionUserById } from "../utils/userQueries.js";
+import { isDemoRequestAllowed, refuseDemoWrite, requestPath } from "./demoReadOnly.js";
 
 interface TokenPayload extends jwt.JwtPayload {
   sub: string;
@@ -132,6 +133,16 @@ async function authenticate(
         message:
           "You must choose a new password before using the application.",
       });
+      return;
+    }
+
+    // Default deny for a published demo account, on both paths: it may read
+    // whatever its role allows and make only the handful of requests that
+    // change nothing but its own read markers. Its own password and email are
+    // refused here too, which is why this sits after the forced-change check
+    // rather than in any one router.
+    if (currentUser.isDemo && !isDemoRequestAllowed(request.method, requestPath(request))) {
+      refuseDemoWrite(response);
       return;
     }
 

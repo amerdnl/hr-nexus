@@ -70,6 +70,16 @@ Route guards (`backend/src/auth/guards.ts`):
 - `requireEmployeeRecord` — 403 for an account with no linked employee, on self-service
   routes that need one.
 
+**Read-only demo accounts (migration 0023).** `users.demo_read_only` marks a published
+demo sign-in. It is read with the role on every request and is never a token claim. The
+authentication middleware refuses every request from such an account that is not a
+read (`GET`, `HEAD`, `OPTIONS`) with `403 {"code":"DEMO_READ_ONLY"}`, apart from the
+allowlist in `backend/src/middleware/demoReadOnly.ts`: signing out and marking its own
+notifications and announcements read. Because it runs before any router, a route added
+later is covered automatically. It never widens what the account can see; that is still
+the role's. `backend/tests/demo-readonly.integration.test.ts` proves each blocked class
+of change against a real database.
+
 **Purpose-specific responses, never a filtered mega-object.** There is no endpoint that
 returns "everything about an employee" with fields removed per role. Social data comes
 from `/api/people/*`, the employee's own HR data from `/api/*/me`, a manager's team layer

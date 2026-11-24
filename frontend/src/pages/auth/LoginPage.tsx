@@ -1,7 +1,8 @@
-import { LogIn } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { LogIn, Sparkles } from "lucide-react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { getApiErrorMessage } from "../../api/axios";
+import { demoAccountRequest, type DemoAccount } from "../../api/demoApi";
 import AuthLayout from "../../components/auth/AuthLayout";
 import Alert from "../../components/ui/Alert";
 import Checkbox from "../../components/ui/Checkbox";
@@ -52,6 +53,22 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [demo, setDemo] = useState<DemoAccount | null>(null);
+
+  // Only the public demo answers this; anywhere else the panel never appears.
+  useEffect(() => {
+    let active = true;
+    void demoAccountRequest().then((account) => { if (active) setDemo(account); });
+    return () => { active = false; };
+  }, []);
+
+  const useDemoAccount = () => {
+    if (!demo) return;
+    setEmail(demo.email);
+    setPassword(demo.password);
+    setError("");
+    document.getElementById("login-submit")?.focus();
+  };
 
   if (!isLoading && isAuthenticated && user) {
     return (
@@ -95,6 +112,37 @@ export default function LoginPage() {
       <h1 className="text-2xl font-bold tracking-tight text-fg sm:text-3xl">Welcome back</h1>
       <p className="mt-2 text-sm text-fg-muted">Sign in with your work account.</p>
 
+      {demo && (
+        <section
+          aria-labelledby="demo-heading"
+          className="mt-6 rounded-xl border border-info/30 bg-info-soft px-4 py-3.5 text-sm text-info-fg"
+        >
+          <div className="flex items-start gap-3">
+            <Sparkles aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+            <div className="min-w-0 flex-1">
+              <h2 id="demo-heading" className="font-semibold">Exploring the demo?</h2>
+              <p className="mt-1 leading-5">
+                Meridian Digital is a fictional company. The demo account can open every
+                module but can't change anything{demo.resetsDaily ? ", and the data resets every night" : ""}.
+              </p>
+              <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 font-mono text-xs">
+                <dt className="text-fg-muted">Email</dt>
+                <dd className="break-all">{demo.email}</dd>
+                <dt className="text-fg-muted">Password</dt>
+                <dd className="break-all">{demo.password}</dd>
+              </dl>
+              <button
+                type="button"
+                onClick={useDemoAccount}
+                className="mt-3 inline-flex min-h-9 items-center rounded-lg border border-info/40 bg-surface px-3 text-sm font-semibold text-fg hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                Use demo account
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
       <form className="mt-8 space-y-5" onSubmit={handleSubmit} noValidate>
         <FormField id="login-email" label="Email address" required>
           <TextInput
@@ -130,6 +178,7 @@ export default function LoginPage() {
         {error && <Alert tone="danger">{error}</Alert>}
 
         <PrimaryButton
+          id="login-submit"
           type="submit"
           fullWidth
           className="min-h-11"

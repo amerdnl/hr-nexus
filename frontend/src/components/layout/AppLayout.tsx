@@ -1,3 +1,4 @@
+import { Eye } from "lucide-react";
 import { Suspense } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
@@ -29,6 +30,18 @@ export default function AppLayout() {
       >
         Skip to content
       </a>
+
+      {user?.isDemo && (
+        <div
+          role="note"
+          className="flex items-center justify-center gap-2 border-b border-info/30 bg-info-soft px-(--gutter) py-1.5 text-center text-xs font-medium text-info-fg"
+        >
+          <Eye aria-hidden="true" className="size-3.5 shrink-0" />
+          <span>
+            Demo mode: fictional data, read-only. Changes are turned off and everything resets nightly.
+          </span>
+        </div>
+      )}
 
       <AppHeader />
 

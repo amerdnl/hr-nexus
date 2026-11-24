@@ -7,6 +7,14 @@
   "outputDirectory": "frontend/dist",
   "installCommand": "echo 'Install is handled by buildCommand; the API needs no install because api/index.js is self-contained.'",
 
+  "functions": {
+    "api/index.js": { "maxDuration": 60 }
+  },
+
+  "crons": [
+    { "path": "/api/demo/reset", "schedule": "0 19 * * *" }
+  ],
+
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }

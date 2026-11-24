@@ -5,12 +5,49 @@ PostgreSQL database. It covers the everyday HR work of a single company, includi
 the org chart, attendance, leave, payroll, performance and reporting, and gives
 administrators, managers and employees each the view that fits their role.
 
-The repository runs two local environments side by side:
+Everything you see in it belongs to **Meridian Digital**, a fictional Malaysian company
+whose data is rebuilt around today's date, so it always looks like a company that used
+the system this morning. No person, address, phone number or email in it is real.
 
-- **Meridian Digital** (default): a fictional Malaysian company with a year's worth of
-  activity, used for demonstrations.
-- **Client**: a review copy holding only the the client org chart, so it can be checked
-  and corrected in the product.
+## Public demo
+
+Anyone can sign in and look around:
+
+| | |
+| --- | --- |
+| Email | `demo@meridian.example` |
+| Password | `uuve-pmyv-k9p4` |
+
+The login page of a demo deployment shows these and offers **Use demo account**. The
+account is an HR administrator, so it can open every module: people, the org chart,
+attendance, leave, payroll and payslips, performance, onboarding and offboarding,
+reports, analytics and the audit log. It **cannot change anything**: settings and
+policies, its own email or password, users and invitations, deletions and every other
+write are refused by the API with *"This is disabled in the demo"*, not merely hidden in
+the interface. The data is rebuilt every night, and a banner in the app says so.
+
+This password was generated for the demo alone and is published on purpose. Never use it
+for anything else.
+
+How it works:
+
+- **Read-only, enforced by the API.** The account has `users.demo_read_only` set
+  (migration 0023). The authentication middleware refuses every non-read request from
+  such an account before any route runs, except signing out and marking its own
+  notifications and announcements read
+  (`backend/src/middleware/demoReadOnly.ts`). A route added later is covered without
+  anyone remembering to cover it. `backend/tests/demo-readonly.integration.test.ts`
+  proves each blocked action is refused and the database is left byte-for-byte unchanged.
+- **Always current.** `backend/src/database/presentationData.ts` describes the company,
+  and every date a viewer reads as "now" is computed from the company's today: who is in
+  and who is on leave, new joiners and their onboarding, the last three paid payroll
+  months and this month's calculated run, the open review cycle (the quarter just ended),
+  announcements, events, notifications and the audit trail.
+- **Reset nightly.** `vercel.json` schedules Vercel Cron to call `GET /api/demo/reset`
+  at 19:00 UTC (03:00 in Kuala Lumpur). The endpoint exists only when `DEMO_MODE=true`,
+  requires `Authorization: Bearer $CRON_SECRET` (which Vercel Cron sends), and rebuilds
+  the whole company in one transaction. It refuses any database holding people or
+  accounts outside the demo's reserved ID range, so it cannot empty a real one.
 
 ## What HR Nexus does
 
@@ -74,7 +111,7 @@ hr-nexus/
 │   ├── src/
 │   │   ├── routes/ controllers/ services/   the API, by module
 │   │   ├── auth/policy.ts                   who may do what
-│   │   └── database/                        migration runner, seeders, Client bootstrap
+│   │   └── database/                        migration runner, seeders, demo reset
 │   ├── migrations/           numbered SQL migrations (0001 onwards), never edited once applied
 │   └── tests/                unit tests, plus database suites that run only in a lab
 ├── api/index.js              GENERATED serverless bundle of the API, committed for Vercel
@@ -82,8 +119,8 @@ hr-nexus/
 ├── docs/                     reference docs and rollback SQL (see below)
 ├── scripts/                  presentation reset, integrity check, migration rehearsal
 ├── docker-compose.yml        Meridian (default) environment
-├── docker-compose.client.yml Client review environment
-└── vercel.json               Vercel build and routing
+├── docker-compose.demo.yml   the public demo, run locally
+└── vercel.json               Vercel build, routing and the nightly demo reset
 ```
 
 What remains in `docs/`:
@@ -91,10 +128,8 @@ What remains in `docs/`:
 | Path | Why it is kept |
 | --- | --- |
 | `docs/HR_NEXUS_V3_ARCHITECTURE.md` | Permission model, visibility matrix, API route map, Home widgets |
-| `docs/CLIENT_ORG_MAPPING.md` | How the Client chart was transcribed and which lines are unconfirmed |
 | `docs/sql/rollback_*.sql` | Review-only rollbacks. **The database test suites read these files** |
 | `docs/sql/verify_history_retention.sql` | Read-only verification query for migration 0001 |
-| `docs/sql/reference/Client Org Chart.png` | The source chart the Client data was taken from |
 
 ## Requirements
 
@@ -108,15 +143,16 @@ What remains in `docs/`:
 Clone the repository, then pick an environment. Both can run at the same time; they use
 separate containers, volumes, databases, ports and secrets.
 
-| | Meridian (default) | Client review |
+| | Meridian (default) | Public demo |
 | --- | --- | --- |
-| Compose file | `docker-compose.yml` | `docker-compose.client.yml` |
-| Settings file | `.env` | `.env.client` |
-| Frontend | http://localhost:5173 | http://localhost:5174 |
-| API | http://localhost:5001/api | http://localhost:5002/api |
-| Postgres | `localhost:5433` | `127.0.0.1:5435` |
-| Database | `hr_nexus_v3_presentation` | `hr_nexus_client` |
-| Loaded by | `seedPresentation.ts` | `bootstrapClient.ts` |
+| Compose file | `docker-compose.yml` | `docker-compose.demo.yml` |
+| Settings file | `.env` | `.env.demo` |
+| Frontend | http://localhost:5173 | http://localhost:5175 |
+| API | http://localhost:5001/api | http://localhost:5003/api |
+| Postgres | `localhost:5433` | `127.0.0.1:5436` |
+| Database | `hr_nexus_v3_presentation` | `hr_nexus_public_demo` |
+| Loaded by | `seedPresentation.ts`, once | `resetDemo.ts`, on every `up` |
+| Sign-ins | three, with `PRESENTATION_PASSWORD` | the read-only demo account |
 
 ### Meridian (default environment)
 
@@ -132,9 +168,11 @@ alone. Open http://localhost:5173 and sign in with `PRESENTATION_PASSWORD` as:
 
 | Account | View |
 | --- | --- |
-| `hr.admin@meridian-demo.invalid` | HR administrator |
-| `nur.hidayah@meridian-demo.invalid` | Manager with five direct reports |
-| `kar.wai@meridian-demo.invalid` | Employee who reports to the manager above |
+| `hr.admin@meridian.example` | HR administrator |
+| `nur.hidayah@meridian.example` | Manager with five direct reports |
+| `kar.wai@meridian.example` | Employee who reports to the manager above |
+
+The read-only `demo@meridian.example` account is loaded here too.
 
 Everyday commands:
 
@@ -150,32 +188,28 @@ docker compose down               # stop; the database volume is kept
 Health checks: http://localhost:5001/api/health and
 http://localhost:5001/api/health/database.
 
-### Client review environment
+### Public demo (run locally)
 
 ```bash
-cp .env.client.example .env.client
-# edit .env.client: set POSTGRES_PASSWORD and JWT_SECRET (openssl rand -base64 48)
-docker compose -f docker-compose.client.yml --env-file .env.client up -d --build
+cp .env.demo.example .env.demo
+# edit .env.demo: set POSTGRES_PASSWORD, JWT_SECRET and CRON_SECRET (openssl rand -hex 32)
+docker compose -f docker-compose.demo.yml --env-file .env.demo up -d --build
 ```
 
-Open http://localhost:5174 and sign in as `CLIENT_ADMIN_EMAIL` (by default
-`hr.review@client.invalid`). If you did not set `CLIENT_ADMIN_PASSWORD`, the bootstrap
-generated one and printed it once:
+Open http://localhost:5175 and choose **Use demo account**. Every `up` migrates the demo
+database and rebuilds Meridian Digital for today. To rebuild it again at any time, either
+re-run the setup service or call the reset endpoint the cron uses:
 
 ```bash
-docker compose -f docker-compose.client.yml --env-file .env.client logs client-setup
+docker compose -f docker-compose.demo.yml --env-file .env.demo run --rm demo-setup
+curl -X POST -H "Authorization: Bearer $CRON_SECRET" http://localhost:5003/api/demo/reset
 ```
 
-The account must choose a new password at first sign-in.
+Set `PRESENTATION_PASSWORD` in `.env.demo` if you also want to sign in locally as the
+HR administrator, manager or employee (for example to capture those views). Leave it
+unset for a public deployment: those accounts then get a random password nobody knows.
 
-> **Every `up` re-runs the bootstrap, which rebuilds the chart from
-> `backend/src/database/clientData.ts` and discards org chart edits made in the browser.**
-> To keep a correction, put it in `clientData.ts`, update the expected structure in
-> `backend/tests/client-org.test.ts`, then re-run the setup:
-> `docker compose -f docker-compose.client.yml --env-file .env.client up -d --build client-setup`
-
-The bootstrap writes only identifiers 9300–9399 and refuses any database that holds the
-Meridian company (9200–9299).
+`docker compose -f docker-compose.demo.yml down -v` deletes only the demo's own volume.
 
 ### Running without Docker (optional)
 
@@ -192,7 +226,7 @@ npm install && npm run dev            # app on http://localhost:5173
 
 ## Environment variables
 
-Templates are committed: `.env.example`, `.env.client.example`, `.env.vercel.example`,
+Templates are committed: `.env.example`, `.env.demo.example`, `.env.vercel.example`,
 `backend/.env.example` and `frontend/.env.example`. Copy one, fill it in, and keep the copy
 local. Git ignores every `.env` and `.env.*` file except the `*.example` templates.
 
@@ -206,10 +240,10 @@ local. Git ignores every `.env` and `.env.*` file except the `*.example` templat
 | `PROFILE_IMAGE_DIR` | API | Where profile photos are written. Leave unset on Vercel to turn uploads off. |
 | `VITE_API_BASE_URL` | Frontend, at build time | Where the app calls the API. `/api` on Vercel. |
 | `MIGRATION_DATABASE_URL` | `migrate`, `db:schema` | The database to migrate. Never falls back to `DATABASE_URL`. |
-| `CLIENT_DATABASE_URL` | Client bootstrap | The database to load the Client chart into. |
-| `CLIENT_ADMIN_EMAIL` | Client bootstrap | The review administrator's sign-in. |
-| `CLIENT_ADMIN_PASSWORD` | Client bootstrap | Optional initial password, stored only as a bcrypt hash. |
-| `PRESENTATION_PASSWORD` | Meridian seeder | Password for the three Meridian sign-ins. |
+| `DEMO_MODE` | API | `true` turns on `/api/demo` and the nightly reset. Anything else leaves them off. |
+| `CRON_SECRET` | API | Protects `/api/demo/reset` (16+ characters). Vercel Cron sends it as a bearer token. |
+| `DEMO_DATABASE_URL` | `demo:reset` | The database `npm run demo:reset` rebuilds. Never falls back to `DATABASE_URL`. |
+| `PRESENTATION_PASSWORD` | Meridian seeder, `demo:reset` | Password for the admin, manager and employee sign-ins. Not the demo account's. |
 | `POSTGRES_PASSWORD` | Docker Compose | Password for the environment's own Postgres container. |
 
 Store real values only in your local `.env` files or in the Vercel dashboard. Never in a
@@ -223,9 +257,10 @@ tracked file.
   `backend/src/database/migrate.ts`. Each runs in its own transaction under an advisory
   lock. Migrations are **never** run automatically when the API starts, and an applied
   migration is never edited: changes go in the next number.
-- **Seeders and bootstraps** load data. `seedPresentation.ts` builds Meridian;
-  `bootstrapClient.ts` builds the Client chart; `seedDemo.ts` builds the demo company used
-  by the database test suites. Each one refuses to run against the wrong database.
+- **Seeders** load data. `presentationLoader.ts` writes Meridian Digital; it is used by
+  `seedPresentation.ts` (the default environment, loaded once) and by `demoReset.ts`
+  (the public demo, rebuilt from empty tables). `seedDemo.ts` builds the small company
+  used by the database test suites. Each one refuses to run against the wrong database.
 
 Running migrations by hand (from `backend/`). The `--database` name must match the
 database the URL actually connects to, or the command refuses:
@@ -242,19 +277,16 @@ Setting up an **empty hosted database** (one time, from your own machine):
 cd backend
 MIGRATION_DATABASE_URL='…' npm run db:schema -- --database <database>
 MIGRATION_DATABASE_URL='…' npm run db:migrate -- --database <database>
-CLIENT_DATABASE_URL='…' CLIENT_ADMIN_EMAIL='…' CLIENT_ADMIN_PASSWORD='…' \
-  npm run db:bootstrap:client -- --database <database>
+DEMO_DATABASE_URL='…' npm run demo:reset -- --database <database>
 ```
 
 Back up a local environment with `pg_dump` into `.local-backups/`, which Git ignores.
 Dumps contain password hashes, so keep them off shared drives:
 
 ```bash
-docker exec hr-nexus-client-postgres pg_dump -U postgres -d hr_nexus_client \
-  --no-owner --no-privileges > .local-backups/client-$(date +%Y%m%d-%H%M%S).sql
+docker exec hr-nexus-postgres pg_dump -U postgres -d hr_nexus_v3_presentation \
+  --no-owner --no-privileges > .local-backups/meridian-$(date +%Y%m%d-%H%M%S).sql
 ```
-
-(For Meridian, use `hr-nexus-postgres` and `hr_nexus_v3_presentation`.)
 
 ## Org chart
 
@@ -295,9 +327,10 @@ These actions are all enforced by the API (`/api/org/*`, admin only), not just h
 the interface. Changes to positions, relationships and notes go to the audit log; card
 movements do not.
 
-Charts imported from a drawing, such as Client, keep their source coordinates
+Charts imported from a drawing keep their source coordinates
 (`org_chart_source_layout`). Companies without one, such as Meridian, are laid out
-automatically.
+automatically. Meridian's chart has three open seats (vacant positions) alongside its
+34 people.
 
 ## Testing
 
@@ -305,6 +338,11 @@ automatically.
 cd backend
 npm run type-check
 npm test               # unit tests; database suites are skipped unless enabled
+
+# the public demo's read-only rule and reset, against the local demo's Postgres
+# (creates and drops its own throwaway database there)
+HR_NEXUS_DEMO_TEST_SERVER_URL="postgresql://postgres:$POSTGRES_PASSWORD@127.0.0.1:5436/postgres" \
+  node --import tsx --test tests/demo-readonly.integration.test.ts
 
 cd frontend
 npm run build          # type-checks and builds
@@ -359,14 +397,16 @@ npm --prefix backend run build:api
 
 Before the first deployment:
 
-1. Create a hosted PostgreSQL database. Neon URLs already include `?sslmode=require`;
-   keep it.
-2. Apply the schema, migrations and any bootstrap from your own machine
-   (see [Database](#database)). The deployed API never runs migrations.
+1. Create a hosted PostgreSQL database **used only by the demo** (the nightly reset
+   empties it). Neon URLs already include `?sslmode=require`; keep it.
+2. From your own machine, apply the schema and migrations, then build the demo once
+   (see [Database](#database)). The deployed API never runs migrations, and it needs
+   migration 0023 before it starts, so migrate **before** deploying this version.
 3. In Vercel → Project → Settings → Environment Variables, set `DATABASE_URL`,
-   `JWT_SECRET`, `JWT_EXPIRES_IN` and `VITE_API_BASE_URL=/api`. `FRONTEND_URL` is needed
-   only if the frontend is served from a different domain from the API.
-   `.env.vercel.example` documents each variable.
+   `JWT_SECRET`, `JWT_EXPIRES_IN`, `VITE_API_BASE_URL=/api`, `DEMO_MODE=true` and
+   `CRON_SECRET`. `.env.vercel.example` documents each variable.
+4. Deploy. `vercel.json` registers the nightly cron; check it under Project → Settings →
+   Cron Jobs, where **Run** triggers it once by hand.
 
 Profile photo uploads are off on Vercel because the serverless filesystem is read-only.
 The API returns 503 for uploads instead of crashing. Setting
@@ -378,6 +418,8 @@ Check a deployment:
 ```bash
 curl -s https://<deployment>/api/health                                # {"success":true,...}
 curl -s -o /dev/null -w '%{http_code}\n' https://<deployment>/login    # 200, not 404
+curl -s https://<deployment>/api/demo                                  # the demo sign-in
+curl -s -H "Authorization: Bearer $CRON_SECRET" https://<deployment>/api/demo/reset   # rebuilds today's data
 ```
 
 For a short-lived preview of a local environment, a tunnel such as a Cloudflare Quick
@@ -391,9 +433,13 @@ Tunnel works. Treat its URL as temporary and public, and never as a deployment.
 - Authorisation is enforced by the API on every request. Each request re-reads the account,
   its role, its employee link and its manager scope, so a deactivated account or a changed
   reporting line loses access immediately even though tokens have no revocation list.
-- Passwords are stored only as bcrypt hashes (`bcryptjs`). Generated passwords (new
-  employees, the Client administrator) must be changed at first sign-in. The Meridian demo
-  accounts are the exception, so never reuse their password anywhere real.
+- Passwords are stored only as bcrypt hashes (`bcryptjs`). Generated passwords for new
+  employees must be changed at first sign-in. The Meridian accounts are the exception, so
+  never reuse their passwords anywhere real. The public demo password is published on
+  purpose and works only for an account the API keeps read-only.
+- `/api/demo/reset` empties the database it runs against. It exists only with
+  `DEMO_MODE=true`, needs `CRON_SECRET`, and refuses any database holding people or
+  accounts outside the demo's reserved range.
 - The audit log never stores passwords, tokens, QR secrets, coordinates or private text.
 - Keep production database credentials out of shells, logs and screenshots. The migration
   and bootstrap scripts read their own variables so they can never pick up `DATABASE_URL`
@@ -403,12 +449,13 @@ Tunnel works. Treat its URL as temporary and public, and never as a deployment.
 
 | Symptom | Likely cause and fix |
 | --- | --- |
-| Sign-in fails with credentials you know are correct | The frontend is calling the wrong environment's API. Check `VITE_API_BASE_URL` (5001 for Meridian, 5002 for Client). Without it, the frontend falls back to 5001 and logs a console warning. |
+| Sign-in fails with credentials you know are correct | The frontend is calling the wrong environment's API. Check `VITE_API_BASE_URL` (5001 for Meridian, 5003 for the demo). Without it, the frontend falls back to 5001 and logs a console warning. |
+| "This is disabled in the demo" | You are signed in as the read-only demo account. That is the point; sign in as another account to change data. |
+| The demo shows yesterday's date as today | The nightly reset did not run. Check Vercel → Cron Jobs, or call `/api/demo/reset` with the secret. |
 | Browser reports a CORS error | `FRONTEND_URL` on the API does not match the address the app is served from. |
 | Vite starts on 5174 instead of 5173 | Another process already uses the port, perhaps the other environment. Stop it, or point `FRONTEND_URL` at the new port. |
 | `docker compose up` says a port is already allocated | An old container or a local Postgres holds it. Use `docker ps` to find it, then stop it. |
 | `MIGRATION_DATABASE_URL is required` | The migration and schema scripts never use `DATABASE_URL`. Export `MIGRATION_DATABASE_URL` and pass a matching `--database`. |
-| Org chart edits disappeared in Client | The bootstrap rebuilt the chart on `up`. Put lasting changes in `clientData.ts`. |
 | `/api/health` returns 500 on Vercel | Check the function log. The stack trace should name `/var/task/api/index.js`; if it doesn't, rebuild with `build:api` and redeploy. |
 
 ## Development workflow

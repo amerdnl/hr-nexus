@@ -37,8 +37,9 @@ export async function findSessionUserById(
     email: string;
     must_change_password: boolean;
     is_manager: boolean | null;
+    demo_read_only: boolean;
   }>(
-    `SELECT u.id, u.employee_id, u.role, u.email, u.must_change_password,
+    `SELECT u.id, u.employee_id, u.role, u.email, u.must_change_password, u.demo_read_only,
             ${isManagerExpression} AS is_manager
      FROM users u
      LEFT JOIN employees e ON e.id = u.employee_id
@@ -64,6 +65,7 @@ export async function findSessionUserById(
     id, employeeId, role: row.role, email: row.email,
     mustChangePassword: row.must_change_password,
     isManager: row.is_manager === true,
+    isDemo: row.demo_read_only === true,
   };
 }
 
@@ -87,6 +89,8 @@ export interface SafeUser {
   mustChangePassword: boolean;
   /** Advisory for navigation; every team endpoint re-derives it server-side. */
   isManager: boolean;
+  /** A read-only demo sign-in. Advisory for the interface; the API enforces it. */
+  isDemo: boolean;
   employee: {
     employeeNumber: string;
     fullName: string;
@@ -112,6 +116,7 @@ interface SafeUserRow {
   is_active: boolean;
   must_change_password: boolean;
   is_manager: boolean | null;
+  demo_read_only: boolean;
   employee_number: string | null;
   full_name: string | null;
   phone: string | null;
@@ -136,6 +141,7 @@ const safeUserSelect = `
     u.role,
     u.is_active,
     u.must_change_password,
+    u.demo_read_only,
     ${isManagerExpression} AS is_manager,
     e.employee_number,
     e.full_name,
@@ -165,6 +171,7 @@ function toSafeUser(row: SafeUserRow): SafeUser {
     isActive: row.is_active,
     mustChangePassword: row.must_change_password,
     isManager: row.is_manager === true,
+    isDemo: row.demo_read_only === true,
     employee:
       row.employee_id === null || row.employee_number === null || row.full_name === null
         ? null

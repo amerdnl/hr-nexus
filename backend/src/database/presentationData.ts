@@ -7,10 +7,12 @@
  * which RFC 2606 reserves so it can never resolve to a real mailbox; no name,
  * number, salary or identifier belongs to a real person or company.
  *
- * DATES. Only history that is genuinely fixed - employment dates, the 2026
- * public-holiday calendar, payroll months - is written as a calendar date.
- * Everything a viewer reads as "now" is a function of the company's own today,
- * so the environment stays coherent on whichever day it is shown.
+ * DATES. Only history that is genuinely fixed - long-standing employment dates
+ * and the 2026 public-holiday calendar - is written as a calendar date.
+ * Everything a viewer reads as "now" - new joiners, payroll months, review
+ * cycles, announcements - is a function of the company's own today, so the
+ * environment stays coherent on whichever day it is rebuilt. The public demo is
+ * rebuilt every night for exactly that reason.
  *
  * The dataset is a description, separate from the loader that writes it, so
  * what the presentation contains can be reviewed without reading SQL.
@@ -63,6 +65,12 @@ export interface PresentationEmployee {
   overtimeRateSen?: number;
   account?: "admin" | "employee";
   managerId?: number;
+  /**
+   * A recent joiner. Their start date is this many working days before the
+   * company's today, so they are always "new", and `employmentDate` above is
+   * only the fallback used when no calendar is at hand.
+   */
+  joinedWorkingDaysAgo?: number;
 }
 
 /**
@@ -84,7 +92,7 @@ export const presentationEmployees: PresentationEmployee[] = [
   { id: 9205, employeeNumber: "MDS-005", fullName: "Chong Kar Wai", department: "Engineering", jobTitle: "Software Engineer", status: "active", employmentDate: "2022-02-14", basicSalarySen: 785000, allowanceSen: 70000, overtimeRateSen: 5200, account: "employee", managerId: 9203 },
   { id: 9206, employeeNumber: "MDS-006", fullName: "Siti Balqis binti Azmi", department: "Engineering", jobTitle: "Software Engineer", status: "active", employmentDate: "2022-09-05", basicSalarySen: 742000, allowanceSen: 65000, overtimeRateSen: 4900, managerId: 9203 },
   { id: 9207, employeeNumber: "MDS-007", fullName: "Tan Yi Xuan", department: "Engineering", jobTitle: "QA Engineer", status: "active", employmentDate: "2023-03-13", basicSalarySen: 638000, allowanceSen: 55000, overtimeRateSen: 4250, managerId: 9203 },
-  { id: 9208, employeeNumber: "MDS-008", fullName: "Haziq bin Kamarul", department: "Engineering", jobTitle: "Junior Software Engineer", status: "probation", employmentDate: "2026-07-06", basicSalarySen: 452000, allowanceSen: 35000, overtimeRateSen: 3000, managerId: 9203 },
+  { id: 9208, employeeNumber: "MDS-008", fullName: "Haziq bin Kamarul", department: "Engineering", jobTitle: "Junior Software Engineer", status: "probation", employmentDate: "2026-07-06", basicSalarySen: 452000, allowanceSen: 35000, overtimeRateSen: 3000, managerId: 9203, joinedWorkingDaysAgo: 30 },
   { id: 9209, employeeNumber: "MDS-009", fullName: "Rebecca Anne Fernandez", department: "Engineering", jobTitle: "Engineering Manager, Applications", status: "active", employmentDate: "2021-04-12", basicSalarySen: 1245000, allowanceSen: 145000, overtimeRateSen: 0, managerId: 9202 },
   { id: 9210, employeeNumber: "MDS-010", fullName: "Mohd Faiz bin Ibrahim", department: "Engineering", jobTitle: "Senior Software Engineer", status: "active", employmentDate: "2021-08-23", basicSalarySen: 995000, allowanceSen: 90000, overtimeRateSen: 6600, managerId: 9209 },
   { id: 9211, employeeNumber: "MDS-011", fullName: "Yeoh Sze Ming", department: "Engineering", jobTitle: "Software Engineer", status: "active", employmentDate: "2023-10-02", basicSalarySen: 706000, allowanceSen: 62000, overtimeRateSen: 4700, managerId: 9209 },
@@ -101,7 +109,7 @@ export const presentationEmployees: PresentationEmployee[] = [
   { id: 9218, employeeNumber: "MDS-018", fullName: "Farah Izzati binti Hassan", department: "People & Culture", jobTitle: "Head of People & Culture", status: "active", employmentDate: "2019-09-02", basicSalarySen: 1520000, allowanceSen: 175000, overtimeRateSen: 0, managerId: 9201 },
   { id: 9219, employeeNumber: "MDS-019", fullName: "Melissa Tan Sook Yee", department: "People & Culture", jobTitle: "People Operations Executive", status: "active", employmentDate: "2022-08-08", basicSalarySen: 615000, allowanceSen: 52000, overtimeRateSen: 4100, managerId: 9218 },
   { id: 9220, employeeNumber: "MDS-020", fullName: "Ridzuan bin Salleh", department: "People & Culture", jobTitle: "Talent Acquisition Specialist", status: "active", employmentDate: "2023-11-13", basicSalarySen: 682000, allowanceSen: 58000, overtimeRateSen: 4550, managerId: 9218 },
-  { id: 9221, employeeNumber: "MDS-021", fullName: "Anisha Kaur", department: "People & Culture", jobTitle: "People Operations Assistant", status: "probation", employmentDate: "2026-08-03", basicSalarySen: 428000, allowanceSen: 32000, overtimeRateSen: 2850, managerId: 9219 },
+  { id: 9221, employeeNumber: "MDS-021", fullName: "Anisha Kaur", department: "People & Culture", jobTitle: "People Operations Assistant", status: "probation", employmentDate: "2026-08-03", basicSalarySen: 428000, allowanceSen: 32000, overtimeRateSen: 2850, managerId: 9219, joinedWorkingDaysAgo: 6 },
 
   // ----------------------------------------------------------------- Finance
   { id: 9222, employeeNumber: "MDS-022", fullName: "Ong Chee Keong", department: "Finance", jobTitle: "Finance Manager", status: "active", employmentDate: "2019-05-06", basicSalarySen: 1435000, allowanceSen: 160000, overtimeRateSen: 0, managerId: 9201 },
@@ -124,16 +132,47 @@ export const presentationEmployees: PresentationEmployee[] = [
   { id: 9234, employeeNumber: "MDS-034", fullName: "Wong Kah Meng", department: "Operations & Customer Success", jobTitle: "Operations Executive", status: "active", employmentDate: "2022-06-20", basicSalarySen: 668000, allowanceSen: 56000, overtimeRateSen: 4450, managerId: 9231 },
 ];
 
+/**
+ * The company's mail domain. `.example` is reserved by RFC 2606, so no address
+ * below can ever reach a real mailbox.
+ */
+export const PRESENTATION_EMAIL_DOMAIN = "meridian.example";
+
 /** The HR administrator: an account, not a personnel record, as in a real company. */
 export const presentationAdmin = {
   id: PRESENTATION_ID_MIN,
-  email: "hr.admin@meridian-demo.invalid",
+  email: `hr.admin@${PRESENTATION_EMAIL_DOMAIN}`,
 };
 
 /** The manager and the employee the walkthrough signs in as. */
-export const presentationManagerAccount = { id: 9203, email: "nur.hidayah@meridian-demo.invalid" };
-export const presentationEmployeeAccount = { id: 9205, email: "kar.wai@meridian-demo.invalid" };
+export const presentationManagerAccount = { id: 9203, email: `nur.hidayah@${PRESENTATION_EMAIL_DOMAIN}` };
+export const presentationEmployeeAccount = { id: 9205, email: `kar.wai@${PRESENTATION_EMAIL_DOMAIN}` };
 export const presentationEmployeeAccounts = [presentationManagerAccount, presentationEmployeeAccount];
+
+/**
+ * The public demo account: an HR administrator who can open every module and
+ * change nothing. `users.demo_read_only` makes the API refuse its writes, so
+ * publishing this password is the point, not a leak. It was generated for this
+ * demo alone and is used nowhere else; never reuse it.
+ */
+export const presentationDemoAccount = {
+  id: 9290,
+  email: `demo@${PRESENTATION_EMAIL_DOMAIN}`,
+  password: "uuve-pmyv-k9p4",
+};
+
+/**
+ * Open seats on the chart. Each is a position, not a person: no name, no
+ * personal details, and never counted in headcount, payroll or reviews. They
+ * match the roles the hiring announcement advertises.
+ */
+export const presentationVacancies: Array<{
+  id: number; employeeNumber: string; title: string; department: string; managerId: number; notes: string;
+}> = [
+  { id: 9240, employeeNumber: "POS-9240", title: "Platform Engineer", department: "Engineering", managerId: 9203, notes: "Mid-level hire for the platform team. Interviews in progress." },
+  { id: 9241, employeeNumber: "POS-9241", title: "Customer Success Executive", department: "Operations & Customer Success", managerId: 9232, notes: "Backfill ahead of Wong Kah Meng's departure." },
+  { id: 9242, employeeNumber: "POS-9242", title: "Head of Data", department: "Leadership", managerId: 9201, notes: "New role, approved for next quarter. Brief being written." },
+];
 
 /**
  * Kuala Lumpur's 2026 public holidays, including the substitute days that
@@ -174,6 +213,30 @@ export const presentationHolidays: Array<{ date: string; name: string }> = [
   { date: "2026-12-25", name: "Christmas Day" },
 ];
 
+/**
+ * The calendar for any set of years. 2026 is the gazetted list above. Other
+ * years carry only the holidays fixed by date, because the lunar and
+ * religious ones are announced year by year and are not invented here.
+ */
+export function presentationHolidaysFor(years: number[]): Array<{ date: string; name: string }> {
+  const rows: Array<{ date: string; name: string }> = [];
+  for (const year of [...new Set(years)].sort()) {
+    if (year === 2026) { rows.push(...presentationHolidays); continue; }
+    const firstJune = new Date(Date.UTC(year, 5, 1)).getUTCDay();
+    const agong = 1 + ((8 - firstJune) % 7);
+    rows.push(
+      { date: `${year}-01-01`, name: "New Year's Day" },
+      { date: `${year}-02-01`, name: "Federal Territory Day" },
+      { date: `${year}-05-01`, name: "Labour Day" },
+      { date: `${year}-06-${String(agong).padStart(2, "0")}`, name: "Birthday of the Yang di-Pertuan Agong" },
+      { date: `${year}-08-31`, name: "National Day" },
+      { date: `${year}-09-16`, name: "Malaysia Day" },
+      { date: `${year}-12-25`, name: "Christmas Day" },
+    );
+  }
+  return rows;
+}
+
 /** What some colleagues chose to say about themselves. */
 export const presentationProfiles: Array<{ employeeId: number; about: string; skills: string[]; sharePhone: boolean }> = [
   { employeeId: 9203, about: "I lead the platform team. I care about shipping small, safe changes and about the people who ship them. Ask me about architecture, on-call or how to get something unblocked.", skills: ["Engineering management", "Distributed systems", "TypeScript", "Coaching"], sharePhone: true },
@@ -184,7 +247,7 @@ export const presentationProfiles: Array<{ employeeId: number; about: string; sk
   { employeeId: 9204, about: "Senior engineer. Mostly platform work, and the person to ask about our deployment pipeline.", skills: ["Go", "Kubernetes", "Observability", "Mentoring"], sharePhone: false },
   { employeeId: 9226, about: "Sales and partnerships across Malaysia and Singapore.", skills: ["Enterprise sales", "Partnerships", "Negotiation"], sharePhone: true },
   { employeeId: 9231, about: "Operations and customer success. I care about response times and about the customers behind them.", skills: ["Service delivery", "Customer success", "Process design"], sharePhone: true },
-  { employeeId: 9208, about: "Junior engineer, three months in. Learning the codebase and pairing as much as I can.", skills: ["TypeScript", "React"], sharePhone: false },
+  { employeeId: 9208, about: "Junior engineer, a few weeks in. Learning the codebase and pairing as much as I can.", skills: ["TypeScript", "React"], sharePhone: false },
 ];
 
 /** A little company-visible history, so a profile is not blank. */
@@ -208,6 +271,56 @@ export interface PresentationCalendar {
   addDays: (date: string, days: number) => string;
   /** The date `days` working days after `date`, skipping weekends and holidays. */
   addWorkingDays: (date: string, days: number) => string;
+}
+
+/** "Thursday 26 November", as the company would write it. */
+export function formatDay(date: string): string {
+  return new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" })
+    .format(new Date(`${date}T00:00:00Z`)).replace(",", "");
+}
+
+/** "26 November". */
+export function formatShortDay(date: string): string {
+  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", timeZone: "UTC" })
+    .format(new Date(`${date}T00:00:00Z`));
+}
+
+/** "November 2026" for a year and a 1-based month. */
+export function formatMonth(year: number, month: number): string {
+  return new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" })
+    .format(new Date(Date.UTC(year, month - 1, 1)));
+}
+
+/** The employees as they stand on the calendar's today: recent joiners get their real start date. */
+export function presentationEmployeesOn(cal: PresentationCalendar): PresentationEmployee[] {
+  return presentationEmployees.map((employee) => employee.joinedWorkingDaysAgo === undefined
+    ? employee
+    : { ...employee, employmentDate: cal.addWorkingDays(cal.today, -employee.joinedWorkingDaysAgo) });
+}
+
+const joinedOn = (cal: PresentationCalendar, id: number) =>
+  presentationEmployeesOn(cal).find((employee) => employee.id === id)!.employmentDate;
+
+/**
+ * The review calendar. The open cycle reviews the quarter that has just ended
+ * and the closed one the quarter before it, so on any day of any year there is
+ * one cycle in progress and one finished behind it.
+ */
+export function reviewQuarters(today: string): {
+  open: { name: string; start: string; end: string };
+  closed: { name: string; start: string; end: string };
+} {
+  const year = Number(today.slice(0, 4));
+  const quarter = Math.floor((Number(today.slice(5, 7)) - 1) / 3); // 0-3, the current quarter
+  const bounds = (offset: number) => {
+    const index = year * 4 + quarter + offset;
+    const y = Math.floor(index / 4);
+    const q = index - y * 4;
+    const start = `${y}-${String(q * 3 + 1).padStart(2, "0")}-01`;
+    const endDate = new Date(Date.UTC(y, q * 3 + 3, 0));
+    return { name: `Q${q + 1} ${y} review`, start, end: endDate.toISOString().slice(0, 10) };
+  };
+  return { open: bounds(-1), closed: bounds(-2) };
 }
 
 export interface PresentationLeave {
@@ -271,9 +384,10 @@ export function presentationEvents(cal: PresentationCalendar): Array<{
     { title: "Platform demo day", description: "The platform team shows what shipped this fortnight. Everyone welcome.", location: "Level 18, Auditorium", startsOn: addWorkingDays(today, 2), startTime: "16:00", endTime: "17:00" },
     { title: "New joiner coffee session", description: "An informal half hour for everyone who joined in the last two months.", location: "Level 17, Pantry", startsOn: addWorkingDays(today, 4), startTime: "09:30", endTime: "10:15" },
     { title: "Company town hall", description: "Quarterly update from the managing director, followed by questions.", location: "Level 18, Auditorium", startsOn: addWorkingDays(today, 8), startTime: "10:00", endTime: "11:30" },
-    { title: "Client workshop: Astra Retail", description: "Discovery workshop with the client team.", location: "Client office, Bangsar South", startsOn: addWorkingDays(today, 12), startTime: "09:30", endTime: "16:30" },
-    { title: "Engineering offsite", description: "Two days of planning for the next quarter.", location: "Port Dickson", startsOn: addDays(today, -21), endsOn: addDays(today, -20) },
-    { title: "Deepavali celebration", description: "Lunch and an open house at the office.", location: "Level 17, Common area", startsOn: "2026-11-06", startTime: "12:00", endTime: "14:00" },
+    { title: "Client workshop: Kestrel Retail", description: "Discovery workshop with the client team.", location: "Client office", startsOn: addWorkingDays(today, 12), startTime: "09:30", endTime: "16:30" },
+    { title: "Engineering offsite", description: "Two days of planning for the next quarter.", location: "Off-site", startsOn: addDays(today, -21), endsOn: addDays(today, -20) },
+    { title: "Monthly birthday lunch", description: "Lunch for everyone with a birthday this month, and anyone who wants cake.", location: "Level 17, Common area", startsOn: addWorkingDays(today, -6), startTime: "12:30", endTime: "13:30" },
+    { title: "Fire drill", description: "Building-wide evacuation drill. Assemble at the car park entrance.", location: "Whole building", startsOn: addWorkingDays(today, 3), startTime: "10:30", endTime: "11:00" },
   ];
 }
 
@@ -281,12 +395,16 @@ export function presentationAnnouncements(cal: PresentationCalendar): Array<{
   key: string; title: string; body: string; priority: "normal" | "important"; status: "published" | "draft";
   department?: string; publishedOn?: string; expiresOn?: string;
 }> {
-  const { today, addDays } = cal;
+  const { today, addDays, addWorkingDays } = cal;
+  const anishaStart = joinedOn(cal, 9221);
+  const drill = addWorkingDays(today, 3);
+  const cycle = reviewQuarters(today).open;
+  const quarter = `Q${Math.floor((Number(today.slice(5, 7)) - 1) / 3) + 1}`;
   return [
     {
       key: "welcome-anisha", title: "Welcome Anisha Kaur to People & Culture", priority: "normal", status: "published",
-      publishedOn: addDays(today, -44),
-      body: "Anisha joined us on 3 August as People Operations Assistant, working with Melissa on onboarding and employee records. She sits on Level 17 - do say hello.",
+      publishedOn: anishaStart,
+      body: `Anisha joined us on ${formatShortDay(anishaStart)} as People Operations Assistant, working with Melissa on onboarding and employee records. She sits on Level 17 - do say hello.`,
     },
     {
       key: "hiring-platform", title: "We are hiring: Platform Engineering and Customer Success", priority: "normal", status: "published",
@@ -294,17 +412,17 @@ export function presentationAnnouncements(cal: PresentationCalendar): Array<{
       body: "Two roles are open: a mid-level platform engineer and a customer success executive. The referral bonus applies to both. Ridzuan has the briefs, and referrals go through the People & Culture team.",
     },
     {
-      key: "malaysia-day", title: "Office closed for Malaysia Day", priority: "normal", status: "published",
-      publishedOn: addDays(today, -6), expiresOn: addDays(today, 7),
-      body: "The office is closed on Wednesday 16 September for Malaysia Day. On-call cover is unchanged, and anyone working the client escalation should agree a replacement day with their manager.",
+      key: "fire-drill", title: `Fire drill on ${formatDay(drill)}`, priority: "normal", status: "published",
+      publishedOn: addDays(today, -6), expiresOn: addDays(drill, 1),
+      body: `Building management will run an evacuation drill on ${formatDay(drill)} at 10:30. When the alarm sounds, leave by the nearest stairwell and assemble at the car park entrance. It takes about twenty minutes.`,
     },
     {
-      key: "review-cycle", title: "Mid-year reviews: self-reviews close this week", priority: "important", status: "published",
+      key: "review-cycle", title: `${cycle.name}: self-reviews close soon`, priority: "important", status: "published",
       publishedOn: addDays(today, -3),
-      body: "Self-reviews for the Mid-year 2026 cycle are due this Friday, and managers have the following week to write theirs. The form is under Growth, and Farah's team can help if anything is unclear.",
+      body: `Self-reviews for the ${cycle.name} cycle are due on ${formatDay(addWorkingDays(today, 3))}, and managers have the following week to write theirs. The form is under Growth, and Farah's team can help if anything is unclear.`,
     },
     {
-      key: "town-hall-agenda", title: "Q4 town hall: agenda and questions", priority: "normal", status: "draft",
+      key: "town-hall-agenda", title: `${quarter} town hall: agenda and questions`, priority: "normal", status: "draft",
       body: "Draft agenda for the quarterly town hall: results, the platform roadmap, hiring, and an open question session. Send questions ahead of time so we can group them.",
     },
   ];
@@ -349,12 +467,14 @@ export function presentationLifecyclePlans(cal: PresentationCalendar): Array<{
   employeeId: number; template: string; startsOn: string; targetDate: string; done: number[]; exitStatus?: "resigned" | "terminated" | "inactive";
 }> {
   const { today, addDays, addWorkingDays } = cal;
+  const haziq = joinedOn(cal, 9208);
+  const anisha = joinedOn(cal, 9221);
   return [
-    // Haziq joined on 6 July: nearly through, with the thirty-day check-in and
-    // the goal-setting task still open.
-    { employeeId: 9208, template: "onboarding", startsOn: "2026-07-06", targetDate: "2026-08-05", done: [1, 2, 3, 4, 5, 6] },
-    // Anisha joined on 3 August: the later tasks are still ahead of her.
-    { employeeId: 9221, template: "onboarding", startsOn: "2026-08-03", targetDate: "2026-09-02", done: [1, 2, 3, 4, 5] },
+    // Haziq joined six weeks ago: nearly through, with the goal-setting task and
+    // the thirty-day check-in still open.
+    { employeeId: 9208, template: "onboarding", startsOn: haziq, targetDate: addDays(haziq, 30), done: [1, 2, 3, 4, 5, 6] },
+    // Anisha joined last week: the later tasks are still ahead of her.
+    { employeeId: 9221, template: "onboarding", startsOn: anisha, targetDate: addDays(anisha, 30), done: [1, 2, 3, 4] },
     // Kah Meng resigned; his last working day is the end of this month.
     { employeeId: 9234, template: "offboarding", startsOn: addDays(today, -18), targetDate: addWorkingDays(today, 10), done: [1, 2], exitStatus: "resigned" },
   ];
@@ -366,13 +486,13 @@ export function presentationRecognitions(cal: PresentationCalendar): Array<{
 }> {
   const { today, addDays } = cal;
   return [
-    { giver: 9203, receiver: 9204, category: "mentoring", message: "Thank you for pairing with Haziq every afternoon in his first fortnight. He is contributing already, and that is largely your doing.", visibility: "company", givenOn: addDays(today, -39) },
+    { giver: 9203, receiver: 9204, category: "mentoring", message: "Thank you for pairing with Haziq every afternoon in his first fortnight. He is contributing already, and that is largely your doing.", visibility: "company", givenOn: addDays(today, -24) },
     { giver: 9209, receiver: 9212, category: "problem_solving", message: "You found the cause of the Friday night deployment failure in under an hour and wrote it up so it cannot happen again.", visibility: "company", givenOn: addDays(today, -33) },
-    { giver: 9231, receiver: 9233, category: "customer_focus", message: "Astra Retail said your handling of their migration weekend was the best support they have had from any vendor.", visibility: "company", givenOn: addDays(today, -26) },
+    { giver: 9231, receiver: 9233, category: "customer_focus", message: "Kestrel Retail said your handling of their migration weekend was the best support they have had from any vendor.", visibility: "company", givenOn: addDays(today, -26) },
     { giver: 9218, receiver: 9219, category: "above_and_beyond", message: "You covered both onboarding cohorts while we were short-handed and neither joiner noticed a thing.", visibility: "company", givenOn: addDays(today, -21) },
     { giver: 9205, receiver: 9207, category: "teamwork", message: "Thanks for staying late to finish the regression run before the release. It made the whole thing calm instead of frantic.", visibility: "company", givenOn: addDays(today, -14) },
     { giver: 9213, receiver: 9217, category: "above_and_beyond", message: "The research summary changed the roadmap. It is rare that six interviews are that useful.", visibility: "company", givenOn: addDays(today, -11) },
-    { giver: 9222, receiver: 9223, category: "above_and_beyond", message: "August payroll closed a day early and with no corrections. Thank you.", visibility: "company", givenOn: addDays(today, -8) },
+    { giver: 9222, receiver: 9223, category: "above_and_beyond", message: "Last month's payroll closed a day early and with no corrections. Thank you.", visibility: "company", givenOn: addDays(today, -8) },
     { giver: 9204, receiver: 9205, category: "problem_solving", message: "The billing reconciliation fix was neat, and the tests you added around it are better than the code they cover.", visibility: "company", givenOn: addDays(today, -4) },
     { giver: 9203, receiver: 9206, category: "teamwork", message: "You picked up the on-call handover at short notice and kept everyone informed. Quietly done and much appreciated.", visibility: "private", givenOn: addDays(today, -2) },
   ];
@@ -418,7 +538,7 @@ export function presentationGoals(cal: PresentationCalendar): Array<{
       startsOn: addDays(today, -84), dueOn: addDays(today, 36), status: "active", progress: 60, visibility: "team",
       updates: [
         { by: 9203, on: addDays(today, -40), from: 20, to: 45, note: "Nine alerts retired, four rewritten to page only on customer impact." },
-        { by: 9203, on: addDays(today, -6), from: 45, to: 60, note: "Two nights paged last month, against nine in May." },
+        { by: 9203, on: addDays(today, -6), from: 45, to: 60, note: "Two nights paged last month, against nine a quarter ago." },
       ],
     },
     {
@@ -463,28 +583,33 @@ export function presentationReviewCycles(cal: PresentationCalendar): Array<{
   reviews: Array<{ employee: number; self?: [number, string, string]; manager?: [number, string, string, number]; response?: [string, string] }>;
 }> {
   const { today, addDays, addWorkingDays } = cal;
+  const { open, closed } = reviewQuarters(today);
+  // The finished cycle ran in the weeks after its quarter closed.
+  const closedOpened = addDays(closed.end, 7);
+  const openedOn = addDays(today, -10) > open.end ? addDays(today, -10) : addDays(open.end, 1);
   return [
     {
-      key: "annual-2025", name: "Annual 2025", periodStart: "2025-01-01", periodEnd: "2025-12-31",
-      selfDueOn: "2026-01-16", managerDueOn: "2026-01-30", status: "closed", openedOn: "2026-01-05", closedOn: "2026-02-06", departments: [],
+      key: "previous", name: closed.name, periodStart: closed.start, periodEnd: closed.end,
+      selfDueOn: addDays(closedOpened, 14), managerDueOn: addDays(closedOpened, 28), status: "closed",
+      openedOn: closedOpened, closedOn: addDays(closedOpened, 35), departments: [],
       reviews: [
         {
           employee: 9205,
-          self: [3, "Shipped the invoicing rewrite and picked up the reporting service when Arvind was away.", "2026-01-13"],
-          manager: [4, "Kar Wai took on work outside his comfort zone twice this year and both landed well. Next year: more design input earlier.", "2026-01-27", 9203],
-          response: ["Thank you. I would like to take the lead on the reporting work next.", "2026-01-28"],
+          self: [3, "Shipped the invoicing rewrite and picked up the reporting service when Arvind was away.", addDays(closedOpened, 9)],
+          manager: [4, "Kar Wai took on work outside his comfort zone twice this quarter and both landed well. Next: more design input earlier.", addDays(closedOpened, 23), 9203],
+          response: ["Thank you. I would like to take the lead on the reporting work next.", addDays(closedOpened, 24)],
         },
         {
           employee: 9204,
-          self: [4, "Led the pipeline migration and mentored two engineers through it.", "2026-01-12"],
-          manager: [4, "Arvind is the reason the migration was uneventful. The mentoring is what I value most.", "2026-01-26", 9203],
+          self: [4, "Led the pipeline migration and mentored two engineers through it.", addDays(closedOpened, 8)],
+          manager: [4, "Arvind is the reason the migration was uneventful. The mentoring is what I value most.", addDays(closedOpened, 22), 9203],
         },
       ],
     },
     {
-      key: "midyear-2026", name: "Mid-year 2026", periodStart: "2026-01-01", periodEnd: "2026-06-30",
+      key: "current", name: open.name, periodStart: open.start, periodEnd: open.end,
       selfDueOn: addWorkingDays(today, 3), managerDueOn: addWorkingDays(today, 10),
-      status: "open", openedOn: addDays(today, -10), departments: ["Engineering", "Product & Design"],
+      status: "open", openedOn, departments: ["Engineering", "Product & Design"],
       reviews: [
         // Written already, so the cycle shows progress rather than an empty list.
         {
@@ -525,14 +650,17 @@ export function seededRandom(seed: number): () => number {
 export const presentationDetails: Array<{
   employeeId: number; address?: string; dateOfBirth?: string; emergencyContactName?: string; emergencyContactPhone?: string;
 }> = [
-  { employeeId: 9203, address: "12-3A, Residensi Suasana, Jalan Tun Razak, 50400 Kuala Lumpur", dateOfBirth: "1989-04-17", emergencyContactName: "Roslan bin Ahmad", emergencyContactPhone: "+60 3-5550 0103" },
-  { employeeId: 9205, address: "8-12, Vista Damansara, Jalan Damansara, 60000 Kuala Lumpur", dateOfBirth: "1995-11-02", emergencyContactName: "Chong Mei Fong", emergencyContactPhone: "+60 3-5550 0105" },
-  { employeeId: 9202, address: "27, Jalan Setiabakti, Bukit Damansara, 50490 Kuala Lumpur", dateOfBirth: "1984-02-28" },
-  { employeeId: 9218, address: "5-8, The Sentral Residences, Jalan Stesen Sentral, 50470 Kuala Lumpur", dateOfBirth: "1986-07-09", emergencyContactName: "Hassan bin Idris", emergencyContactPhone: "+60 3-5550 0118" },
-  { employeeId: 9208, address: "Unit 14-2, PV21 Residence, Setapak, 53300 Kuala Lumpur", dateOfBirth: "2002-01-26", emergencyContactName: "Kamarul bin Yusof", emergencyContactPhone: "+60 3-5550 0108" },
-  { employeeId: 9221, dateOfBirth: "2003-05-14", emergencyContactName: "Harjit Singh", emergencyContactPhone: "+60 3-5550 0121" },
-  { employeeId: 9226, address: "19, Jalan Kiara 3, Mont Kiara, 50480 Kuala Lumpur", dateOfBirth: "1983-09-30" },
-  { employeeId: 9231, address: "3-11, Kiaraville, Mont Kiara, 50480 Kuala Lumpur", emergencyContactName: "Suresh Menon", emergencyContactPhone: "+60 3-5550 0131" },
+  // Addresses are deliberately fictional: "Contoh" is Malay for "example", and
+  // no street or building below exists. Phone numbers use the unallocated
+  // 03-0000 block, which cannot ring a real line.
+  { employeeId: 9203, address: "12-3A, Residensi Contoh, Jalan Contoh 3, 50450 Kuala Lumpur", dateOfBirth: "1989-04-17", emergencyContactName: "Roslan bin Ahmad", emergencyContactPhone: "+60 3-0000 0103" },
+  { employeeId: 9205, address: "8-12, Pangsapuri Contoh Indah, Jalan Contoh 8, 60000 Kuala Lumpur", dateOfBirth: "1995-11-02", emergencyContactName: "Chong Mei Fong", emergencyContactPhone: "+60 3-0000 0105" },
+  { employeeId: 9202, address: "27, Jalan Contoh Jaya 2, Taman Contoh, 50490 Kuala Lumpur", dateOfBirth: "1984-02-28" },
+  { employeeId: 9218, address: "5-8, Menara Contoh Residences, Jalan Contoh 11, 50470 Kuala Lumpur", dateOfBirth: "1986-07-09", emergencyContactName: "Hassan bin Idris", emergencyContactPhone: "+60 3-0000 0118" },
+  { employeeId: 9208, address: "Unit 14-2, Contoh Court, Jalan Contoh 21, 53300 Kuala Lumpur", dateOfBirth: "2002-01-26", emergencyContactName: "Kamarul bin Yusof", emergencyContactPhone: "+60 3-0000 0108" },
+  { employeeId: 9221, dateOfBirth: "2003-05-14", emergencyContactName: "Harjit Singh", emergencyContactPhone: "+60 3-0000 0121" },
+  { employeeId: 9226, address: "19, Jalan Contoh Kiara 3, 50480 Kuala Lumpur", dateOfBirth: "1983-09-30" },
+  { employeeId: 9231, address: "3-11, Contoh Villa, Jalan Contoh Kiara 5, 50480 Kuala Lumpur", emergencyContactName: "Suresh Menon", emergencyContactPhone: "+60 3-0000 0131" },
   { employeeId: 9234, dateOfBirth: "1993-12-05" },
-  { employeeId: 9213, address: "22-6, Ken Bangsar, Jalan Maarof, 59100 Kuala Lumpur", dateOfBirth: "1987-03-19" },
+  { employeeId: 9213, address: "22-6, Residensi Contoh Maju, Jalan Contoh 9, 59100 Kuala Lumpur", dateOfBirth: "1987-03-19" },
 ];

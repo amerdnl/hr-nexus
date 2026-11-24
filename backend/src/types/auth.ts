@@ -31,6 +31,14 @@ export interface AuthenticatedUser {
    * It grants the team layer only - nothing company-wide, which stays admin.
    */
   isManager: boolean;
+  /**
+   * True for a published demo sign-in (`users.demo_read_only`). Read from the
+   * database on every request, never a token claim, like the flags above. The
+   * authentication middleware refuses every write such an account makes apart
+   * from the allowlist in middleware/demoReadOnly.ts. It never widens what the
+   * account can see.
+   */
+  isDemo: boolean;
 }
 
 declare global {

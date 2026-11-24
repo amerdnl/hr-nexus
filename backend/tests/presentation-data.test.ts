@@ -107,8 +107,9 @@ test("the three demonstration accounts are what the walkthrough needs", () => {
   const reports = presentationEmployees.filter((person) => person.managerId === manager.id);
   assert.ok(reports.length >= 3, `the manager account has ${reports.length} direct reports`);
   assert.equal(employee.managerId, manager.id, "the employee reports to the manager account");
-  assert.ok(presentationEmployeeAccounts.every((account) => /@meridian-demo\.invalid$/.test(account.email)));
-  assert.match(presentationAdmin.email, /@meridian-demo\.invalid$/);
+  // .example is reserved by RFC 2606: no address here can reach a real mailbox.
+  assert.ok(presentationEmployeeAccounts.every((account) => /@meridian\.example$/.test(account.email)));
+  assert.match(presentationAdmin.email, /@meridian\.example$/);
 });
 
 test("salaries vary by person and every active employee below the top is paid", () => {

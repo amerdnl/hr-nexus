@@ -265,8 +265,8 @@ async function main(): Promise<void> {
           employee.id, employee.employeeNumber, employee.fullName,
           departmentIds.get(employee.department) ?? null, employee.jobTitle,
           employee.status, employee.employmentDate,
-          // A documentation-range number, so it cannot dial a real person.
-          `+60 3-5550 ${String(employee.id).slice(-4)}`,
+          // The unallocated 03-0000 block, so it cannot dial a real person.
+          `+60 3-0000 ${String(employee.id).slice(-4)}`,
         ],
       );
     }

@@ -30,6 +30,7 @@ import lifecycleRoutes from "./routes/lifecycleRoutes.js";
 import recognitionRoutes from "./routes/recognitionRoutes.js";
 import { goalRouter, reviewRouter } from "./routes/performanceRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
+import demoRoutes from "./routes/demoRoutes.js";
 
 import { authenticateToken } from "./middleware/authMiddleware.js";
 import { authorizeRoles } from "./middleware/roleMiddleware.js";
@@ -88,6 +89,8 @@ app.use("/api/recognition", recognitionRoutes);
 app.use("/api/goals", goalRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/analytics", analyticsRoutes);
+// Answers 404 unless DEMO_MODE=true; see routes/demoRoutes.ts.
+app.use("/api/demo", demoRoutes);
 
 app.use(
   "/api/attendance",

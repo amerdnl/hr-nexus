@@ -21293,27 +21293,27 @@ var require_router = __commonJS({
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var methods = METHODS.map((method) => method.toLowerCase());
-    module2.exports = Router25;
+    module2.exports = Router26;
     module2.exports.Route = Route;
-    function Router25(options) {
-      if (!(this instanceof Router25)) {
-        return new Router25(options);
+    function Router26(options) {
+      if (!(this instanceof Router26)) {
+        return new Router26(options);
       }
       const opts = options || {};
-      function router20(req, res, next) {
-        router20.handle(req, res, next);
+      function router21(req, res, next) {
+        router21.handle(req, res, next);
       }
-      Object.setPrototypeOf(router20, this);
-      router20.caseSensitive = opts.caseSensitive;
-      router20.mergeParams = opts.mergeParams;
-      router20.params = {};
-      router20.strict = opts.strict;
-      router20.stack = [];
-      return router20;
+      Object.setPrototypeOf(router21, this);
+      router21.caseSensitive = opts.caseSensitive;
+      router21.mergeParams = opts.mergeParams;
+      router21.params = {};
+      router21.strict = opts.strict;
+      router21.stack = [];
+      return router21;
     }
-    Router25.prototype = function() {
+    Router26.prototype = function() {
     };
-    Router25.prototype.param = function param(name, fn) {
+    Router26.prototype.param = function param(name, fn) {
       if (!name) {
         throw new TypeError("argument name is required");
       }
@@ -21333,7 +21333,7 @@ var require_router = __commonJS({
       params.push(fn);
       return this;
     };
-    Router25.prototype.handle = function handle(req, res, callback) {
+    Router26.prototype.handle = function handle(req, res, callback) {
       if (!callback) {
         throw new TypeError("argument callback is required");
       }
@@ -21460,7 +21460,7 @@ var require_router = __commonJS({
         }
       }
     };
-    Router25.prototype.use = function use(handler) {
+    Router26.prototype.use = function use(handler) {
       let offset = 0;
       let path3 = "/";
       if (typeof handler !== "function") {
@@ -21493,7 +21493,7 @@ var require_router = __commonJS({
       }
       return this;
     };
-    Router25.prototype.route = function route(path3) {
+    Router26.prototype.route = function route(path3) {
       const route2 = new Route(path3);
       const layer = new Layer(path3, {
         sensitive: this.caseSensitive,
@@ -21508,7 +21508,7 @@ var require_router = __commonJS({
       return route2;
     };
     methods.concat("all").forEach(function(method) {
-      Router25.prototype[method] = function(path3) {
+      Router26.prototype[method] = function(path3) {
         const route = this.route(path3);
         route[method].apply(route, slice.call(arguments, 1));
         return this;
@@ -21691,13 +21691,13 @@ var require_application = __commonJS({
     var compileTrust = require_utils3().compileTrust;
     var resolve = require("node:path").resolve;
     var once = require_once();
-    var Router25 = require_router();
+    var Router26 = require_router();
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var app2 = exports2 = module2.exports = {};
     var trustProxyDefaultSymbol = "@@symbol:trust_proxy_default";
     app2.init = function init() {
-      var router20 = null;
+      var router21 = null;
       this.cache = /* @__PURE__ */ Object.create(null);
       this.engines = /* @__PURE__ */ Object.create(null);
       this.settings = /* @__PURE__ */ Object.create(null);
@@ -21706,13 +21706,13 @@ var require_application = __commonJS({
         configurable: true,
         enumerable: true,
         get: function getrouter() {
-          if (router20 === null) {
-            router20 = new Router25({
+          if (router21 === null) {
+            router21 = new Router26({
               caseSensitive: this.enabled("case sensitive routing"),
               strict: this.enabled("strict routing")
             });
           }
-          return router20;
+          return router21;
         }
       });
     };
@@ -21783,15 +21783,15 @@ var require_application = __commonJS({
       if (fns.length === 0) {
         throw new TypeError("app.use() requires a middleware function");
       }
-      var router20 = this.router;
+      var router21 = this.router;
       fns.forEach(function(fn2) {
         if (!fn2 || !fn2.handle || !fn2.set) {
-          return router20.use(path3, fn2);
+          return router21.use(path3, fn2);
         }
         debug(".use app under %s", path3);
         fn2.mountpath = path3;
         fn2.parent = this;
-        router20.use(path3, function mounted_app(req, res, next) {
+        router21.use(path3, function mounted_app(req, res, next) {
           var orig = req.app;
           fn2.handle(req, res, function(err) {
             Object.setPrototypeOf(req, orig.request);
@@ -24268,7 +24268,7 @@ var require_serve_static = __commonJS({
       return '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>' + title + "</title>\n</head>\n<body>\n<pre>" + body + "</pre>\n</body>\n</html>\n";
     }
     function createNotFoundDirectoryListener() {
-      return function notFound() {
+      return function notFound2() {
         this.error(404);
       };
     }
@@ -24303,7 +24303,7 @@ var require_express = __commonJS({
     var EventEmitter = require("node:events").EventEmitter;
     var mixin = require_merge_descriptors();
     var proto = require_application();
-    var Router25 = require_router();
+    var Router26 = require_router();
     var req = require_request();
     var res = require_response();
     exports2 = module2.exports = createApplication;
@@ -24325,8 +24325,8 @@ var require_express = __commonJS({
     exports2.application = proto;
     exports2.request = req;
     exports2.response = res;
-    exports2.Route = Router25.Route;
-    exports2.Router = Router25;
+    exports2.Route = Router26.Route;
+    exports2.Router = Router26;
     exports2.json = bodyParser.json;
     exports2.raw = bodyParser.raw;
     exports2.static = require_serve_static();
@@ -25498,7 +25498,7 @@ var require_utils5 = __commonJS({
     var nodeCrypto2 = require("crypto");
     module2.exports = {
       postgresMd5PasswordHash,
-      randomBytes: randomBytes4,
+      randomBytes: randomBytes5,
       deriveKey,
       sha256,
       hashByName,
@@ -25508,7 +25508,7 @@ var require_utils5 = __commonJS({
     var webCrypto = nodeCrypto2.webcrypto || globalThis.crypto;
     var subtleCrypto = webCrypto.subtle;
     var textEncoder = new TextEncoder();
-    function randomBytes4(length) {
+    function randomBytes5(length) {
       return webCrypto.getRandomValues(Buffer.alloc(length));
     }
     async function md52(string) {
@@ -29895,12 +29895,12 @@ var require_jwa = __commonJS({
       };
     }
     var bufferEqual;
-    var timingSafeEqual = "timingSafeEqual" in crypto5 ? function timingSafeEqual2(a, b) {
+    var timingSafeEqual2 = "timingSafeEqual" in crypto5 ? function timingSafeEqual3(a, b) {
       if (a.byteLength !== b.byteLength) {
         return false;
       }
       return crypto5.timingSafeEqual(a, b);
-    } : function timingSafeEqual2(a, b) {
+    } : function timingSafeEqual3(a, b) {
       if (!bufferEqual) {
         bufferEqual = require_buffer_equal_constant_time();
       }
@@ -29909,7 +29909,7 @@ var require_jwa = __commonJS({
     function createHmacVerifier(bits) {
       return function verify2(thing, signature, secret) {
         var computedSig = createHmacSigner(bits)(thing, secret);
-        return timingSafeEqual(Buffer2.from(signature), Buffer2.from(computedSig));
+        return timingSafeEqual2(Buffer2.from(signature), Buffer2.from(computedSig));
       };
     }
     function createKeySigner(bits) {
@@ -111711,7 +111711,7 @@ __export(app_exports, {
 });
 module.exports = __toCommonJS(app_exports);
 var import_cors = __toESM(require_lib(), 1);
-var import_express25 = __toESM(require_express2(), 1);
+var import_express26 = __toESM(require_express2(), 1);
 
 // node_modules/pg/esm/index.mjs
 var import_lib = __toESM(require_lib5(), 1);
@@ -113763,7 +113763,7 @@ var eligibleAccountCondition = `u.is_active = TRUE AND (
 )`;
 async function findSessionUserById(userId) {
   const result = await db_default.query(
-    `SELECT u.id, u.employee_id, u.role, u.email, u.must_change_password,
+    `SELECT u.id, u.employee_id, u.role, u.email, u.must_change_password, u.demo_read_only,
             ${isManagerExpression} AS is_manager
      FROM users u
      LEFT JOIN employees e ON e.id = u.employee_id
@@ -113783,7 +113783,8 @@ async function findSessionUserById(userId) {
     role: row.role,
     email: row.email,
     mustChangePassword: row.must_change_password,
-    isManager: row.is_manager === true
+    isManager: row.is_manager === true,
+    isDemo: row.demo_read_only === true
   };
 }
 var safeUserSelect = `
@@ -113794,6 +113795,7 @@ var safeUserSelect = `
     u.role,
     u.is_active,
     u.must_change_password,
+    u.demo_read_only,
     ${isManagerExpression} AS is_manager,
     e.employee_number,
     e.full_name,
@@ -113822,6 +113824,7 @@ function toSafeUser(row) {
     isActive: row.is_active,
     mustChangePassword: row.must_change_password,
     isManager: row.is_manager === true,
+    isDemo: row.demo_read_only === true,
     employee: row.employee_id === null || row.employee_number === null || row.full_name === null ? null : {
       employeeNumber: row.employee_number,
       fullName: row.full_name,
@@ -113993,6 +113996,34 @@ async function logout(request, response) {
 
 // src/middleware/authMiddleware.ts
 var import_jsonwebtoken2 = __toESM(require_jsonwebtoken(), 1);
+
+// src/middleware/demoReadOnly.ts
+var DEMO_READ_ONLY_CODE = "DEMO_READ_ONLY";
+var DEMO_READ_ONLY_MESSAGE = "This is disabled in the demo. You can look at everything, but changes are turned off.";
+var READ_METHODS = /* @__PURE__ */ new Set(["GET", "HEAD", "OPTIONS"]);
+var DEMO_ALLOWED_WRITES = [
+  { method: "POST", path: /^\/api\/auth\/logout$/, why: "signing out" },
+  { method: "PUT", path: /^\/api\/notifications\/read-all$/, why: "marking its own notifications read" },
+  { method: "PUT", path: /^\/api\/notifications\/\d+\/read$/, why: "marking one of its own notifications read" },
+  { method: "PUT", path: /^\/api\/announcements\/\d+\/read$/, why: "marking an announcement read" }
+];
+function isDemoRequestAllowed(method, path3) {
+  const verb = method.toUpperCase();
+  if (READ_METHODS.has(verb)) return true;
+  return DEMO_ALLOWED_WRITES.some((entry) => entry.method === verb && entry.path.test(path3));
+}
+function requestPath(request) {
+  return (request.originalUrl || request.url).split("?")[0] ?? "";
+}
+function refuseDemoWrite(response) {
+  response.status(403).json({
+    success: false,
+    code: DEMO_READ_ONLY_CODE,
+    message: DEMO_READ_ONLY_MESSAGE
+  });
+}
+
+// src/middleware/authMiddleware.ts
 function getJwtSecret() {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
@@ -114051,6 +114082,10 @@ async function authenticate(request, response, next, allowPasswordChange) {
         code: "PASSWORD_CHANGE_REQUIRED",
         message: "You must choose a new password before using the application."
       });
+      return;
+    }
+    if (currentUser.isDemo && !isDemoRequestAllowed(request.method, requestPath(request))) {
+      refuseDemoWrite(response);
       return;
     }
     request.user = currentUser;
@@ -128218,11 +128253,11 @@ function idOr400(request, response, name = "id", label = "ID") {
   if (id === null) response.status(400).json({ success: false, message: `Invalid ${label}` });
   return id;
 }
-async function read(response, action, work, notFound) {
+async function read(response, action, work, notFound2) {
   try {
     const data = await work();
     if (data === null) {
-      response.status(404).json({ success: false, message: notFound });
+      response.status(404).json({ success: false, message: notFound2 });
       return;
     }
     response.status(200).json({ success: true, data });
@@ -128602,8 +128637,1665 @@ router19.get("/company", authorizeRoles("admin"), getCompanyAnalytics);
 router19.get("/team", requireManager, getTeamAnalytics);
 var analyticsRoutes_default = router19;
 
-// src/routes/attendanceRoutes.ts
+// src/routes/demoRoutes.ts
 var import_express24 = __toESM(require_express2(), 1);
+
+// src/database/demoReset.ts
+var import_node_crypto3 = require("node:crypto");
+
+// src/database/presentationData.ts
+var PRESENTATION_ID_MIN = 9200;
+var PRESENTATION_ID_MAX = 9299;
+var presentationCompany = {
+  name: "Meridian Digital Solutions Sdn. Bhd.",
+  shortName: "Meridian Digital",
+  timezone: "Asia/Kuala_Lumpur",
+  workingDays: [1, 2, 3, 4, 5],
+  workStart: "09:00",
+  workEnd: "18:00",
+  graceMinutes: 15,
+  // Fictional office coordinates in the Kuala Lumpur city centre.
+  officeLatitude: 3.1528,
+  officeLongitude: 101.7133,
+  radiusMeters: 150
+};
+var presentationDepartments = [
+  { name: "Leadership", description: "Company direction, and the heads of each department" },
+  { name: "Engineering", description: "Platform and application engineering, quality and delivery" },
+  { name: "Product & Design", description: "Product management, design and user research" },
+  { name: "People & Culture", description: "Hiring, onboarding, employee experience and policy" },
+  { name: "Finance", description: "Payroll operations, accounting and financial reporting" },
+  { name: "Sales & Partnerships", description: "New business, account management and partner programmes" },
+  { name: "Operations & Customer Success", description: "Service delivery, customer success and internal operations" }
+];
+var presentationEmployees = [
+  // ------------------------------------------------------------- Leadership
+  { id: 9201, employeeNumber: "MDS-001", fullName: "Azman bin Rahim", department: "Leadership", jobTitle: "Managing Director", status: "active", employmentDate: "2018-03-05", basicSalarySen: 32e5, allowanceSen: 42e4, overtimeRateSen: 0 },
+  // ------------------------------------------------------------ Engineering
+  { id: 9202, employeeNumber: "MDS-002", fullName: "Lim Wei Sheng", department: "Engineering", jobTitle: "Head of Engineering", status: "active", employmentDate: "2019-01-14", basicSalarySen: 178e4, allowanceSen: 22e4, overtimeRateSen: 0, managerId: 9201 },
+  // The manager the presentation walks through: a real reporting line, five reports.
+  { id: 9203, employeeNumber: "MDS-003", fullName: "Nur Hidayah binti Roslan", department: "Engineering", jobTitle: "Engineering Manager, Platform", status: "active", employmentDate: "2020-06-01", basicSalarySen: 1285e3, allowanceSen: 15e4, overtimeRateSen: 0, account: "employee", managerId: 9202 },
+  { id: 9204, employeeNumber: "MDS-004", fullName: "Arvind Menon", department: "Engineering", jobTitle: "Senior Software Engineer", status: "active", employmentDate: "2020-11-09", basicSalarySen: 104e4, allowanceSen: 95e3, overtimeRateSen: 6900, managerId: 9203 },
+  // The employee the presentation walks through, inside that manager's team.
+  { id: 9205, employeeNumber: "MDS-005", fullName: "Chong Kar Wai", department: "Engineering", jobTitle: "Software Engineer", status: "active", employmentDate: "2022-02-14", basicSalarySen: 785e3, allowanceSen: 7e4, overtimeRateSen: 5200, account: "employee", managerId: 9203 },
+  { id: 9206, employeeNumber: "MDS-006", fullName: "Siti Balqis binti Azmi", department: "Engineering", jobTitle: "Software Engineer", status: "active", employmentDate: "2022-09-05", basicSalarySen: 742e3, allowanceSen: 65e3, overtimeRateSen: 4900, managerId: 9203 },
+  { id: 9207, employeeNumber: "MDS-007", fullName: "Tan Yi Xuan", department: "Engineering", jobTitle: "QA Engineer", status: "active", employmentDate: "2023-03-13", basicSalarySen: 638e3, allowanceSen: 55e3, overtimeRateSen: 4250, managerId: 9203 },
+  { id: 9208, employeeNumber: "MDS-008", fullName: "Haziq bin Kamarul", department: "Engineering", jobTitle: "Junior Software Engineer", status: "probation", employmentDate: "2026-07-06", basicSalarySen: 452e3, allowanceSen: 35e3, overtimeRateSen: 3e3, managerId: 9203, joinedWorkingDaysAgo: 30 },
+  { id: 9209, employeeNumber: "MDS-009", fullName: "Rebecca Anne Fernandez", department: "Engineering", jobTitle: "Engineering Manager, Applications", status: "active", employmentDate: "2021-04-12", basicSalarySen: 1245e3, allowanceSen: 145e3, overtimeRateSen: 0, managerId: 9202 },
+  { id: 9210, employeeNumber: "MDS-010", fullName: "Mohd Faiz bin Ibrahim", department: "Engineering", jobTitle: "Senior Software Engineer", status: "active", employmentDate: "2021-08-23", basicSalarySen: 995e3, allowanceSen: 9e4, overtimeRateSen: 6600, managerId: 9209 },
+  { id: 9211, employeeNumber: "MDS-011", fullName: "Yeoh Sze Ming", department: "Engineering", jobTitle: "Software Engineer", status: "active", employmentDate: "2023-10-02", basicSalarySen: 706e3, allowanceSen: 62e3, overtimeRateSen: 4700, managerId: 9209 },
+  { id: 9212, employeeNumber: "MDS-012", fullName: "Kavitha Raman", department: "Engineering", jobTitle: "DevOps Engineer", status: "active", employmentDate: "2022-05-16", basicSalarySen: 862e3, allowanceSen: 78e3, overtimeRateSen: 5750, managerId: 9209 },
+  // ------------------------------------------------------- Product & Design
+  { id: 9213, employeeNumber: "MDS-013", fullName: "Lai Mun Yee", department: "Product & Design", jobTitle: "Head of Product & Design", status: "active", employmentDate: "2019-07-01", basicSalarySen: 1615e3, allowanceSen: 19e4, overtimeRateSen: 0, managerId: 9201 },
+  { id: 9214, employeeNumber: "MDS-014", fullName: "Danial Hakim bin Omar", department: "Product & Design", jobTitle: "Product Manager", status: "active", employmentDate: "2021-10-18", basicSalarySen: 1085e3, allowanceSen: 105e3, overtimeRateSen: 0, managerId: 9213 },
+  { id: 9215, employeeNumber: "MDS-015", fullName: "Grace Ooi Hui Shan", department: "Product & Design", jobTitle: "Senior Product Designer", status: "active", employmentDate: "2022-03-21", basicSalarySen: 918e3, allowanceSen: 84e3, overtimeRateSen: 0, managerId: 9213 },
+  { id: 9216, employeeNumber: "MDS-016", fullName: "Iskandar bin Jamal", department: "Product & Design", jobTitle: "Product Designer", status: "active", employmentDate: "2024-01-15", basicSalarySen: 672e3, allowanceSen: 58e3, overtimeRateSen: 0, managerId: 9215 },
+  { id: 9217, employeeNumber: "MDS-017", fullName: "Ng Jia Hui", department: "Product & Design", jobTitle: "UX Researcher", status: "active", employmentDate: "2023-06-05", basicSalarySen: 748e3, allowanceSen: 64e3, overtimeRateSen: 0, managerId: 9213 },
+  // -------------------------------------------------------- People & Culture
+  { id: 9218, employeeNumber: "MDS-018", fullName: "Farah Izzati binti Hassan", department: "People & Culture", jobTitle: "Head of People & Culture", status: "active", employmentDate: "2019-09-02", basicSalarySen: 152e4, allowanceSen: 175e3, overtimeRateSen: 0, managerId: 9201 },
+  { id: 9219, employeeNumber: "MDS-019", fullName: "Melissa Tan Sook Yee", department: "People & Culture", jobTitle: "People Operations Executive", status: "active", employmentDate: "2022-08-08", basicSalarySen: 615e3, allowanceSen: 52e3, overtimeRateSen: 4100, managerId: 9218 },
+  { id: 9220, employeeNumber: "MDS-020", fullName: "Ridzuan bin Salleh", department: "People & Culture", jobTitle: "Talent Acquisition Specialist", status: "active", employmentDate: "2023-11-13", basicSalarySen: 682e3, allowanceSen: 58e3, overtimeRateSen: 4550, managerId: 9218 },
+  { id: 9221, employeeNumber: "MDS-021", fullName: "Anisha Kaur", department: "People & Culture", jobTitle: "People Operations Assistant", status: "probation", employmentDate: "2026-08-03", basicSalarySen: 428e3, allowanceSen: 32e3, overtimeRateSen: 2850, managerId: 9219, joinedWorkingDaysAgo: 6 },
+  // ----------------------------------------------------------------- Finance
+  { id: 9222, employeeNumber: "MDS-022", fullName: "Ong Chee Keong", department: "Finance", jobTitle: "Finance Manager", status: "active", employmentDate: "2019-05-06", basicSalarySen: 1435e3, allowanceSen: 16e4, overtimeRateSen: 0, managerId: 9201 },
+  { id: 9223, employeeNumber: "MDS-023", fullName: "Nadhirah binti Zulkarnain", department: "Finance", jobTitle: "Payroll Executive", status: "active", employmentDate: "2021-12-06", basicSalarySen: 725e3, allowanceSen: 62e3, overtimeRateSen: 4800, managerId: 9222 },
+  { id: 9224, employeeNumber: "MDS-024", fullName: "Vimal Raj Krishnan", department: "Finance", jobTitle: "Accounts Executive", status: "active", employmentDate: "2023-02-20", basicSalarySen: 596e3, allowanceSen: 48e3, overtimeRateSen: 3950, managerId: 9222 },
+  { id: 9225, employeeNumber: "MDS-025", fullName: "Low Pei Shan", department: "Finance", jobTitle: "Finance Analyst", status: "active", employmentDate: "2024-07-08", basicSalarySen: 658e3, allowanceSen: 54e3, overtimeRateSen: 4350, managerId: 9222 },
+  // ------------------------------------------------------ Sales & Partnerships
+  { id: 9226, employeeNumber: "MDS-026", fullName: "Marcus Teoh Wei Liang", department: "Sales & Partnerships", jobTitle: "Sales Director", status: "active", employmentDate: "2019-02-11", basicSalarySen: 169e4, allowanceSen: 24e4, overtimeRateSen: 0, managerId: 9201 },
+  { id: 9227, employeeNumber: "MDS-027", fullName: "Sharifah binti Yahya", department: "Sales & Partnerships", jobTitle: "Senior Account Manager", status: "active", employmentDate: "2021-06-14", basicSalarySen: 952e3, allowanceSen: 13e4, overtimeRateSen: 0, managerId: 9226 },
+  { id: 9228, employeeNumber: "MDS-028", fullName: "Jonathan Lee Zhi Wei", department: "Sales & Partnerships", jobTitle: "Account Manager", status: "active", employmentDate: "2022-11-28", basicSalarySen: 788e3, allowanceSen: 105e3, overtimeRateSen: 0, managerId: 9226 },
+  { id: 9229, employeeNumber: "MDS-029", fullName: "Amirul Hakimi bin Nasir", department: "Sales & Partnerships", jobTitle: "Partnerships Executive", status: "active", employmentDate: "2024-03-04", basicSalarySen: 645e3, allowanceSen: 72e3, overtimeRateSen: 0, managerId: 9226 },
+  { id: 9230, employeeNumber: "MDS-030", fullName: "Chan Li Wen", department: "Sales & Partnerships", jobTitle: "Sales Development Representative", status: "active", employmentDate: "2025-01-13", basicSalarySen: 512e3, allowanceSen: 6e4, overtimeRateSen: 3400, managerId: 9227 },
+  // --------------------------------------------- Operations & Customer Success
+  { id: 9231, employeeNumber: "MDS-031", fullName: "Devi Suresh", department: "Operations & Customer Success", jobTitle: "Head of Operations & Customer Success", status: "active", employmentDate: "2020-02-17", basicSalarySen: 148e4, allowanceSen: 168e3, overtimeRateSen: 0, managerId: 9201 },
+  { id: 9232, employeeNumber: "MDS-032", fullName: "Zulkifli bin Hamzah", department: "Operations & Customer Success", jobTitle: "Customer Success Manager", status: "active", employmentDate: "2021-09-06", basicSalarySen: 925e3, allowanceSen: 88e3, overtimeRateSen: 6150, managerId: 9231 },
+  { id: 9233, employeeNumber: "MDS-033", fullName: "Priya Lakshmi Naidu", department: "Operations & Customer Success", jobTitle: "Customer Success Executive", status: "active", employmentDate: "2023-08-14", basicSalarySen: 624e3, allowanceSen: 52e3, overtimeRateSen: 4150, managerId: 9232 },
+  // Leaving at the end of the month: the offboarding the presentation shows.
+  { id: 9234, employeeNumber: "MDS-034", fullName: "Wong Kah Meng", department: "Operations & Customer Success", jobTitle: "Operations Executive", status: "active", employmentDate: "2022-06-20", basicSalarySen: 668e3, allowanceSen: 56e3, overtimeRateSen: 4450, managerId: 9231 }
+];
+var PRESENTATION_EMAIL_DOMAIN = "meridian.example";
+var presentationAdmin = {
+  id: PRESENTATION_ID_MIN,
+  email: `hr.admin@${PRESENTATION_EMAIL_DOMAIN}`
+};
+var presentationManagerAccount = { id: 9203, email: `nur.hidayah@${PRESENTATION_EMAIL_DOMAIN}` };
+var presentationEmployeeAccount = { id: 9205, email: `kar.wai@${PRESENTATION_EMAIL_DOMAIN}` };
+var presentationEmployeeAccounts = [presentationManagerAccount, presentationEmployeeAccount];
+var presentationDemoAccount = {
+  id: 9290,
+  email: `demo@${PRESENTATION_EMAIL_DOMAIN}`,
+  password: "uuve-pmyv-k9p4"
+};
+var presentationVacancies = [
+  { id: 9240, employeeNumber: "POS-9240", title: "Platform Engineer", department: "Engineering", managerId: 9203, notes: "Mid-level hire for the platform team. Interviews in progress." },
+  { id: 9241, employeeNumber: "POS-9241", title: "Customer Success Executive", department: "Operations & Customer Success", managerId: 9232, notes: "Backfill ahead of Wong Kah Meng's departure." },
+  { id: 9242, employeeNumber: "POS-9242", title: "Head of Data", department: "Leadership", managerId: 9201, notes: "New role, approved for next quarter. Brief being written." }
+];
+var presentationHolidays = [
+  { date: "2026-01-01", name: "New Year's Day" },
+  { date: "2026-02-01", name: "Thaipusam / Federal Territory Day" },
+  { date: "2026-02-02", name: "Thaipusam (substitute)" },
+  { date: "2026-02-03", name: "Federal Territory Day (substitute)" },
+  { date: "2026-02-17", name: "Chinese New Year" },
+  { date: "2026-02-18", name: "Chinese New Year (second day)" },
+  { date: "2026-03-07", name: "Nuzul Al-Quran" },
+  { date: "2026-03-20", name: "Hari Raya Aidilfitri (additional day)" },
+  { date: "2026-03-21", name: "Hari Raya Aidilfitri" },
+  { date: "2026-03-22", name: "Hari Raya Aidilfitri (second day)" },
+  { date: "2026-03-23", name: "Hari Raya Aidilfitri (substitute)" },
+  { date: "2026-05-01", name: "Labour Day" },
+  { date: "2026-05-27", name: "Hari Raya Haji" },
+  { date: "2026-05-31", name: "Wesak Day" },
+  { date: "2026-06-01", name: "Birthday of the Yang di-Pertuan Agong" },
+  { date: "2026-06-02", name: "Wesak Day (substitute)" },
+  { date: "2026-06-17", name: "Awal Muharram" },
+  { date: "2026-08-25", name: "Birthday of Prophet Muhammad" },
+  { date: "2026-08-31", name: "National Day" },
+  { date: "2026-09-16", name: "Malaysia Day" },
+  { date: "2026-11-08", name: "Deepavali" },
+  { date: "2026-11-09", name: "Deepavali (substitute)" },
+  { date: "2026-12-25", name: "Christmas Day" }
+];
+function presentationHolidaysFor(years) {
+  const rows = [];
+  for (const year of [...new Set(years)].sort()) {
+    if (year === 2026) {
+      rows.push(...presentationHolidays);
+      continue;
+    }
+    const firstJune = new Date(Date.UTC(year, 5, 1)).getUTCDay();
+    const agong = 1 + (8 - firstJune) % 7;
+    rows.push(
+      { date: `${year}-01-01`, name: "New Year's Day" },
+      { date: `${year}-02-01`, name: "Federal Territory Day" },
+      { date: `${year}-05-01`, name: "Labour Day" },
+      { date: `${year}-06-${String(agong).padStart(2, "0")}`, name: "Birthday of the Yang di-Pertuan Agong" },
+      { date: `${year}-08-31`, name: "National Day" },
+      { date: `${year}-09-16`, name: "Malaysia Day" },
+      { date: `${year}-12-25`, name: "Christmas Day" }
+    );
+  }
+  return rows;
+}
+var presentationProfiles = [
+  { employeeId: 9203, about: "I lead the platform team. I care about shipping small, safe changes and about the people who ship them. Ask me about architecture, on-call or how to get something unblocked.", skills: ["Engineering management", "Distributed systems", "TypeScript", "Coaching"], sharePhone: true },
+  { employeeId: 9205, about: "Software engineer on the platform team. Currently working on the billing service and the reporting pipeline.", skills: ["TypeScript", "PostgreSQL", "Node.js", "Testing"], sharePhone: false },
+  { employeeId: 9218, about: "I look after hiring, onboarding and the policies that decide how we work day to day. If something about working here does not make sense, tell me.", skills: ["Employee relations", "Policy design", "Hiring", "Compensation"], sharePhone: true },
+  { employeeId: 9202, about: "Head of Engineering. I spend most of my time on delivery, hiring and making sure the two teams are pulling in the same direction.", skills: ["Engineering leadership", "System design", "Hiring"], sharePhone: true },
+  { employeeId: 9213, about: "Product and design. I am interested in the research behind a decision as much as the decision itself.", skills: ["Product strategy", "Design leadership", "User research"], sharePhone: false },
+  { employeeId: 9204, about: "Senior engineer. Mostly platform work, and the person to ask about our deployment pipeline.", skills: ["Go", "Kubernetes", "Observability", "Mentoring"], sharePhone: false },
+  { employeeId: 9226, about: "Sales and partnerships across Malaysia and Singapore.", skills: ["Enterprise sales", "Partnerships", "Negotiation"], sharePhone: true },
+  { employeeId: 9231, about: "Operations and customer success. I care about response times and about the customers behind them.", skills: ["Service delivery", "Customer success", "Process design"], sharePhone: true },
+  { employeeId: 9208, about: "Junior engineer, a few weeks in. Learning the codebase and pairing as much as I can.", skills: ["TypeScript", "React"], sharePhone: false }
+];
+var presentationTimeline = [
+  { employeeId: 9203, kind: "job_title_changed", occurredOn: "2023-01-01", title: "Promoted to Engineering Manager, Platform" },
+  { employeeId: 9204, kind: "job_title_changed", occurredOn: "2023-07-01", title: "Promoted to Senior Software Engineer" },
+  { employeeId: 9210, kind: "job_title_changed", occurredOn: "2024-01-01", title: "Promoted to Senior Software Engineer" },
+  { employeeId: 9215, kind: "job_title_changed", occurredOn: "2024-04-01", title: "Promoted to Senior Product Designer" },
+  { employeeId: 9219, kind: "manager_changed", occurredOn: "2024-09-01", title: "Now reports to Farah Izzati binti Hassan" },
+  { employeeId: 9232, kind: "job_title_changed", occurredOn: "2023-03-01", title: "Promoted to Customer Success Manager" },
+  { employeeId: 9227, kind: "job_title_changed", occurredOn: "2023-10-01", title: "Promoted to Senior Account Manager" }
+];
+function formatDay2(date2) {
+  return new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }).format(/* @__PURE__ */ new Date(`${date2}T00:00:00Z`)).replace(",", "");
+}
+function formatShortDay(date2) {
+  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", timeZone: "UTC" }).format(/* @__PURE__ */ new Date(`${date2}T00:00:00Z`));
+}
+function formatMonth2(year, month) {
+  return new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(Date.UTC(year, month - 1, 1)));
+}
+function presentationEmployeesOn(cal) {
+  return presentationEmployees.map((employee) => employee.joinedWorkingDaysAgo === void 0 ? employee : { ...employee, employmentDate: cal.addWorkingDays(cal.today, -employee.joinedWorkingDaysAgo) });
+}
+var joinedOn = (cal, id) => presentationEmployeesOn(cal).find((employee) => employee.id === id).employmentDate;
+function reviewQuarters(today) {
+  const year = Number(today.slice(0, 4));
+  const quarter = Math.floor((Number(today.slice(5, 7)) - 1) / 3);
+  const bounds = (offset) => {
+    const index = year * 4 + quarter + offset;
+    const y = Math.floor(index / 4);
+    const q = index - y * 4;
+    const start = `${y}-${String(q * 3 + 1).padStart(2, "0")}-01`;
+    const endDate = new Date(Date.UTC(y, q * 3 + 3, 0));
+    return { name: `Q${q + 1} ${y} review`, start, end: endDate.toISOString().slice(0, 10) };
+  };
+  return { open: bounds(-1), closed: bounds(-2) };
+}
+function presentationLeave(cal) {
+  const { today, addDays: addDays3, addWorkingDays } = cal;
+  return [
+    // Away today.
+    { employee: 9217, type: "annual", start: addWorkingDays(today, -1), end: addWorkingDays(today, 1), status: "approved", reason: "Family trip to Penang" },
+    { employee: 9228, type: "annual", start: today, end: addWorkingDays(today, 2), status: "approved", reason: "Annual leave" },
+    { employee: 9224, type: "medical", start: today, end: today, status: "approved", reason: "Medical appointment" },
+    // Approved and still ahead.
+    { employee: 9206, type: "annual", start: addWorkingDays(today, 7), end: addWorkingDays(today, 11), status: "approved", reason: "Wedding in Ipoh" },
+    { employee: 9212, type: "annual", start: addWorkingDays(today, 4), end: addWorkingDays(today, 5), status: "approved", reason: "Long weekend" },
+    { employee: 9232, type: "annual", start: addWorkingDays(today, 15), end: addWorkingDays(today, 19), status: "approved", reason: "Annual leave" },
+    // Waiting for the platform manager: one of them is the employee account's.
+    { employee: 9205, type: "annual", start: addWorkingDays(today, 14), end: addWorkingDays(today, 18), status: "pending", reason: "Planned time off" },
+    { employee: 9207, type: "emergency", start: addWorkingDays(today, 2), end: addWorkingDays(today, 2), status: "pending", reason: "Family matter" },
+    // Waiting for HR, from other teams.
+    { employee: 9211, type: "annual", start: addWorkingDays(today, 21), end: addWorkingDays(today, 22), status: "pending", reason: "Short break" },
+    { employee: 9233, type: "medical", start: addWorkingDays(today, 1), end: addWorkingDays(today, 1), status: "pending", reason: "Specialist appointment" },
+    { employee: 9216, type: "unpaid", start: addWorkingDays(today, 25), end: addWorkingDays(today, 26), status: "pending", reason: "Personal matter" },
+    // History.
+    { employee: 9204, type: "annual", start: addDays3(today, -47), end: addDays3(today, -43), status: "approved", reason: "Annual leave" },
+    { employee: 9219, type: "medical", start: addDays3(today, -38), end: addDays3(today, -37), status: "approved", reason: "Medical leave" },
+    { employee: 9227, type: "annual", start: addDays3(today, -31), end: addDays3(today, -28), status: "approved", reason: "School holidays" },
+    { employee: 9214, type: "annual", start: addDays3(today, -24), end: addDays3(today, -24), status: "approved", reason: "Personal errand" },
+    { employee: 9210, type: "medical", start: addDays3(today, -17), end: addDays3(today, -17), status: "approved", reason: "Medical leave" },
+    { employee: 9223, type: "emergency", start: addDays3(today, -10), end: addDays3(today, -10), status: "approved", reason: "Family emergency" },
+    { employee: 9230, type: "annual", start: addDays3(today, -12), end: addDays3(today, -9), status: "rejected", reason: "Annual leave" },
+    { employee: 9229, type: "annual", start: addWorkingDays(today, 9), end: addWorkingDays(today, 10), status: "cancelled", reason: "Plans changed" },
+    // The employee account has a little history of its own to show.
+    { employee: 9205, type: "annual", start: addDays3(today, -66), end: addDays3(today, -62), status: "approved", reason: "Annual leave" },
+    { employee: 9205, type: "medical", start: addDays3(today, -29), end: addDays3(today, -29), status: "approved", reason: "Medical leave" },
+    { employee: 9205, type: "annual", start: addDays3(today, -20), end: addDays3(today, -19), status: "cancelled", reason: "Plans changed" }
+  ];
+}
+function presentationEvents(cal) {
+  const { today, addDays: addDays3, addWorkingDays } = cal;
+  return [
+    { title: "Platform demo day", description: "The platform team shows what shipped this fortnight. Everyone welcome.", location: "Level 18, Auditorium", startsOn: addWorkingDays(today, 2), startTime: "16:00", endTime: "17:00" },
+    { title: "New joiner coffee session", description: "An informal half hour for everyone who joined in the last two months.", location: "Level 17, Pantry", startsOn: addWorkingDays(today, 4), startTime: "09:30", endTime: "10:15" },
+    { title: "Company town hall", description: "Quarterly update from the managing director, followed by questions.", location: "Level 18, Auditorium", startsOn: addWorkingDays(today, 8), startTime: "10:00", endTime: "11:30" },
+    { title: "Client workshop: Kestrel Retail", description: "Discovery workshop with the client team.", location: "Client office", startsOn: addWorkingDays(today, 12), startTime: "09:30", endTime: "16:30" },
+    { title: "Engineering offsite", description: "Two days of planning for the next quarter.", location: "Off-site", startsOn: addDays3(today, -21), endsOn: addDays3(today, -20) },
+    { title: "Monthly birthday lunch", description: "Lunch for everyone with a birthday this month, and anyone who wants cake.", location: "Level 17, Common area", startsOn: addWorkingDays(today, -6), startTime: "12:30", endTime: "13:30" },
+    { title: "Fire drill", description: "Building-wide evacuation drill. Assemble at the car park entrance.", location: "Whole building", startsOn: addWorkingDays(today, 3), startTime: "10:30", endTime: "11:00" }
+  ];
+}
+function presentationAnnouncements(cal) {
+  const { today, addDays: addDays3, addWorkingDays } = cal;
+  const anishaStart = joinedOn(cal, 9221);
+  const drill = addWorkingDays(today, 3);
+  const cycle = reviewQuarters(today).open;
+  const quarter = `Q${Math.floor((Number(today.slice(5, 7)) - 1) / 3) + 1}`;
+  return [
+    {
+      key: "welcome-anisha",
+      title: "Welcome Anisha Kaur to People & Culture",
+      priority: "normal",
+      status: "published",
+      publishedOn: anishaStart,
+      body: `Anisha joined us on ${formatShortDay(anishaStart)} as People Operations Assistant, working with Melissa on onboarding and employee records. She sits on Level 17 - do say hello.`
+    },
+    {
+      key: "hiring-platform",
+      title: "We are hiring: Platform Engineering and Customer Success",
+      priority: "normal",
+      status: "published",
+      publishedOn: addDays3(today, -18),
+      body: "Two roles are open: a mid-level platform engineer and a customer success executive. The referral bonus applies to both. Ridzuan has the briefs, and referrals go through the People & Culture team."
+    },
+    {
+      key: "fire-drill",
+      title: `Fire drill on ${formatDay2(drill)}`,
+      priority: "normal",
+      status: "published",
+      publishedOn: addDays3(today, -6),
+      expiresOn: addDays3(drill, 1),
+      body: `Building management will run an evacuation drill on ${formatDay2(drill)} at 10:30. When the alarm sounds, leave by the nearest stairwell and assemble at the car park entrance. It takes about twenty minutes.`
+    },
+    {
+      key: "review-cycle",
+      title: `${cycle.name}: self-reviews close soon`,
+      priority: "important",
+      status: "published",
+      publishedOn: addDays3(today, -3),
+      body: `Self-reviews for the ${cycle.name} cycle are due on ${formatDay2(addWorkingDays(today, 3))}, and managers have the following week to write theirs. The form is under Growth, and Farah's team can help if anything is unclear.`
+    },
+    {
+      key: "town-hall-agenda",
+      title: `${quarter} town hall: agenda and questions`,
+      priority: "normal",
+      status: "draft",
+      body: "Draft agenda for the quarterly town hall: results, the platform roadmap, hiring, and an open question session. Send questions ahead of time so we can group them."
+    }
+  ];
+}
+var presentationLifecycleTemplates = [
+  {
+    key: "onboarding",
+    kind: "onboarding",
+    name: "New joiner onboarding",
+    description: "Everything a new colleague needs in their first month at Meridian Digital.",
+    tasks: [
+      { title: "Prepare laptop and accounts", instructions: "Raise the IT request at least three working days before the start date.", role: "hr", offset: -3 },
+      { title: "Send the welcome pack", instructions: "Company handbook, benefits summary and the first-week schedule.", role: "hr", offset: -1 },
+      { title: "First-day welcome and office tour", role: "manager", offset: 0 },
+      { title: "Set up payroll and statutory details", instructions: "Bank details, EPF and tax file number, collected through the People & Culture team.", role: "hr", offset: 1 },
+      { title: "Meet the team and agree the first project", role: "manager", offset: 3 },
+      { title: "Complete security and data-protection training", role: "employee", offset: 7 },
+      { title: "Set first-quarter goals with your manager", role: "employee", offset: 14 },
+      { title: "Thirty-day check-in", instructions: "Half an hour on how the first month went, what is unclear and what to change.", role: "manager", offset: 30 }
+    ]
+  },
+  {
+    key: "offboarding",
+    kind: "offboarding",
+    name: "Leaver offboarding",
+    description: "Closing out an employment properly, in the right order.",
+    tasks: [
+      { title: "Acknowledge the resignation in writing", role: "hr", offset: -21 },
+      { title: "Agree the handover plan", instructions: "Name the person taking each responsibility, and the date it moves.", role: "manager", offset: -14 },
+      { title: "Complete the handover notes", role: "employee", offset: -5 },
+      { title: "Return laptop, access card and equipment", role: "employee", offset: 0 },
+      { title: "Revoke system access", instructions: "On the last working day, after the handover is confirmed.", role: "hr", offset: 0 },
+      { title: "Final pay and exit interview", role: "hr", offset: 3 }
+    ]
+  }
+];
+function presentationLifecyclePlans(cal) {
+  const { today, addDays: addDays3, addWorkingDays } = cal;
+  const haziq = joinedOn(cal, 9208);
+  const anisha = joinedOn(cal, 9221);
+  return [
+    // Haziq joined six weeks ago: nearly through, with the goal-setting task and
+    // the thirty-day check-in still open.
+    { employeeId: 9208, template: "onboarding", startsOn: haziq, targetDate: addDays3(haziq, 30), done: [1, 2, 3, 4, 5, 6] },
+    // Anisha joined last week: the later tasks are still ahead of her.
+    { employeeId: 9221, template: "onboarding", startsOn: anisha, targetDate: addDays3(anisha, 30), done: [1, 2, 3, 4] },
+    // Kah Meng resigned; his last working day is the end of this month.
+    { employeeId: 9234, template: "offboarding", startsOn: addDays3(today, -18), targetDate: addWorkingDays(today, 10), done: [1, 2], exitStatus: "resigned" }
+  ];
+}
+function presentationRecognitions(cal) {
+  const { today, addDays: addDays3 } = cal;
+  return [
+    { giver: 9203, receiver: 9204, category: "mentoring", message: "Thank you for pairing with Haziq every afternoon in his first fortnight. He is contributing already, and that is largely your doing.", visibility: "company", givenOn: addDays3(today, -24) },
+    { giver: 9209, receiver: 9212, category: "problem_solving", message: "You found the cause of the Friday night deployment failure in under an hour and wrote it up so it cannot happen again.", visibility: "company", givenOn: addDays3(today, -33) },
+    { giver: 9231, receiver: 9233, category: "customer_focus", message: "Kestrel Retail said your handling of their migration weekend was the best support they have had from any vendor.", visibility: "company", givenOn: addDays3(today, -26) },
+    { giver: 9218, receiver: 9219, category: "above_and_beyond", message: "You covered both onboarding cohorts while we were short-handed and neither joiner noticed a thing.", visibility: "company", givenOn: addDays3(today, -21) },
+    { giver: 9205, receiver: 9207, category: "teamwork", message: "Thanks for staying late to finish the regression run before the release. It made the whole thing calm instead of frantic.", visibility: "company", givenOn: addDays3(today, -14) },
+    { giver: 9213, receiver: 9217, category: "above_and_beyond", message: "The research summary changed the roadmap. It is rare that six interviews are that useful.", visibility: "company", givenOn: addDays3(today, -11) },
+    { giver: 9222, receiver: 9223, category: "above_and_beyond", message: "Last month's payroll closed a day early and with no corrections. Thank you.", visibility: "company", givenOn: addDays3(today, -8) },
+    { giver: 9204, receiver: 9205, category: "problem_solving", message: "The billing reconciliation fix was neat, and the tests you added around it are better than the code they cover.", visibility: "company", givenOn: addDays3(today, -4) },
+    { giver: 9203, receiver: 9206, category: "teamwork", message: "You picked up the on-call handover at short notice and kept everyone informed. Quietly done and much appreciated.", visibility: "private", givenOn: addDays3(today, -2) }
+  ];
+}
+function presentationGoals(cal) {
+  const { today, addDays: addDays3 } = cal;
+  return [
+    {
+      owner: 9205,
+      setBy: 9203,
+      title: "Cut billing service p95 latency to under 400 ms",
+      description: "The billing service is the slowest path in the product. Profile it, fix the two worst queries and keep the improvement under load.",
+      startsOn: addDays3(today, -74),
+      dueOn: addDays3(today, 16),
+      status: "active",
+      progress: 65,
+      visibility: "team",
+      updates: [
+        { by: 9205, on: addDays3(today, -45), from: 0, to: 30, note: "Profiling done. Two N+1 queries in the invoice summary are most of it." },
+        { by: 9205, on: addDays3(today, -12), from: 30, to: 65, note: "First query fixed and deployed; p95 is down to 620 ms." }
+      ]
+    },
+    {
+      owner: 9205,
+      setBy: 9205,
+      title: "Finish the platform on-call handbook",
+      description: "Write down what the platform team actually does on call, so the next joiner does not have to ask.",
+      startsOn: addDays3(today, -60),
+      dueOn: addDays3(today, -5),
+      status: "active",
+      progress: 70,
+      visibility: "team",
+      updates: [{ by: 9205, on: addDays3(today, -20), from: 40, to: 70, note: "Escalation paths and the runbook index are written. The alert catalogue is left." }]
+    },
+    {
+      owner: 9204,
+      setBy: 9203,
+      title: "Move deployments to the new pipeline",
+      description: "Every service deploys through the new pipeline, with a rollback that has been tested rather than assumed.",
+      startsOn: addDays3(today, -88),
+      dueOn: addDays3(today, 30),
+      status: "active",
+      progress: 55,
+      visibility: "team",
+      updates: [{ by: 9204, on: addDays3(today, -26), from: 25, to: 55, note: "Six of eleven services moved. Rollback rehearsed twice." }]
+    },
+    {
+      owner: 9207,
+      setBy: 9203,
+      title: "Automate the release regression suite",
+      description: "The release checklist takes a day by hand. Automate the parts that are the same every time.",
+      startsOn: addDays3(today, -52),
+      dueOn: addDays3(today, 24),
+      status: "active",
+      progress: 40,
+      visibility: "team",
+      updates: [{ by: 9207, on: addDays3(today, -9), from: 15, to: 40, note: "Smoke suite runs on every build now." }]
+    },
+    {
+      owner: 9206,
+      setBy: 9206,
+      title: "Take over the reporting service",
+      description: "Become the person who can safely change the reporting service without help.",
+      startsOn: addDays3(today, -40),
+      dueOn: addDays3(today, 50),
+      status: "active",
+      progress: 25,
+      visibility: "team",
+      updates: []
+    },
+    {
+      owner: 9203,
+      setBy: 9202,
+      title: "Halve the platform on-call load",
+      description: "Nobody should be woken twice in a week. Cut the alerts that do not need a person, and share the rota more widely.",
+      startsOn: addDays3(today, -84),
+      dueOn: addDays3(today, 36),
+      status: "active",
+      progress: 60,
+      visibility: "team",
+      updates: [
+        { by: 9203, on: addDays3(today, -40), from: 20, to: 45, note: "Nine alerts retired, four rewritten to page only on customer impact." },
+        { by: 9203, on: addDays3(today, -6), from: 45, to: 60, note: "Two nights paged last month, against nine a quarter ago." }
+      ]
+    },
+    {
+      owner: 9203,
+      setBy: 9203,
+      title: "Grow two engineers into senior scope",
+      description: "Give Kar Wai and Siti Balqis work with real ownership, and the support to carry it.",
+      startsOn: addDays3(today, -95),
+      dueOn: addDays3(today, 70),
+      status: "active",
+      progress: 35,
+      visibility: "team",
+      updates: [{ by: 9203, on: addDays3(today, -16), from: 15, to: 35, note: "Both now lead their own workstream; reviewing progress at the mid-year cycle." }]
+    },
+    {
+      owner: 9217,
+      setBy: 9213,
+      title: "Run six discovery interviews for the analytics work",
+      description: "Understand how customers actually read the reports before we redesign them.",
+      startsOn: addDays3(today, -62),
+      dueOn: addDays3(today, -12),
+      status: "completed",
+      progress: 100,
+      visibility: "company",
+      completedOn: addDays3(today, -13),
+      updates: [
+        { by: 9217, on: addDays3(today, -30), from: 30, to: 80, note: "Five interviews done, one rescheduled." },
+        { by: 9217, on: addDays3(today, -13), from: 80, to: 100, note: "Summary shared with product and engineering.", status: "completed" }
+      ]
+    },
+    {
+      owner: 9233,
+      setBy: 9232,
+      title: "First response under two hours for priority tickets",
+      description: "Hold first response under two hours for priority-one tickets through the quarter.",
+      startsOn: addDays3(today, -80),
+      dueOn: addDays3(today, 12),
+      status: "active",
+      progress: 80,
+      visibility: "team",
+      updates: [{ by: 9233, on: addDays3(today, -7), from: 60, to: 80, note: "Averaging 84 minutes this month." }]
+    },
+    {
+      owner: 9228,
+      setBy: 9226,
+      title: "Close two enterprise accounts this quarter",
+      description: "Two signed enterprise agreements, with the onboarding date agreed at signature.",
+      startsOn: addDays3(today, -78),
+      dueOn: addDays3(today, 14),
+      status: "active",
+      progress: 50,
+      visibility: "team",
+      updates: [{ by: 9228, on: addDays3(today, -15), from: 20, to: 50, note: "One signed, one at legal review." }]
+    },
+    {
+      owner: 9219,
+      setBy: 9218,
+      title: "Cut time-to-offer to under three weeks",
+      description: "From first interview to written offer, for every open engineering role.",
+      startsOn: addDays3(today, -70),
+      dueOn: addDays3(today, 40),
+      status: "active",
+      progress: 45,
+      visibility: "team",
+      updates: [{ by: 9219, on: addDays3(today, -18), from: 20, to: 45, note: "Interview loop shortened from five stages to three." }]
+    }
+  ];
+}
+function presentationReviewCycles(cal) {
+  const { today, addDays: addDays3, addWorkingDays } = cal;
+  const { open: open2, closed } = reviewQuarters(today);
+  const closedOpened = addDays3(closed.end, 7);
+  const openedOn = addDays3(today, -10) > open2.end ? addDays3(today, -10) : addDays3(open2.end, 1);
+  return [
+    {
+      key: "previous",
+      name: closed.name,
+      periodStart: closed.start,
+      periodEnd: closed.end,
+      selfDueOn: addDays3(closedOpened, 14),
+      managerDueOn: addDays3(closedOpened, 28),
+      status: "closed",
+      openedOn: closedOpened,
+      closedOn: addDays3(closedOpened, 35),
+      departments: [],
+      reviews: [
+        {
+          employee: 9205,
+          self: [3, "Shipped the invoicing rewrite and picked up the reporting service when Arvind was away.", addDays3(closedOpened, 9)],
+          manager: [4, "Kar Wai took on work outside his comfort zone twice this quarter and both landed well. Next: more design input earlier.", addDays3(closedOpened, 23), 9203],
+          response: ["Thank you. I would like to take the lead on the reporting work next.", addDays3(closedOpened, 24)]
+        },
+        {
+          employee: 9204,
+          self: [4, "Led the pipeline migration and mentored two engineers through it.", addDays3(closedOpened, 8)],
+          manager: [4, "Arvind is the reason the migration was uneventful. The mentoring is what I value most.", addDays3(closedOpened, 22), 9203]
+        }
+      ]
+    },
+    {
+      key: "current",
+      name: open2.name,
+      periodStart: open2.start,
+      periodEnd: open2.end,
+      selfDueOn: addWorkingDays(today, 3),
+      managerDueOn: addWorkingDays(today, 10),
+      status: "open",
+      openedOn,
+      departments: ["Engineering", "Product & Design"],
+      reviews: [
+        // Written already, so the cycle shows progress rather than an empty list.
+        {
+          employee: 9204,
+          self: [4, "Pipeline work is on track and I have kept the on-call load off the rest of the team.", addDays3(today, -7)],
+          manager: [4, "Arvind carries more than his share quietly. We agreed he will hand over half of on-call this quarter.", addDays3(today, -5), 9203]
+        },
+        // Waiting for the manager: this is what her widget counts.
+        { employee: 9205, self: [4, "Billing latency is down by a third and the on-call handbook is nearly finished.", addDays3(today, -4)] },
+        { employee: 9207, self: [3, "Automated the smoke suite; the full regression is still manual.", addDays3(today, -2)] }
+      ]
+    }
+  ];
+}
+function seededRandom(seed) {
+  let state = seed >>> 0;
+  return () => {
+    state |= 0;
+    state = state + 1831565813 | 0;
+    let value = Math.imul(state ^ state >>> 15, 1 | state);
+    value = value + Math.imul(value ^ value >>> 7, 61 | value) ^ value;
+    return ((value ^ value >>> 14) >>> 0) / 4294967296;
+  };
+}
+var presentationDetails = [
+  // Addresses are deliberately fictional: "Contoh" is Malay for "example", and
+  // no street or building below exists. Phone numbers use the unallocated
+  // 03-0000 block, which cannot ring a real line.
+  { employeeId: 9203, address: "12-3A, Residensi Contoh, Jalan Contoh 3, 50450 Kuala Lumpur", dateOfBirth: "1989-04-17", emergencyContactName: "Roslan bin Ahmad", emergencyContactPhone: "+60 3-0000 0103" },
+  { employeeId: 9205, address: "8-12, Pangsapuri Contoh Indah, Jalan Contoh 8, 60000 Kuala Lumpur", dateOfBirth: "1995-11-02", emergencyContactName: "Chong Mei Fong", emergencyContactPhone: "+60 3-0000 0105" },
+  { employeeId: 9202, address: "27, Jalan Contoh Jaya 2, Taman Contoh, 50490 Kuala Lumpur", dateOfBirth: "1984-02-28" },
+  { employeeId: 9218, address: "5-8, Menara Contoh Residences, Jalan Contoh 11, 50470 Kuala Lumpur", dateOfBirth: "1986-07-09", emergencyContactName: "Hassan bin Idris", emergencyContactPhone: "+60 3-0000 0118" },
+  { employeeId: 9208, address: "Unit 14-2, Contoh Court, Jalan Contoh 21, 53300 Kuala Lumpur", dateOfBirth: "2002-01-26", emergencyContactName: "Kamarul bin Yusof", emergencyContactPhone: "+60 3-0000 0108" },
+  { employeeId: 9221, dateOfBirth: "2003-05-14", emergencyContactName: "Harjit Singh", emergencyContactPhone: "+60 3-0000 0121" },
+  { employeeId: 9226, address: "19, Jalan Contoh Kiara 3, 50480 Kuala Lumpur", dateOfBirth: "1983-09-30" },
+  { employeeId: 9231, address: "3-11, Contoh Villa, Jalan Contoh Kiara 5, 50480 Kuala Lumpur", emergencyContactName: "Suresh Menon", emergencyContactPhone: "+60 3-0000 0131" },
+  { employeeId: 9234, dateOfBirth: "1993-12-05" },
+  { employeeId: 9213, address: "22-6, Residensi Contoh Maju, Jalan Contoh 9, 59100 Kuala Lumpur", dateOfBirth: "1987-03-19" }
+];
+
+// src/database/presentationLoader.ts
+function addDays2(date2, days) {
+  const value = /* @__PURE__ */ new Date(`${date2}T00:00:00Z`);
+  value.setUTCDate(value.getUTCDate() + days);
+  return value.toISOString().slice(0, 10);
+}
+function isoWeekday2(date2) {
+  const day = (/* @__PURE__ */ new Date(`${date2}T00:00:00Z`)).getUTCDay();
+  return day === 0 ? 7 : day;
+}
+function companyNow(at = /* @__PURE__ */ new Date()) {
+  const parts2 = new Intl.DateTimeFormat("en-GB", {
+    timeZone: presentationCompany.timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  }).formatToParts(at);
+  const value = (type) => parts2.find((part) => part.type === type).value;
+  return {
+    date: `${value("year")}-${value("month")}-${value("day")}`,
+    minutes: Number(value("hour")) % 24 * 60 + Number(value("minute"))
+  };
+}
+var minutesToTime = (minutes2) => `${String(Math.floor(minutes2 / 60)).padStart(2, "0")}:${String(minutes2 % 60).padStart(2, "0")}:00`;
+function presentationCalendar(today) {
+  const year = Number(today.slice(0, 4));
+  const holidays = presentationHolidaysFor([year - 1, year, year + 1]);
+  const holidayDates = new Set(holidays.map((holiday) => holiday.date));
+  const isWorkingDay = (date2) => presentationCompany.workingDays.includes(isoWeekday2(date2)) && !holidayDates.has(date2);
+  const addWorkingDays = (date2, days) => {
+    let cursor = date2;
+    const step = days >= 0 ? 1 : -1;
+    for (let left = Math.abs(days); left > 0; left -= 1) {
+      do {
+        cursor = addDays2(cursor, step);
+      } while (!isWorkingDay(cursor));
+    }
+    return cursor;
+  };
+  return { today, addDays: addDays2, addWorkingDays, isWorkingDay, holidays };
+}
+function payrollMonths(today, count = 3) {
+  const year = Number(today.slice(0, 4));
+  const month = Number(today.slice(5, 7));
+  const months = [];
+  for (let back = count; back >= 1; back -= 1) {
+    const index = year * 12 + (month - 1) - back;
+    months.push({ year: Math.floor(index / 12), month: index % 12 + 1, status: "paid" });
+  }
+  months.push({ year, month, status: "draft" });
+  return months;
+}
+async function addStatutoryLines(client, periodId) {
+  const records = await client.query(
+    "SELECT id, basic_salary_sen AS basic, gross_sen AS gross FROM public.payroll_records WHERE period_id = $1",
+    [periodId]
+  );
+  for (const record of records.rows) {
+    const basic = Number(record.basic);
+    const gross = Number(record.gross);
+    const insurable = Math.min(gross, 6e5);
+    const lines = [
+      ["EPF (employee, 11%)", Math.round(basic * 0.11)],
+      ["SOCSO (employee)", Math.round(insurable * 5e-3)],
+      ["EIS (employee)", Math.round(insurable * 2e-3)],
+      ["PCB (monthly tax deduction)", Math.max(0, Math.round((gross - 35e4) * 0.09))]
+    ];
+    for (const [label, amount] of lines) {
+      if (amount <= 0) continue;
+      await client.query(
+        `INSERT INTO public.payroll_items
+           (record_id, item_type, code, label, amount_sen, is_manual, is_statutory, note, created_by)
+         VALUES ($1, 'deduction', 'statutory', $2, $3, TRUE, TRUE, NULL, $4)`,
+        [record.id, label, amount, presentationAdmin.id]
+      );
+    }
+    await refreshRecordTotals(client, record.id);
+  }
+}
+async function loadPresentationCompany(client, options) {
+  const { today, nowMinutes, staffPasswordHash, demoPasswordHash } = options;
+  const ledger = await client.query("SELECT version FROM public.schema_migrations ORDER BY version");
+  const versions = ledger.rows.map((row) => row.version);
+  if (!versions.includes("0023")) {
+    throw new Error(`The database is not fully migrated (ledger ends at ${versions.at(-1) ?? "nothing"}); apply the migrations first.`);
+  }
+  const calendar = presentationCalendar(today);
+  const { isWorkingDay } = calendar;
+  const year = Number(today.slice(0, 4));
+  const countLeaveDays = (start, end) => {
+    let count = 0;
+    for (let cursor = start; cursor <= end; cursor = addDays2(cursor, 1)) {
+      if (presentationCompany.workingDays.includes(isoWeekday2(cursor))) count += 1;
+    }
+    return count;
+  };
+  const employees = presentationEmployeesOn(calendar);
+  const leave = presentationLeave(calendar);
+  const events = presentationEvents(calendar);
+  const announcements = presentationAnnouncements(calendar);
+  const plans = presentationLifecyclePlans(calendar);
+  const recognitions = presentationRecognitions(calendar);
+  const goals = presentationGoals(calendar);
+  const reviewCycles = presentationReviewCycles(calendar);
+  const months = payrollMonths(today);
+  const holidays = calendar.holidays;
+  await client.query(
+    `UPDATE public.company_settings
+     SET company_name = $1, timezone = $2, working_days = $3::smallint[], work_start_time = $4::time,
+         work_end_time = $5::time, grace_period_minutes = $6, office_latitude = $7, office_longitude = $8,
+         attendance_radius_meters = $9, revision = revision + 1, updated_at = CURRENT_TIMESTAMP
+     WHERE id = 1`,
+    [
+      presentationCompany.name,
+      presentationCompany.timezone,
+      presentationCompany.workingDays,
+      presentationCompany.workStart,
+      presentationCompany.workEnd,
+      presentationCompany.graceMinutes,
+      presentationCompany.officeLatitude,
+      presentationCompany.officeLongitude,
+      presentationCompany.radiusMeters
+    ]
+  );
+  await client.query(
+    `DELETE FROM public.payroll_items WHERE record_id IN (
+       SELECT id FROM public.payroll_records WHERE employee_id BETWEEN $1 AND $2)`,
+    [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]
+  );
+  await client.query("DELETE FROM public.payroll_records WHERE employee_id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
+  for (const { year: periodYear, month } of months) {
+    await client.query("DELETE FROM public.payroll_periods WHERE period_year = $1 AND period_month = $2", [periodYear, month]);
+  }
+  for (const table of ["employee_compensation", "leave_entitlements", "leave_requests", "attendance", "employee_profiles"]) {
+    await client.query(`DELETE FROM public.${table} WHERE employee_id BETWEEN $1 AND $2`, [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
+  }
+  await client.query(
+    `DELETE FROM public.lifecycle_tasks WHERE plan_id IN (
+       SELECT id FROM public.lifecycle_plans WHERE employee_id BETWEEN $1 AND $2)`,
+    [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]
+  );
+  await client.query("DELETE FROM public.lifecycle_plans WHERE employee_id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
+  for (const table of ["lifecycle_templates", "announcements", "company_events", "company_holidays"]) {
+    await client.query(`DELETE FROM public.${table} WHERE created_by = $1`, [presentationAdmin.id]);
+  }
+  await client.query("UPDATE public.employees SET manager_id = NULL WHERE id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
+  await client.query("DELETE FROM public.users WHERE id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
+  await client.query("DELETE FROM public.users WHERE employee_id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
+  await client.query("DELETE FROM public.employees WHERE id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
+  for (const department of presentationDepartments) {
+    await client.query(
+      `INSERT INTO public.departments (name, description) VALUES ($1, $2)
+       ON CONFLICT (name) DO UPDATE SET description = EXCLUDED.description`,
+      [department.name, department.description]
+    );
+  }
+  const departmentIds = new Map(
+    (await client.query("SELECT id, name FROM public.departments")).rows.map((row) => [row.name, row.id])
+  );
+  const detail = (id) => presentationDetails.find((row) => row.employeeId === id);
+  for (const employee2 of employees) {
+    await client.query(
+      `INSERT INTO public.employees
+         (id, employee_number, full_name, department_id, job_title, employment_status, employment_date, phone,
+          address, date_of_birth, emergency_contact_name, emergency_contact_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+      [
+        employee2.id,
+        employee2.employeeNumber,
+        employee2.fullName,
+        departmentIds.get(employee2.department) ?? null,
+        employee2.jobTitle,
+        employee2.status,
+        employee2.employmentDate,
+        // The unallocated 03-0000 block, which cannot ring a real line.
+        `+60 3-0000 ${String(employee2.id).slice(-4)}`,
+        detail(employee2.id)?.address ?? null,
+        detail(employee2.id)?.dateOfBirth ?? null,
+        detail(employee2.id)?.emergencyContactName ?? null,
+        detail(employee2.id)?.emergencyContactPhone ?? null
+      ]
+    );
+  }
+  for (const employee2 of employees) {
+    if (employee2.managerId === void 0) continue;
+    await client.query("UPDATE public.employees SET manager_id = $1 WHERE id = $2", [employee2.managerId, employee2.id]);
+  }
+  for (const vacancy of presentationVacancies) {
+    await client.query(
+      `INSERT INTO public.employees
+         (id, employee_number, full_name, job_title, department_id, employment_status,
+          position_kind, occupancy, position_notes, manager_id)
+       VALUES ($1, $2, $3, NULL, $4, 'active', 'vacant', 'vacant', $5, $6)`,
+      [
+        vacancy.id,
+        vacancy.employeeNumber,
+        vacancy.title,
+        departmentIds.get(vacancy.department) ?? null,
+        vacancy.notes,
+        vacancy.managerId
+      ]
+    );
+  }
+  for (const profile of presentationProfiles) {
+    await client.query(
+      `INSERT INTO public.employee_profiles (employee_id, about, skills, share_phone) VALUES ($1,$2,$3,$4)`,
+      [profile.employeeId, profile.about, profile.skills, profile.sharePhone]
+    );
+  }
+  for (const event of presentationTimeline) {
+    await client.query(
+      `INSERT INTO public.employee_events (employee_id, kind, visibility, occurred_on, title, source_type, source_id)
+       VALUES ($1,$2,'company',$3,$4,'presentation_seed',$5) ON CONFLICT DO NOTHING`,
+      [event.employeeId, event.kind, event.occurredOn, event.title, `${event.kind}:${event.occurredOn}`]
+    );
+  }
+  await client.query(
+    `INSERT INTO public.users (id, employee_id, email, password_hash, role, is_active, must_change_password)
+     VALUES ($1, NULL, $2, $3, 'admin', TRUE, FALSE)`,
+    [presentationAdmin.id, presentationAdmin.email, staffPasswordHash]
+  );
+  for (const account of presentationEmployeeAccounts) {
+    await client.query(
+      `INSERT INTO public.users (id, employee_id, email, password_hash, role, is_active, must_change_password)
+       VALUES ($1, $1, $2, $3, 'employee', TRUE, FALSE)`,
+      [account.id, account.email, staffPasswordHash]
+    );
+  }
+  await client.query(
+    `INSERT INTO public.users (id, employee_id, email, password_hash, role, is_active, must_change_password, demo_read_only)
+     VALUES ($1, NULL, $2, $3, 'admin', TRUE, FALSE, TRUE)`,
+    [presentationDemoAccount.id, presentationDemoAccount.email, demoPasswordHash]
+  );
+  const compensationFrom = `${months[0].year - 1}-01-01`;
+  for (const employee2 of employees) {
+    if (employee2.basicSalarySen === void 0) continue;
+    await client.query(
+      `INSERT INTO public.employee_compensation
+         (employee_id, basic_salary_sen, allowance_sen, overtime_rate_sen, effective_from)
+       VALUES ($1,$2,$3,$4,$5)`,
+      [
+        employee2.id,
+        employee2.basicSalarySen,
+        employee2.allowanceSen ?? 0,
+        employee2.overtimeRateSen ?? 0,
+        employee2.employmentDate > compensationFrom ? employee2.employmentDate : compensationFrom
+      ]
+    );
+  }
+  const random = seededRandom(Number(today.replaceAll("-", "")));
+  const historyStart = addDays2(today, -125);
+  const approvedLeave = leave.filter((request) => request.status === "approved");
+  const onLeave = (employeeId2, date2) => approvedLeave.some((request) => request.employee === employeeId2 && date2 >= request.start && date2 <= request.end);
+  const workStartMinutes = Number(presentationCompany.workStart.slice(0, 2)) * 60;
+  const rows = {
+    employee: [],
+    date: [],
+    checkIn: [],
+    checkOut: [],
+    status: [],
+    late: []
+  };
+  const push = (employeeId2, date2, status, checkIn2 = null, checkOut2 = null, late = 0) => {
+    rows.employee.push(employeeId2);
+    rows.date.push(date2);
+    rows.status.push(status);
+    rows.checkIn.push(checkIn2);
+    rows.checkOut.push(checkOut2);
+    rows.late.push(late);
+  };
+  let todayPresent = 0;
+  let todayLate = 0;
+  let todayOnLeave = 0;
+  for (const employee2 of employees) {
+    if (employee2.status === "resigned" || employee2.status === "inactive") continue;
+    for (let date2 = historyStart; date2 <= today; date2 = addDays2(date2, 1)) {
+      if (!isWorkingDay(date2)) continue;
+      if (date2 < employee2.employmentDate) continue;
+      if (onLeave(employee2.id, date2)) {
+        push(employee2.id, date2, "on_leave");
+        if (date2 === today) todayOnLeave += 1;
+        continue;
+      }
+      const roll = random();
+      if (date2 !== today && roll < 0.015) continue;
+      if (date2 !== today && roll < 0.03) {
+        push(employee2.id, date2, "absent");
+        continue;
+      }
+      const late = roll > 0.86;
+      const arrival = late ? workStartMinutes + presentationCompany.graceMinutes + 3 + Math.floor(random() * 32) : workStartMinutes - 25 + Math.floor(random() * 37);
+      const elapsed = Math.max(0, arrival - workStartMinutes);
+      const isLate = elapsed > presentationCompany.graceMinutes;
+      const departure = 17 * 60 + 50 + Math.floor(random() * 75);
+      const forgotCheckout = random() < 0.035;
+      if (date2 === today) {
+        if (nowMinutes < arrival) continue;
+        const left = nowMinutes >= departure && !forgotCheckout;
+        push(
+          employee2.id,
+          date2,
+          isLate ? "late" : "present",
+          minutesToTime(arrival),
+          left ? minutesToTime(departure) : null,
+          isLate ? elapsed : 0
+        );
+        isLate ? todayLate += 1 : todayPresent += 1;
+        continue;
+      }
+      push(
+        employee2.id,
+        date2,
+        isLate ? "late" : "present",
+        minutesToTime(arrival),
+        forgotCheckout ? null : minutesToTime(departure),
+        isLate ? elapsed : 0
+      );
+    }
+  }
+  if (rows.employee.length > 0) {
+    await client.query(
+      `INSERT INTO public.attendance (employee_id, attendance_date, check_in_time, check_out_time, status, late_minutes)
+       SELECT * FROM unnest($1::bigint[], $2::date[], $3::time[], $4::time[], $5::varchar[], $6::int[])`,
+      [rows.employee, rows.date, rows.checkIn, rows.checkOut, rows.status, rows.late]
+    );
+  }
+  const attendanceRows = rows.employee.length;
+  for (const employee2 of employees) {
+    if (employee2.status === "resigned") continue;
+    const senior = employee2.employmentDate < `${year - 4}-01-01`;
+    for (const leaveYear of [year - 1, year]) {
+      if (employee2.employmentDate > `${leaveYear}-12-31`) continue;
+      for (const [type, days] of [["annual", senior ? 18 : 14], ["medical", 14], ["emergency", 3]]) {
+        await client.query(
+          `INSERT INTO public.leave_entitlements
+             (employee_id, leave_year, leave_type, entitled_days, carried_forward_days, adjustment_days, source)
+           VALUES ($1, $2, $3, $4, $5, 0, 'policy')`,
+          [employee2.id, leaveYear, type, days, type === "annual" && senior ? 2 : 0]
+        );
+      }
+    }
+  }
+  const accountIds = /* @__PURE__ */ new Set([presentationAdmin.id, ...presentationEmployeeAccounts.map((account) => account.id)]);
+  const actorFor = (employeeIdOfRequest) => {
+    const person = employees.find((entry) => entry.id === employeeIdOfRequest);
+    return person?.managerId !== void 0 && accountIds.has(person.managerId) ? person.managerId : presentationAdmin.id;
+  };
+  for (const [index, request] of leave.entries()) {
+    await client.query(
+      `INSERT INTO public.leave_requests
+         (employee_id, leave_type, start_date, end_date, reason, status, working_days, leave_year,
+          reviewed_at, reviewed_by, cancelled_at, cancelled_by, created_at)
+       VALUES ($1,$2,$3,$4,$5,$6::varchar,$7,$10,
+               CASE WHEN $6::varchar IN ('approved','rejected') THEN ($3::date - interval '6 days') END,
+               CASE WHEN $6::varchar IN ('approved','rejected') THEN $8::int END,
+               CASE WHEN $6::varchar = 'cancelled' THEN ($3::date - interval '4 days') END,
+               CASE WHEN $6::varchar = 'cancelled' THEN $9::int END,
+               -- Applied nine days ahead, but never in the future: requests for
+               -- far-off dates were sent over the last few days.
+               LEAST($3::date - interval '9 days', CURRENT_TIMESTAMP - make_interval(days => $11::int, hours => $12::int)))`,
+      [
+        request.employee,
+        request.type,
+        request.start,
+        request.end,
+        request.reason,
+        request.status,
+        countLeaveDays(request.start, request.end),
+        actorFor(request.employee),
+        accountIds.has(request.employee) ? request.employee : presentationAdmin.id,
+        Number(request.start.slice(0, 4)),
+        1 + index % 6,
+        index * 5 % 9
+      ]
+    );
+  }
+  for (const holiday of holidays) {
+    await client.query(
+      `INSERT INTO public.company_holidays (holiday_date, name, created_by, updated_by)
+       VALUES ($1,$2,$3,$3) ON CONFLICT (holiday_date) DO NOTHING`,
+      [holiday.date, holiday.name, presentationAdmin.id]
+    );
+  }
+  for (const event of events) {
+    await client.query(
+      `INSERT INTO public.company_events
+         (title, description, location, starts_on, ends_on, start_time, end_time, created_by, updated_by)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$8)`,
+      [
+        event.title,
+        event.description ?? null,
+        event.location ?? null,
+        event.startsOn,
+        event.endsOn ?? event.startsOn,
+        event.startTime ?? null,
+        event.endTime ?? null,
+        presentationAdmin.id
+      ]
+    );
+  }
+  const announcementIds = /* @__PURE__ */ new Map();
+  for (const announcement of announcements) {
+    const created = await client.query(
+      `INSERT INTO public.announcements
+         (title, body, priority, audience, department_id, status, expires_on,
+          published_at, published_by, created_by, updated_by, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6::varchar,$7,
+               CASE WHEN $8::date IS NULL THEN NULL ELSE ($8::date + time '09:00') AT TIME ZONE 'Asia/Kuala_Lumpur' END,
+               CASE WHEN $6::varchar = 'published' THEN $9::int END, $9, $9,
+               COALESCE(($8::date + time '08:30') AT TIME ZONE 'Asia/Kuala_Lumpur', CURRENT_TIMESTAMP),
+               COALESCE(($8::date + time '09:00') AT TIME ZONE 'Asia/Kuala_Lumpur', CURRENT_TIMESTAMP))
+       RETURNING id`,
+      [
+        announcement.title,
+        announcement.body,
+        announcement.priority,
+        announcement.department ? "department" : "company",
+        announcement.department ? departmentIds.get(announcement.department) ?? null : null,
+        announcement.status,
+        announcement.expiresOn ?? null,
+        announcement.status === "published" ? announcement.publishedOn ?? null : null,
+        presentationAdmin.id
+      ]
+    );
+    announcementIds.set(announcement.key, Number(created.rows[0].id));
+  }
+  const templateIds = /* @__PURE__ */ new Map();
+  for (const template of presentationLifecycleTemplates) {
+    const created = await client.query(
+      `INSERT INTO public.lifecycle_templates (kind, name, description, created_by, updated_by)
+       VALUES ($1,$2,$3,$4,$4) RETURNING id`,
+      [template.kind, template.name, template.description, presentationAdmin.id]
+    );
+    const templateId = Number(created.rows[0].id);
+    templateIds.set(template.key, templateId);
+    for (const [index, task] of template.tasks.entries()) {
+      await client.query(
+        `INSERT INTO public.lifecycle_template_tasks (template_id, position, title, instructions, assignee_role, due_offset_days)
+         VALUES ($1,$2,$3,$4,$5,$6)`,
+        [templateId, index + 1, task.title, task.instructions ?? null, task.role, task.offset]
+      );
+    }
+  }
+  for (const plan of plans) {
+    const template = presentationLifecycleTemplates.find((item) => item.key === plan.template);
+    const created = await client.query(
+      `INSERT INTO public.lifecycle_plans (employee_id, kind, template_id, title, starts_on, target_date, exit_status, created_by, created_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,($5::date + time '09:00') AT TIME ZONE 'Asia/Kuala_Lumpur') RETURNING id`,
+      [
+        plan.employeeId,
+        template.kind,
+        templateIds.get(plan.template),
+        template.name,
+        plan.startsOn,
+        plan.targetDate,
+        plan.exitStatus ?? null,
+        presentationAdmin.id
+      ]
+    );
+    const planId = Number(created.rows[0].id);
+    const anchor = template.kind === "onboarding" ? plan.startsOn : plan.targetDate;
+    for (const [index, task] of template.tasks.entries()) {
+      const due = addDays2(anchor, task.offset);
+      const finished = plan.done.includes(index + 1);
+      await client.query(
+        `INSERT INTO public.lifecycle_tasks (plan_id, position, title, instructions, assignee_role, due_on, status, completed_at, completed_by)
+         VALUES ($1,$2,$3,$4,$5,$6,$7::varchar,
+                 CASE WHEN $7::varchar = 'done' THEN ($6::date + time '16:30') AT TIME ZONE 'Asia/Kuala_Lumpur' END,
+                 CASE WHEN $7::varchar = 'done' THEN $8::int END)`,
+        [planId, index + 1, task.title, task.instructions ?? null, task.role, due, finished ? "done" : "pending", presentationAdmin.id]
+      );
+    }
+    if (template.kind === "onboarding") {
+      await client.query(
+        `INSERT INTO public.employee_events (employee_id, kind, visibility, occurred_on, title, source_type, source_id)
+         VALUES ($1,'onboarding_started','company',$2,'Started onboarding','presentation_seed',$3) ON CONFLICT DO NOTHING`,
+        [plan.employeeId, plan.startsOn, `onboarding:${plan.startsOn}`]
+      );
+    }
+  }
+  const recognitionIds = [];
+  for (const recognition of recognitions) {
+    const created = await client.query(
+      `INSERT INTO public.recognitions
+         (giver_employee_id, receiver_employee_id, category, message, visibility, given_on, created_by, created_at)
+       VALUES ($1::int,$2,$3,$4,$5,$6,(SELECT u.id FROM public.users u WHERE u.employee_id = $1::int),
+               ($6::date + time '11:20') AT TIME ZONE 'Asia/Kuala_Lumpur') RETURNING id`,
+      [recognition.giver, recognition.receiver, recognition.category, recognition.message, recognition.visibility, recognition.givenOn]
+    );
+    const id = Number(created.rows[0].id);
+    recognitionIds.push(id);
+    const giver = employees.find((employee2) => employee2.id === recognition.giver);
+    const label = recognition.category.replace(/_/g, " ").replace(/^./, (letter) => letter.toUpperCase());
+    await client.query(
+      `INSERT INTO public.employee_events (employee_id, kind, visibility, occurred_on, title, source_type, source_id)
+       VALUES ($1,'recognition_received',$2,$3,$4,'recognition',$5)`,
+      [
+        recognition.receiver,
+        recognition.visibility === "company" ? "company" : "self",
+        recognition.givenOn,
+        recognition.visibility === "company" ? `Recognised for ${label} by ${giver.fullName}` : `Recognised for ${label}`,
+        String(id)
+      ]
+    );
+  }
+  for (const goal of goals) {
+    const created = await client.query(
+      `INSERT INTO public.goals (owner_employee_id, title, description, starts_on, due_on, status, progress, visibility,
+         created_as, created_by, created_at, completed_at, updated_at)
+       VALUES ($1::int,$2,$3,$4::date,$5::date,$6::varchar,$7,$8,$9,
+               (SELECT u.id FROM public.users u WHERE u.employee_id = $10::int),
+               ($4::date + time '09:30') AT TIME ZONE 'Asia/Kuala_Lumpur',
+               CASE WHEN $6::varchar = 'completed' THEN ($11::date + time '16:00') AT TIME ZONE 'Asia/Kuala_Lumpur' END,
+               CURRENT_TIMESTAMP)
+       RETURNING id`,
+      [
+        goal.owner,
+        goal.title,
+        goal.description,
+        goal.startsOn,
+        goal.dueOn,
+        goal.status,
+        goal.progress,
+        goal.visibility,
+        goal.setBy === goal.owner ? "owner" : "manager",
+        goal.setBy,
+        goal.completedOn ?? null
+      ]
+    );
+    const goalId = Number(created.rows[0].id);
+    for (const update of goal.updates) {
+      await client.query(
+        `INSERT INTO public.goal_updates (goal_id, author_user_id, author_role, progress_before, progress_after,
+           status_before, status_after, note, created_at)
+         VALUES ($1,(SELECT u.id FROM public.users u WHERE u.employee_id = $2::int),$3,$4,$5,'active',$6,$7,
+                 ($8::date + time '17:10') AT TIME ZONE 'Asia/Kuala_Lumpur')`,
+        [
+          goalId,
+          update.by,
+          update.by === goal.owner ? "owner" : "manager",
+          update.from,
+          update.to,
+          update.status ?? "active",
+          update.note ?? null,
+          update.on
+        ]
+      );
+    }
+    if (goal.status === "completed" && goal.visibility === "company") {
+      await client.query(
+        `INSERT INTO public.employee_events (employee_id, kind, visibility, occurred_on, title, source_type, source_id)
+         VALUES ($1,'goal_completed','company',$2,$3,'goal',$4)`,
+        [goal.owner, goal.completedOn, `Completed a goal: ${goal.title}`, String(goalId)]
+      );
+    }
+  }
+  const reviewIds = /* @__PURE__ */ new Map();
+  for (const cycle of reviewCycles) {
+    const created = await client.query(
+      `INSERT INTO public.review_cycles (name, period_start, period_end, self_due_on, manager_due_on, status,
+         opened_at, opened_by, closed_at, closed_by, created_by, created_at)
+       VALUES ($1,$2,$3,$4,$5,$6::varchar,
+               ($7::date + time '09:00') AT TIME ZONE 'Asia/Kuala_Lumpur', $8::int,
+               CASE WHEN $6::varchar = 'closed' THEN ($9::date + time '17:00') AT TIME ZONE 'Asia/Kuala_Lumpur' END,
+               CASE WHEN $6::varchar = 'closed' THEN $8::int END,
+               $8::int, ($7::date + time '08:00') AT TIME ZONE 'Asia/Kuala_Lumpur')
+       RETURNING id`,
+      [
+        cycle.name,
+        cycle.periodStart,
+        cycle.periodEnd,
+        cycle.selfDueOn,
+        cycle.managerDueOn,
+        cycle.status,
+        cycle.openedOn,
+        presentationAdmin.id,
+        cycle.closedOn ?? null
+      ]
+    );
+    const cycleId = Number(created.rows[0].id);
+    const people = cycle.departments.length === 0 ? cycle.reviews.map((review) => review.employee) : employees.filter((employee2) => cycle.departments.includes(employee2.department) && (employee2.status === "active" || employee2.status === "probation")).map((employee2) => employee2.id);
+    for (const employeeId2 of people) {
+      const review = cycle.reviews.find((entry) => entry.employee === employeeId2);
+      const status = review?.manager ? "completed" : review?.self ? "pending_manager" : "pending_self";
+      const row = await client.query(
+        `INSERT INTO public.review_participants (cycle_id, employee_id, status,
+           self_summary, self_rating, self_submitted_at,
+           manager_summary, manager_rating, manager_submitted_at, manager_submitted_by,
+           employee_response, responded_at, created_at)
+         VALUES ($1,$2,$3,
+           $4,$5,($6::date + time '15:00') AT TIME ZONE 'Asia/Kuala_Lumpur',
+           $7,$8,($9::date + time '15:00') AT TIME ZONE 'Asia/Kuala_Lumpur',
+           (SELECT u.id FROM public.users u WHERE u.employee_id = $10::int),
+           $11,($12::date + time '10:00') AT TIME ZONE 'Asia/Kuala_Lumpur',
+           ($13::date + time '09:00') AT TIME ZONE 'Asia/Kuala_Lumpur')
+         RETURNING id`,
+        [
+          cycleId,
+          employeeId2,
+          status,
+          review?.self?.[1] ?? null,
+          review?.self?.[0] ?? null,
+          review?.self?.[2] ?? null,
+          review?.manager?.[1] ?? null,
+          review?.manager?.[0] ?? null,
+          review?.manager?.[2] ?? null,
+          review?.manager?.[3] ?? null,
+          review?.response?.[0] ?? null,
+          review?.response?.[1] ?? null,
+          cycle.openedOn
+        ]
+      );
+      reviewIds.set(`${cycle.key}:${employeeId2}`, Number(row.rows[0].id));
+      if (review?.manager) {
+        await client.query(
+          `INSERT INTO public.employee_events (employee_id, kind, visibility, occurred_on, title, source_type, source_id)
+           VALUES ($1,'review_completed','self',$2,$3,'review_participant',$4)`,
+          [employeeId2, review.manager[2], `Completed the ${cycle.name} review`, row.rows[0].id]
+        );
+      }
+    }
+  }
+  const openCycle2 = reviewCycles.find((cycle) => cycle.status === "open");
+  let payslips = 0;
+  const periodLabels = [];
+  let lastPaid = null;
+  for (const { year: periodYear, month, status } of months) {
+    const period = await openPeriod(client, periodYear, month, presentationAdmin.id);
+    const summary = await calculatePeriod(client, period);
+    await addStatutoryLines(client, period.id);
+    if (status === "draft") {
+      const monthStart = `${periodYear}-${String(month).padStart(2, "0")}-01`;
+      const calculatedOn = addDays2(today, -1) > monthStart ? addDays2(today, -1) : monthStart;
+      await client.query(
+        `UPDATE public.payroll_periods SET status = 'calculated',
+           calculated_at = ($2::timestamp AT TIME ZONE 'Asia/Kuala_Lumpur') WHERE id = $1`,
+        [period.id, `${calculatedOn} 16:30`]
+      );
+      periodLabels.push(`${periodYear}-${String(month).padStart(2, "0")} calculated`);
+      continue;
+    }
+    periodLabels.push(`${periodYear}-${String(month).padStart(2, "0")} ${status}`);
+    payslips = summary.calculated;
+    lastPaid = { year: periodYear, month };
+    const close = addDays2(`${periodYear}-${String(month).padStart(2, "0")}-01`, 25);
+    for (const [step, column, day, time] of [
+      ["calculated", "calculated_at", 0, "10:00"],
+      ["reviewed", "reviewed_at", 0, "14:00"],
+      ["approved", "approved_at", 2, "09:30"],
+      ["paid", "paid_at", 2, "15:00"]
+    ]) {
+      await client.query(
+        `UPDATE public.payroll_periods
+         SET status = $2, ${column} = ($3::timestamp AT TIME ZONE 'Asia/Kuala_Lumpur')${step === "approved" ? ", approved_by = $4" : ""}
+         WHERE id = $1`,
+        step === "approved" ? [period.id, step, `${addDays2(close, day)} ${time}`, presentationAdmin.id] : [period.id, step, `${addDays2(close, day)} ${time}`]
+      );
+    }
+  }
+  const lastPaidLabel = lastPaid ? formatMonth2(lastPaid.year, lastPaid.month) : "";
+  const lastPaidOn = lastPaid ? addDays2(`${lastPaid.year}-${String(lastPaid.month).padStart(2, "0")}-01`, 27) : today;
+  const notifications = [];
+  const managerId = presentationManagerAccount.id;
+  const employeeId = presentationEmployeeAccount.id;
+  const demoId = presentationDemoAccount.id;
+  const employeeName2 = employees.find((person) => person.id === employeeId).fullName;
+  const nameOf = (id) => employees.find((person) => person.id === id).fullName;
+  const leaveLabel = (type) => ({ annual: "Annual", medical: "Medical", emergency: "Emergency", unpaid: "Unpaid" })[type] ?? type;
+  const at = (date2, time) => `${date2}T${time}+08:00`;
+  for (const key of ["welcome-anisha", "hiring-platform", "fire-drill", "review-cycle"]) {
+    const announcement = announcements.find((item) => item.key === key);
+    const id = announcementIds.get(key);
+    for (const userId of [managerId, employeeId, demoId]) {
+      notifications.push([
+        userId,
+        "announcement_published",
+        announcement.priority === "important" ? `Important: ${announcement.title}` : announcement.title,
+        announcement.body.replace(/\s+/g, " ").slice(0, 139),
+        `/announcements/${id}`,
+        "announcement",
+        String(id),
+        at(announcement.publishedOn, "09:00:00")
+      ]);
+    }
+  }
+  const pendingForManager = leave.filter((request) => request.status === "pending" && employees.find((person) => person.id === request.employee)?.managerId === managerId);
+  for (const request of pendingForManager) {
+    notifications.push([
+      managerId,
+      "leave_submitted",
+      `${nameOf(request.employee)} requested leave`,
+      `${leaveLabel(request.type)} leave \xB7 ${request.start} to ${request.end}`,
+      "/team/leave?status=pending",
+      "leave",
+      null,
+      at(addDays2(today, -2), "10:15:00")
+    ]);
+  }
+  const pendingForHr = leave.filter((request) => request.status === "pending" && actorFor(request.employee) === presentationAdmin.id);
+  for (const [index, request] of pendingForHr.entries()) {
+    notifications.push([
+      demoId,
+      "leave_submitted",
+      `${nameOf(request.employee)} requested leave`,
+      `${leaveLabel(request.type)} leave \xB7 ${request.start} to ${request.end}`,
+      "/admin/leave?status=pending",
+      "leave",
+      null,
+      at(addDays2(today, -1 - index), "11:05:00")
+    ]);
+  }
+  notifications.push(
+    [
+      employeeId,
+      "leave_submitted",
+      `Your leave request was sent to ${nameOf(managerId)}`,
+      "Annual leave, waiting for a decision",
+      "/employee/leave",
+      "leave",
+      null,
+      at(addDays2(today, -2), "10:14:00")
+    ],
+    [
+      employeeId,
+      "recognition_received",
+      "Arvind Menon recognised you for Problem solving",
+      "The billing reconciliation fix was neat, and the tests you added around it are better than the code they cover.",
+      "/recognition?view=received",
+      "recognition",
+      String(recognitionIds[7]),
+      at(addDays2(today, -4), "11:20:00")
+    ],
+    [employeeId, "review_opened", `Your ${openCycle2.name} self-review is open`, null, "/reviews", "review_cycle", null, at(openCycle2.openedOn, "09:00:00")],
+    [
+      managerId,
+      "review_opened",
+      `${openCycle2.name} reviews are open for your team`,
+      "Self-reviews close this week; manager reviews the week after.",
+      "/reviews",
+      "review_cycle",
+      null,
+      at(openCycle2.openedOn, "09:00:00")
+    ],
+    [
+      managerId,
+      "review_submitted",
+      `${employeeName2} submitted their ${openCycle2.name} self-review`,
+      null,
+      `/reviews/${reviewIds.get(`current:${employeeId}`)}`,
+      "review_participant",
+      String(reviewIds.get(`current:${employeeId}`)),
+      at(addDays2(today, -4), "15:00:00")
+    ],
+    [
+      managerId,
+      "review_submitted",
+      `Tan Yi Xuan submitted their ${openCycle2.name} self-review`,
+      null,
+      `/reviews/${reviewIds.get("current:9207")}`,
+      "review_participant",
+      String(reviewIds.get("current:9207")),
+      at(addDays2(today, -2), "15:00:00")
+    ],
+    [
+      demoId,
+      "plan_started",
+      "Onboarding started for Anisha Kaur",
+      "New joiner onboarding, eight tasks",
+      "/admin/onboarding",
+      null,
+      null,
+      at(plans[1].startsOn, "09:00:00")
+    ],
+    [
+      demoId,
+      "task_assigned",
+      "Meet the team and agree the first project",
+      "Onboarding \xB7 Anisha Kaur",
+      "/tasks",
+      null,
+      null,
+      at(addDays2(today, -2), "09:00:00")
+    ],
+    [
+      demoId,
+      "payroll_paid",
+      `${lastPaidLabel} payroll was paid`,
+      `${payslips} payslips published to employees`,
+      "/admin/payroll",
+      null,
+      null,
+      at(lastPaidOn, "15:00:00")
+    ]
+  );
+  for (const userId of [managerId, employeeId]) {
+    notifications.push([
+      userId,
+      "payslip_published",
+      `Your payslip for ${lastPaidLabel} is ready`,
+      null,
+      "/employee/payroll",
+      "payroll_period",
+      null,
+      at(lastPaidOn, "15:05:00")
+    ]);
+  }
+  for (const [userId, kind, title, body, link, entityType, entityId, createdAt] of notifications) {
+    const paired = entityId === null ? null : entityType;
+    await client.query(
+      `INSERT INTO public.notifications (user_id, kind, title, body, link, entity_type, entity_id, actor_user_id, created_at, read_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::timestamptz,
+               -- Older news has been read; the last few days are still new.
+               CASE WHEN $9::timestamptz < ($10::date - interval '3 days') THEN $9::timestamptz + interval '3 hours' END)`,
+      [userId, kind, title, body, link, paired, entityId, presentationAdmin.id, createdAt, today]
+    );
+  }
+  await client.query(
+    `INSERT INTO public.announcement_reads (announcement_id, user_id, read_at)
+     VALUES ($1, $2, ($3::date + time '10:00') AT TIME ZONE 'Asia/Kuala_Lumpur')`,
+    [announcementIds.get("welcome-anisha"), employeeId, addDays2(plans[1].startsOn, 1)]
+  );
+  const hr5 = { userId: presentationAdmin.id, employeeId: null, label: presentationAdmin.email, role: "admin" };
+  const manager = { userId: managerId, employeeId: managerId, label: presentationManagerAccount.email, role: "employee" };
+  const employee = { userId: employeeId, employeeId, label: presentationEmployeeAccount.email, role: "employee" };
+  const haziq = employees.find((person) => person.id === 9208);
+  const anisha = employees.find((person) => person.id === 9221);
+  const draftMonth = months.at(-1);
+  const trail = [
+    [hr5, "EMPLOYEE_CREATED", "employee", "9208", "Created employee MDS-008 (Haziq bin Kamarul)", { employee_number: "MDS-008", employment_status: "probation" }, at(addDays2(haziq.employmentDate, -10), "10:02:00")],
+    [hr5, "LIFECYCLE_PLAN_STARTED", "lifecycle_plan", null, "Started New joiner onboarding for Haziq bin Kamarul", null, at(haziq.employmentDate, "09:05:00")],
+    [hr5, "EMPLOYEE_CREATED", "employee", "9221", "Created employee MDS-021 (Anisha Kaur)", { employee_number: "MDS-021", employment_status: "probation" }, at(addDays2(anisha.employmentDate, -9), "09:12:00")],
+    [hr5, "LIFECYCLE_PLAN_STARTED", "lifecycle_plan", null, "Started New joiner onboarding for Anisha Kaur", null, at(anisha.employmentDate, "09:04:00")],
+    [hr5, "ANNOUNCEMENT_PUBLISHED", "announcement", String(announcementIds.get("welcome-anisha")), 'Published "Welcome Anisha Kaur to People & Culture"', null, at(anisha.employmentDate, "09:00:00")],
+    [hr5, "PAYROLL_CALCULATED", "payroll", null, `${lastPaidLabel} payroll calculated for ${payslips} employees`, null, at(addDays2(lastPaidOn, -2), "10:00:00")],
+    [hr5, "PAYROLL_APPROVED", "payroll", null, `${lastPaidLabel} payroll approved`, { status: { before: "reviewed", after: "approved" } }, at(lastPaidOn, "09:30:00")],
+    [hr5, "PAYROLL_PAID", "payroll", null, `${lastPaidLabel} payroll paid`, { status: { before: "approved", after: "paid" } }, at(lastPaidOn, "15:00:00")],
+    [hr5, "PAYROLL_PERIOD_OPENED", "payroll", null, `Opened the ${formatMonth2(draftMonth.year, draftMonth.month)} payroll period`, null, at(`${today.slice(0, 7)}-01`, "09:15:00")],
+    [manager, "LEAVE_APPROVED", "leave", null, "Approved annual leave for Arvind Menon", { status: { before: "pending", after: "approved" }, working_days: 5 }, at(addDays2(today, -53), "11:20:00")],
+    [hr5, "LEAVE_APPROVED", "leave", null, "Approved annual leave for Sharifah binti Yahya", { status: { before: "pending", after: "approved" }, working_days: 4 }, at(addDays2(today, -37), "11:20:00")],
+    [hr5, "LEAVE_REJECTED", "leave", null, "Rejected annual leave for Chan Li Wen", { status: { before: "pending", after: "rejected" } }, at(addDays2(today, -18), "16:40:00")],
+    [manager, "LEAVE_APPROVED", "leave", null, "Approved annual leave for Siti Balqis binti Azmi", { status: { before: "pending", after: "approved" }, working_days: 5 }, at(addDays2(today, -6), "14:02:00")],
+    [hr5, "SETTINGS_CHANGED", "settings", "1", "Company settings saved", { grace_period_minutes: { before: 10, after: 15 } }, at(addDays2(today, -27), "16:05:00")],
+    [hr5, "SALARY_CHANGED", "compensation", "9204", "Set compensation for employee #9204", { basic_salary_sen: 104e4 }, at(addDays2(today, -22), "10:40:00")],
+    [hr5, "EMPLOYEE_UPDATED", "employee", "9234", "Recorded resignation for MDS-034 (Wong Kah Meng)", { notice: "resigned" }, at(addDays2(today, -18), "14:25:00")],
+    [hr5, "LIFECYCLE_PLAN_STARTED", "lifecycle_plan", null, "Started Leaver offboarding for Wong Kah Meng", null, at(addDays2(today, -18), "14:31:00")],
+    [hr5, "ORG_POSITION_CREATED", "employee", "9240", "Added vacant position Platform Engineer", null, at(addDays2(today, -17), "15:10:00")],
+    [hr5, "ORG_POSITION_CREATED", "employee", "9241", "Added vacant position Customer Success Executive", null, at(addDays2(today, -17), "15:14:00")],
+    [hr5, "ANNOUNCEMENT_PUBLISHED", "announcement", String(announcementIds.get("hiring-platform")), 'Published "We are hiring: Platform Engineering and Customer Success"', null, at(addDays2(today, -18), "09:00:00")],
+    [hr5, "ORG_POSITION_CREATED", "employee", "9242", "Added vacant position Head of Data", null, at(addDays2(today, -12), "11:48:00")],
+    [hr5, "REVIEW_CYCLE_OPENED", "review_cycle", null, `Opened the ${openCycle2.name} cycle`, null, at(openCycle2.openedOn, "09:00:00")],
+    [employee, "REVIEW_SELF_SUBMITTED", "review_participant", String(reviewIds.get(`current:${employeeId}`)), `Submitted the ${openCycle2.name} self-review`, null, at(addDays2(today, -4), "15:00:00")],
+    [hr5, "ANNOUNCEMENT_PUBLISHED", "announcement", String(announcementIds.get("review-cycle")), `Published "${openCycle2.name}: self-reviews close soon"`, null, at(addDays2(today, -3), "09:00:00")],
+    [hr5, "DATA_EXPORTED", "export", null, "Exported the workforce report (CSV)", { report: "workforce" }, at(addDays2(today, -2), "16:20:00")],
+    [hr5, "ATTENDANCE_CORRECTED", "attendance", null, "Corrected a missing check-out for Tan Yi Xuan", { check_out_time: { before: null, after: "18:04" } }, at(addDays2(today, -1), "09:40:00")]
+  ];
+  for (let back = 7; back >= 0; back -= 1) {
+    const day = addDays2(today, -back);
+    if (!isWorkingDay(day)) continue;
+    trail.push([hr5, "LOGIN", "auth", String(presentationAdmin.id), "Administrator signed in", null, at(day, `08:${String(41 + back).padStart(2, "0")}:00`)]);
+    if (back % 2 === 0) trail.push([manager, "LOGIN", "auth", String(managerId), "Employee signed in", null, at(day, "08:57:00")]);
+    if (back % 3 === 1) trail.push([employee, "LOGIN", "auth", String(employeeId), "Employee signed in", null, at(day, "09:02:00")]);
+  }
+  trail.push([
+    { userId: null, employeeId: null, label: `kar.wai@${presentationEmployeeAccount.email.split("@")[1]}`, role: null },
+    "LOGIN_FAILED",
+    "auth",
+    null,
+    "Sign-in failed: invalid email or password",
+    null,
+    at(addDays2(today, -1), "09:01:00"),
+    "failure"
+  ]);
+  trail.sort((left, right) => left[6].localeCompare(right[6]));
+  const nowStamp = Date.now();
+  let auditEvents = 0;
+  for (const [actor, action, entityType, entityId, summaryText, changes, occurredAt, outcome] of trail) {
+    if (new Date(occurredAt).getTime() > nowStamp) continue;
+    await client.query(
+      `INSERT INTO public.audit_events
+         (actor_user_id, actor_employee_id, actor_label, actor_role, action, entity_type, entity_id,
+          summary, changes, outcome, occurred_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, $10, $11::timestamptz)`,
+      [
+        actor.userId,
+        actor.employeeId,
+        actor.label,
+        actor.role,
+        action,
+        entityType,
+        entityId,
+        summaryText,
+        changes === null ? null : JSON.stringify(changes),
+        outcome ?? "success",
+        occurredAt
+      ]
+    );
+    auditEvents += 1;
+  }
+  const layout = {
+    version: 1,
+    items: [
+      { kind: "widget", widget: "action-center", size: "large" },
+      { kind: "stack", id: "stack-team01", size: "medium", widgets: ["team-leave", "team-reviews"], smart: true },
+      { kind: "widget", widget: "team-today", size: "medium" },
+      { kind: "widget", widget: "my-attendance", size: "small" },
+      { kind: "widget", widget: "leave-balance", size: "small" },
+      { kind: "widget", widget: "today", size: "medium" },
+      { kind: "widget", widget: "whos-out", size: "medium" }
+    ]
+  };
+  await client.query(
+    `INSERT INTO public.user_dashboard_layouts (user_id, layout, revision, updated_at)
+     VALUES ($1, $2::jsonb, 1, ($3::date - interval '9 days'))
+     ON CONFLICT (user_id) DO UPDATE SET layout = EXCLUDED.layout, revision = public.user_dashboard_layouts.revision + 1`,
+    [managerId, JSON.stringify(layout), today]
+  );
+  return {
+    company: presentationCompany.name,
+    companyToday: today,
+    seededAsOf: minutesToTime(nowMinutes).slice(0, 5),
+    departments: presentationDepartments.length,
+    employees: employees.length,
+    vacancies: presentationVacancies.length,
+    attendanceRows,
+    todayPresent,
+    todayLate,
+    todayOnLeave,
+    leaveRequests: leave.length,
+    payrollPeriods: periodLabels,
+    payslipsInLatestPaidPeriod: payslips,
+    holidays: holidays.length,
+    events: events.length,
+    announcements: announcements.length,
+    lifecyclePlans: plans.length,
+    recognitions: recognitions.length,
+    goals: goals.length,
+    reviewCycles: reviewCycles.length,
+    notifications: notifications.length,
+    auditEvents,
+    preparedDashboardFor: presentationManagerAccount.email,
+    accounts: {
+      demo: presentationDemoAccount.email,
+      admin: presentationAdmin.email,
+      manager: presentationManagerAccount.email,
+      employee: presentationEmployeeAccount.email
+    }
+  };
+}
+
+// src/database/demoReset.ts
+var DEMO_RESET_LOCK = [1213353560, 1145392468];
+var DEMO_EARLIEST_AS_OF_MINUTES = 11 * 60 + 30;
+var DemoResetError = class extends Error {
+  constructor(message, code) {
+    super(message);
+    this.code = code;
+    this.name = "DemoResetError";
+  }
+  code;
+};
+async function restoreMigrationDefaults(client) {
+  await client.query("INSERT INTO public.company_settings (id) VALUES (1) ON CONFLICT (id) DO NOTHING");
+  await client.query(
+    `INSERT INTO public.leave_policies (leave_type, default_annual_days, deducts_balance, is_paid) VALUES
+       ('annual', 12, TRUE, TRUE), ('medical', 10, TRUE, TRUE), ('emergency', 2, TRUE, TRUE), ('unpaid', 0, FALSE, FALSE)
+     ON CONFLICT (leave_type) DO UPDATE SET default_annual_days = EXCLUDED.default_annual_days,
+       deducts_balance = EXCLUDED.deducts_balance, is_paid = EXCLUDED.is_paid, active = TRUE`
+  );
+}
+async function assertDemoDatabase(client) {
+  const migrated = await client.query(
+    `SELECT to_regclass('public.schema_migrations') IS NOT NULL
+        AND EXISTS (SELECT 1 FROM public.schema_migrations WHERE version = '0023') AS ok`
+  ).catch(() => ({ rows: [{ ok: false }] }));
+  if (!migrated.rows[0]?.ok) {
+    throw new DemoResetError("The database is not migrated through 0023; apply the migrations first.", "NOT_MIGRATED");
+  }
+  const strangers = await client.query(
+    `SELECT (SELECT count(*) FROM public.employees WHERE id NOT BETWEEN $1 AND $2)::text AS employees,
+            (SELECT count(*) FROM public.users WHERE id NOT BETWEEN $1 AND $2)::text AS users`,
+    [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]
+  );
+  const row = strangers.rows[0];
+  if (Number(row.employees) > 0 || Number(row.users) > 0) {
+    throw new DemoResetError(
+      `Refusing to reset: this database holds ${row.employees} employees and ${row.users} accounts outside the demo range ${PRESENTATION_ID_MIN}-${PRESENTATION_ID_MAX}, so it is not a demo database.`,
+      "NOT_A_DEMO_DATABASE"
+    );
+  }
+}
+async function resetDemoDatabase(client, options = {}) {
+  const started = Date.now();
+  const now = companyNow(options.at);
+  const [staffPasswordHash, demoPasswordHash] = await Promise.all([
+    bcryptjs_default.hash(options.staffPassword || (0, import_node_crypto3.randomBytes)(24).toString("base64url"), 10),
+    bcryptjs_default.hash(presentationDemoAccount.password, 10)
+  ]);
+  await client.query("BEGIN");
+  try {
+    const lock = await client.query(
+      "SELECT pg_try_advisory_xact_lock($1::integer, $2::integer) AS acquired",
+      [...DEMO_RESET_LOCK]
+    );
+    if (!lock.rows[0]?.acquired) throw new DemoResetError("Another demo reset is already running.", "RESET_BUSY");
+    await assertDemoDatabase(client);
+    const tables = await client.query(
+      `SELECT quote_ident(tablename) AS name FROM pg_tables
+       WHERE schemaname = 'public' AND tablename <> 'schema_migrations' ORDER BY tablename`
+    );
+    await client.query(
+      `TRUNCATE TABLE ${tables.rows.map((table) => `public.${table.name}`).join(", ")} RESTART IDENTITY CASCADE`
+    );
+    await restoreMigrationDefaults(client);
+    const summary = await loadPresentationCompany(client, {
+      today: now.date,
+      nowMinutes: Math.max(now.minutes, DEMO_EARLIEST_AS_OF_MINUTES),
+      staffPasswordHash,
+      demoPasswordHash
+    });
+    await assertDemoDatabase(client);
+    await client.query("COMMIT");
+    return { ...summary, durationMs: Date.now() - started };
+  } catch (error) {
+    await client.query("ROLLBACK").catch(() => void 0);
+    throw error;
+  }
+}
+
+// src/utils/demoSecret.ts
+var import_node_crypto4 = require("node:crypto");
+var isDemoMode = () => process.env.DEMO_MODE === "true";
+function hasResetSecret(request, secret = process.env.CRON_SECRET) {
+  if (!secret || secret.length < 16) return false;
+  const header = request.headers.authorization ?? "";
+  if (!header.startsWith("Bearer ")) return false;
+  const given = Buffer.from(header.slice("Bearer ".length));
+  const wanted = Buffer.from(secret);
+  return given.length === wanted.length && (0, import_node_crypto4.timingSafeEqual)(given, wanted);
+}
+
+// src/routes/demoRoutes.ts
+function notFound(response) {
+  response.status(404).json({ success: false, message: "API endpoint not found" });
+}
+var router20 = (0, import_express24.Router)();
+router20.get("/", (_request, response) => {
+  if (!isDemoMode()) return notFound(response);
+  response.status(200).json({
+    success: true,
+    message: "This is a public demo with fictional data. The demo account can look at everything and change nothing.",
+    data: {
+      email: presentationDemoAccount.email,
+      password: presentationDemoAccount.password,
+      resetsDaily: true
+    }
+  });
+});
+async function reset(request, response) {
+  if (!isDemoMode()) return notFound(response);
+  if (!process.env.CRON_SECRET || process.env.CRON_SECRET.length < 16) {
+    response.status(503).json({ success: false, message: "The demo reset is not configured. Set CRON_SECRET (16+ characters)." });
+    return;
+  }
+  if (!hasResetSecret(request)) {
+    response.status(401).json({ success: false, message: "A valid reset secret is required." });
+    return;
+  }
+  const client = await db_default.connect();
+  try {
+    const summary = await resetDemoDatabase(client);
+    response.status(200).json({ success: true, message: "Demo data restored.", data: summary });
+  } catch (error) {
+    if (error instanceof DemoResetError) {
+      response.status(error.code === "RESET_BUSY" ? 409 : 422).json({ success: false, code: error.code, message: error.message });
+      return;
+    }
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+router20.get("/reset", reset);
+router20.post("/reset", reset);
+var demoRoutes_default = router20;
+
+// src/routes/attendanceRoutes.ts
+var import_express25 = __toESM(require_express2(), 1);
 
 // src/services/attendanceService.ts
 function normalizeDatabaseDate(value) {
@@ -128834,7 +130526,7 @@ async function getAttendanceStatistics(attendanceDate) {
 }
 
 // src/services/attendanceQrService.ts
-var import_node_crypto3 = require("node:crypto");
+var import_node_crypto5 = require("node:crypto");
 
 // node_modules/qrcode-generator/dist/qrcode.mjs
 var qrcode = function(typeNumber, errorCorrectionLevel) {
@@ -130472,7 +132164,7 @@ var stringToBytes2 = qrcode.stringToBytes;
 
 // src/services/attendanceQrService.ts
 var QR_PREFIX = "HRNEXUS1:";
-var hashToken = (token) => (0, import_node_crypto3.createHash)("sha256").update(token).digest("hex");
+var hashToken = (token) => (0, import_node_crypto5.createHash)("sha256").update(token).digest("hex");
 function normalizeToken(raw) {
   const trimmed = raw.trim();
   const withoutPrefix = trimmed.startsWith(QR_PREFIX) ? trimmed.slice(QR_PREFIX.length) : trimmed;
@@ -130480,7 +132172,7 @@ function normalizeToken(raw) {
 }
 async function issueChallenge(client, issuedByUserId, ttlSeconds = QR_TTL_SECONDS) {
   const ttl = Math.min(Math.max(Math.trunc(ttlSeconds), QR_TTL_MIN_SECONDS), QR_TTL_MAX_SECONDS);
-  const token = (0, import_node_crypto3.randomBytes)(16).toString("base64url");
+  const token = (0, import_node_crypto5.randomBytes)(16).toString("base64url");
   const payload = `${QR_PREFIX}${token}`;
   const inserted = await client.query(
     `INSERT INTO public.attendance_qr_challenges (token_hash, expires_at, issued_by)
@@ -131270,22 +132962,22 @@ function createAttendanceRouter({
   authenticate: authenticate2,
   requireAdmin
 }) {
-  const router20 = (0, import_express24.Router)();
-  router20.post("/check-in", authenticate2, checkIn);
-  router20.patch("/check-out", authenticate2, checkOut);
-  router20.get("/today", authenticate2, getToday);
-  router20.get("/my-history", authenticate2, getMyHistory);
-  router20.get("/verification-status", authenticate2, getAttendanceVerificationStatus);
-  router20.post("/qr", authenticate2, requireAdmin, createQrChallenge);
-  router20.get("/statistics", authenticate2, requireAdmin, getStatistics);
-  router20.post("/manual", authenticate2, requireAdmin, createManualAttendance2);
-  router20.patch("/:id", authenticate2, requireAdmin, updateAttendance);
-  router20.get("/", authenticate2, requireAdmin, listAttendance);
-  return router20;
+  const router21 = (0, import_express25.Router)();
+  router21.post("/check-in", authenticate2, checkIn);
+  router21.patch("/check-out", authenticate2, checkOut);
+  router21.get("/today", authenticate2, getToday);
+  router21.get("/my-history", authenticate2, getMyHistory);
+  router21.get("/verification-status", authenticate2, getAttendanceVerificationStatus);
+  router21.post("/qr", authenticate2, requireAdmin, createQrChallenge);
+  router21.get("/statistics", authenticate2, requireAdmin, getStatistics);
+  router21.post("/manual", authenticate2, requireAdmin, createManualAttendance2);
+  router21.patch("/:id", authenticate2, requireAdmin, updateAttendance);
+  router21.get("/", authenticate2, requireAdmin, listAttendance);
+  return router21;
 }
 
 // src/app.ts
-var app = (0, import_express25.default)();
+var app = (0, import_express26.default)();
 app.use(
   (0, import_cors.default)({
     origin: process.env.FRONTEND_URL ?? "http://localhost:5173",
@@ -131297,10 +132989,10 @@ app.use(
     exposedHeaders: ["Content-Disposition"]
   })
 );
-app.use(import_express25.default.json());
+app.use(import_express26.default.json());
 app.use(
   "/uploads/profile-images",
-  import_express25.default.static(profileImagesDirectory, { dotfiles: "deny", index: false })
+  import_express26.default.static(profileImagesDirectory, { dotfiles: "deny", index: false })
 );
 app.use("/api/auth", authRoutes_default);
 app.use("/api/profile", profileRoutes_default);
@@ -131330,6 +133022,7 @@ app.use("/api/recognition", recognitionRoutes_default);
 app.use("/api/goals", goalRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/analytics", analyticsRoutes_default);
+app.use("/api/demo", demoRoutes_default);
 app.use(
   "/api/attendance",
   createAttendanceRouter({

@@ -36,6 +36,12 @@ export interface CurrentUser {
    * endpoint re-derives it from current reporting lines on the server.
    */
   isManager: boolean;
+  /**
+   * A published, read-only demo sign-in. Advisory: it shows the demo banner.
+   * The server refuses every change such an account attempts, whatever the
+   * interface offers.
+   */
+  isDemo?: boolean;
   employee: EmployeeProfile | null;
 }
 

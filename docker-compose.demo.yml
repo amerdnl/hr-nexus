@@ -1,0 +1,109 @@
+# The public demo, run locally: Meridian Digital with a read-only demo sign-in.
+#
+#   cp .env.demo.example .env.demo     # then fill in the three secrets
+#   docker compose -f docker-compose.demo.yml --env-file .env.demo up -d --build
+#
+# Open http://localhost:5175 and choose "Use demo account".
+#
+# Separate from the default (docker-compose.yml) environment in every way that
+# matters: its own Compose project, Postgres container, volume, database name,
+# ports and secrets. Nothing here can reach hr_nexus_v3_presentation, and
+# `docker compose -f docker-compose.demo.yml down -v` destroys only demo data.
+#
+# Every `up` rebuilds the demo for today (the demo-setup service). To rebuild
+# it again later without restarting anything:
+#   docker compose -f docker-compose.demo.yml --env-file .env.demo run --rm demo-setup
+#
+# Ports, chosen not to collide with the default environment's 5433/5001/5173:
+#   frontend  http://localhost:5175
+#   API       http://localhost:5003/api
+#   Postgres  127.0.0.1:5436
+name: hr-nexus-demo
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: hr-nexus-demo-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hr_nexus_public_demo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env.demo}
+    ports:
+      - "127.0.0.1:5436:5432"
+    volumes:
+      - demo_postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hr_nexus_public_demo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Migrates, then rebuilds Meridian Digital for today. The reset refuses any
+  # database holding people outside the demo's reserved range.
+  demo-setup:
+    build:
+      context: ./backend
+    container_name: hr-nexus-demo-setup
+    environment:
+      MIGRATION_DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/hr_nexus_public_demo
+      DEMO_DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/hr_nexus_public_demo
+      # Optional: a password for the admin, manager and employee sign-ins, for
+      # capturing those views. Unset, only the read-only demo sign-in works.
+      PRESENTATION_PASSWORD: ${PRESENTATION_PASSWORD:-}
+    command:
+      - /bin/sh
+      - -c
+      - >
+        npx tsx src/database/migrate.ts apply
+        --database hr_nexus_public_demo &&
+        npx tsx src/database/resetDemo.ts
+        --database hr_nexus_public_demo
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    build:
+      context: ./backend
+    container_name: hr-nexus-demo-backend
+    restart: unless-stopped
+    environment:
+      PORT: 5000
+      FRONTEND_URL: http://localhost:5175
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/hr_nexus_public_demo
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env.demo}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-8h}
+      DEMO_MODE: "true"
+      CRON_SECRET: ${CRON_SECRET:?set CRON_SECRET in .env.demo}
+    ports:
+      - "127.0.0.1:5003:5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      demo-setup:
+        condition: service_completed_successfully
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: hr-nexus-demo-frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE_URL: http://localhost:5003/api
+    ports:
+      - "127.0.0.1:5175:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  # Named by the project, so it is never the default environment's volume.
+  demo_postgres_data:
