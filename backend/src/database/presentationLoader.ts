@@ -1,5 +1,5 @@
 /**
- * Writes the Meridian Digital company into a database, inside a transaction the
+ * Writes the Meridian company into a database, inside a transaction the
  * caller owns.
  *
  * Two callers use it: `seedPresentation.ts`, which loads a local presentation
@@ -788,7 +788,7 @@ export async function loadPresentationCompany(client: PoolClient, options: LoadO
   notifications.push(
     [employeeId, "leave_submitted", `Your leave request was sent to ${nameOf(managerId)}`, "Annual leave, waiting for a decision",
       "/employee/leave", "leave", null, at(addDays(today, -2), "10:14:00")],
-    [employeeId, "recognition_received", "Arvind Menon recognised you for Problem solving",
+    [employeeId, "recognition_received", "Ravi Kumar recognised you for Problem solving",
       "The billing reconciliation fix was neat, and the tests you added around it are better than the code they cover.",
       "/recognition?view=received", "recognition", String(recognitionIds[7]), at(addDays(today, -4), "11:20:00")],
     [employeeId, "review_opened", `Your ${openCycle.name} self-review is open`, null, "/reviews", "review_cycle", null, at(openCycle.openedOn, "09:00:00")],
@@ -797,12 +797,12 @@ export async function loadPresentationCompany(client: PoolClient, options: LoadO
     [managerId, "review_submitted", `${employeeName} submitted their ${openCycle.name} self-review`, null,
       `/reviews/${reviewIds.get(`current:${employeeId}`)}`, "review_participant",
       String(reviewIds.get(`current:${employeeId}`)), at(addDays(today, -4), "15:00:00")],
-    [managerId, "review_submitted", `Tan Yi Xuan submitted their ${openCycle.name} self-review`, null,
+    [managerId, "review_submitted", `Emily Tan submitted their ${openCycle.name} self-review`, null,
       `/reviews/${reviewIds.get("current:9207")}`, "review_participant",
       String(reviewIds.get("current:9207")), at(addDays(today, -2), "15:00:00")],
-    [demoId, "plan_started", "Onboarding started for Anisha Kaur", "New joiner onboarding, eight tasks",
+    [demoId, "plan_started", "Onboarding started for Anna Kaur", "New joiner onboarding, eight tasks",
       "/admin/onboarding", null, null, at(plans[1]!.startsOn, "09:00:00")],
-    [demoId, "task_assigned", "Meet the team and agree the first project", "Onboarding · Anisha Kaur",
+    [demoId, "task_assigned", "Meet the team and agree the first project", "Onboarding · Anna Kaur",
       "/tasks", null, null, at(addDays(today, -2), "09:00:00")],
     [demoId, "payroll_paid", `${lastPaidLabel} payroll was paid`, `${payslips} payslips published to employees`,
       "/admin/payroll", null, null, at(lastPaidOn, "15:00:00")],
@@ -841,32 +841,32 @@ export async function loadPresentationCompany(client: PoolClient, options: LoadO
   const anisha = employees.find((person) => person.id === 9221)!;
   const draftMonth = months.at(-1)!;
   const trail: Array<[Actor, string, string, string | null, string, unknown, string, ("success" | "failure")?]> = [
-    [hr, "EMPLOYEE_CREATED", "employee", "9208", "Created employee MDS-008 (Haziq bin Kamarul)", { employee_number: "MDS-008", employment_status: "probation" }, at(addDays(haziq.employmentDate, -10), "10:02:00")],
-    [hr, "LIFECYCLE_PLAN_STARTED", "lifecycle_plan", null, "Started New joiner onboarding for Haziq bin Kamarul", null, at(haziq.employmentDate, "09:05:00")],
-    [hr, "EMPLOYEE_CREATED", "employee", "9221", "Created employee MDS-021 (Anisha Kaur)", { employee_number: "MDS-021", employment_status: "probation" }, at(addDays(anisha.employmentDate, -9), "09:12:00")],
-    [hr, "LIFECYCLE_PLAN_STARTED", "lifecycle_plan", null, "Started New joiner onboarding for Anisha Kaur", null, at(anisha.employmentDate, "09:04:00")],
-    [hr, "ANNOUNCEMENT_PUBLISHED", "announcement", String(announcementIds.get("welcome-anisha")), "Published \"Welcome Anisha Kaur to People & Culture\"", null, at(anisha.employmentDate, "09:00:00")],
+    [hr, "EMPLOYEE_CREATED", "employee", "9208", "Created employee EMP-008 (Danny Ismail)", { employee_number: "EMP-008", employment_status: "probation" }, at(addDays(haziq.employmentDate, -10), "10:02:00")],
+    [hr, "LIFECYCLE_PLAN_STARTED", "lifecycle_plan", null, "Started New joiner onboarding for Danny Ismail", null, at(haziq.employmentDate, "09:05:00")],
+    [hr, "EMPLOYEE_CREATED", "employee", "9221", "Created employee EMP-021 (Anna Kaur)", { employee_number: "EMP-021", employment_status: "probation" }, at(addDays(anisha.employmentDate, -9), "09:12:00")],
+    [hr, "LIFECYCLE_PLAN_STARTED", "lifecycle_plan", null, "Started New joiner onboarding for Anna Kaur", null, at(anisha.employmentDate, "09:04:00")],
+    [hr, "ANNOUNCEMENT_PUBLISHED", "announcement", String(announcementIds.get("welcome-anisha")), "Published \"Welcome Anna Kaur to HR\"", null, at(anisha.employmentDate, "09:00:00")],
     [hr, "PAYROLL_CALCULATED", "payroll", null, `${lastPaidLabel} payroll calculated for ${payslips} employees`, null, at(addDays(lastPaidOn, -2), "10:00:00")],
     [hr, "PAYROLL_APPROVED", "payroll", null, `${lastPaidLabel} payroll approved`, { status: { before: "reviewed", after: "approved" } }, at(lastPaidOn, "09:30:00")],
     [hr, "PAYROLL_PAID", "payroll", null, `${lastPaidLabel} payroll paid`, { status: { before: "approved", after: "paid" } }, at(lastPaidOn, "15:00:00")],
     [hr, "PAYROLL_PERIOD_OPENED", "payroll", null, `Opened the ${formatMonth(draftMonth.year, draftMonth.month)} payroll period`, null, at(`${today.slice(0, 7)}-01`, "09:15:00")],
-    [manager, "LEAVE_APPROVED", "leave", null, "Approved annual leave for Arvind Menon", { status: { before: "pending", after: "approved" }, working_days: 5 }, at(addDays(today, -53), "11:20:00")],
-    [hr, "LEAVE_APPROVED", "leave", null, "Approved annual leave for Sharifah binti Yahya", { status: { before: "pending", after: "approved" }, working_days: 4 }, at(addDays(today, -37), "11:20:00")],
-    [hr, "LEAVE_REJECTED", "leave", null, "Rejected annual leave for Chan Li Wen", { status: { before: "pending", after: "rejected" } }, at(addDays(today, -18), "16:40:00")],
-    [manager, "LEAVE_APPROVED", "leave", null, "Approved annual leave for Siti Balqis binti Azmi", { status: { before: "pending", after: "approved" }, working_days: 5 }, at(addDays(today, -6), "14:02:00")],
+    [manager, "LEAVE_APPROVED", "leave", null, "Approved annual leave for Ravi Kumar", { status: { before: "pending", after: "approved" }, working_days: 5 }, at(addDays(today, -53), "11:20:00")],
+    [hr, "LEAVE_APPROVED", "leave", null, "Approved annual leave for Sofia Yahya", { status: { before: "pending", after: "approved" }, working_days: 4 }, at(addDays(today, -37), "11:20:00")],
+    [hr, "LEAVE_REJECTED", "leave", null, "Rejected annual leave for Lily Chan", { status: { before: "pending", after: "rejected" } }, at(addDays(today, -18), "16:40:00")],
+    [manager, "LEAVE_APPROVED", "leave", null, "Approved annual leave for Aisha Rahman", { status: { before: "pending", after: "approved" }, working_days: 5 }, at(addDays(today, -6), "14:02:00")],
     [hr, "SETTINGS_CHANGED", "settings", "1", "Company settings saved", { grace_period_minutes: { before: 10, after: 15 } }, at(addDays(today, -27), "16:05:00")],
     [hr, "SALARY_CHANGED", "compensation", "9204", "Set compensation for employee #9204", { basic_salary_sen: 1040000 }, at(addDays(today, -22), "10:40:00")],
-    [hr, "EMPLOYEE_UPDATED", "employee", "9234", "Recorded resignation for MDS-034 (Wong Kah Meng)", { notice: "resigned" }, at(addDays(today, -18), "14:25:00")],
-    [hr, "LIFECYCLE_PLAN_STARTED", "lifecycle_plan", null, "Started Leaver offboarding for Wong Kah Meng", null, at(addDays(today, -18), "14:31:00")],
-    [hr, "ORG_POSITION_CREATED", "employee", "9240", "Added vacant position Platform Engineer", null, at(addDays(today, -17), "15:10:00")],
-    [hr, "ORG_POSITION_CREATED", "employee", "9241", "Added vacant position Customer Success Executive", null, at(addDays(today, -17), "15:14:00")],
-    [hr, "ANNOUNCEMENT_PUBLISHED", "announcement", String(announcementIds.get("hiring-platform")), "Published \"We are hiring: Platform Engineering and Customer Success\"", null, at(addDays(today, -18), "09:00:00")],
+    [hr, "EMPLOYEE_UPDATED", "employee", "9234", "Recorded resignation for EMP-034 (Kenny Chong)", { notice: "resigned" }, at(addDays(today, -18), "14:25:00")],
+    [hr, "LIFECYCLE_PLAN_STARTED", "lifecycle_plan", null, "Started Leaver offboarding for Kenny Chong", null, at(addDays(today, -18), "14:31:00")],
+    [hr, "ORG_POSITION_CREATED", "employee", "9240", "Added vacant position Software Engineer", null, at(addDays(today, -17), "15:10:00")],
+    [hr, "ORG_POSITION_CREATED", "employee", "9241", "Added vacant position Support Executive", null, at(addDays(today, -17), "15:14:00")],
+    [hr, "ANNOUNCEMENT_PUBLISHED", "announcement", String(announcementIds.get("hiring-platform")), "Published \"We are hiring: Engineering and Support\"", null, at(addDays(today, -18), "09:00:00")],
     [hr, "ORG_POSITION_CREATED", "employee", "9242", "Added vacant position Head of Data", null, at(addDays(today, -12), "11:48:00")],
     [hr, "REVIEW_CYCLE_OPENED", "review_cycle", null, `Opened the ${openCycle.name} cycle`, null, at(openCycle.openedOn, "09:00:00")],
     [employee, "REVIEW_SELF_SUBMITTED", "review_participant", String(reviewIds.get(`current:${employeeId}`)), `Submitted the ${openCycle.name} self-review`, null, at(addDays(today, -4), "15:00:00")],
     [hr, "ANNOUNCEMENT_PUBLISHED", "announcement", String(announcementIds.get("review-cycle")), `Published "${openCycle.name}: self-reviews close soon"`, null, at(addDays(today, -3), "09:00:00")],
     [hr, "DATA_EXPORTED", "export", null, "Exported the workforce report (CSV)", { report: "workforce" }, at(addDays(today, -2), "16:20:00")],
-    [hr, "ATTENDANCE_CORRECTED", "attendance", null, "Corrected a missing check-out for Tan Yi Xuan", { check_out_time: { before: null, after: "18:04" } }, at(addDays(today, -1), "09:40:00")],
+    [hr, "ATTENDANCE_CORRECTED", "attendance", null, "Corrected a missing check-out for Emily Tan", { check_out_time: { before: null, after: "18:04" } }, at(addDays(today, -1), "09:40:00")],
   ];
   // Everyday sign-ins over the last week, and the odd mistyped password.
   for (let back = 7; back >= 0; back -= 1) {
@@ -876,7 +876,7 @@ export async function loadPresentationCompany(client: PoolClient, options: LoadO
     if (back % 2 === 0) trail.push([manager, "LOGIN", "auth", String(managerId), "Employee signed in", null, at(day, "08:57:00")]);
     if (back % 3 === 1) trail.push([employee, "LOGIN", "auth", String(employeeId), "Employee signed in", null, at(day, "09:02:00")]);
   }
-  trail.push([{ userId: null, employeeId: null, label: `kar.wai@${presentationEmployeeAccount.email.split("@")[1]}`, role: null },
+  trail.push([{ userId: null, employeeId: null, label: presentationEmployeeAccount.email, role: null },
     "LOGIN_FAILED", "auth", null, "Sign-in failed: invalid email or password", null, at(addDays(today, -1), "09:01:00"), "failure"]);
   trail.sort((left, right) => left[6].localeCompare(right[6]));
   const nowStamp = Date.now();

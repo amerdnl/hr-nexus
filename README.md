@@ -5,7 +5,7 @@ PostgreSQL database. It covers the everyday HR work of a single company, includi
 the org chart, attendance, leave, payroll, performance and reporting, and gives
 administrators, managers and employees each the view that fits their role.
 
-Everything you see in it belongs to **Meridian Digital**, a fictional Malaysian company
+Everything you see in it belongs to **Meridian**, a fictional Malaysian software company
 whose data is rebuilt around today's date, so it always looks like a company that used
 the system this morning. No person, address, phone number or email in it is real.
 
@@ -16,7 +16,7 @@ Anyone can sign in and look around:
 | | |
 | --- | --- |
 | Email | `demo@meridian.example` |
-| Password | `uuve-pmyv-k9p4` |
+| Password | `meridian-demo` |
 
 The login page of a demo deployment shows these and offers **Use demo account**. The
 account is an HR administrator, so it can open every module: people, the org chart,
@@ -26,8 +26,8 @@ policies, its own email or password, users and invitations, deletions and every 
 write are refused by the API with *"This is disabled in the demo"*, not merely hidden in
 the interface. The data is rebuilt every night, and a banner in the app says so.
 
-This password was generated for the demo alone and is published on purpose. Never use it
-for anything else.
+This password belongs to the demo alone and is published on purpose. Never use it for
+anything else.
 
 How it works:
 
@@ -163,14 +163,14 @@ docker compose up -d --build
 ```
 
 On first start, the `presentation-setup` container applies the migrations and seeds
-Meridian Digital. On later starts it sees the company is already there and leaves it
+Meridian. On later starts it sees the company is already there and leaves it
 alone. Open http://localhost:5173 and sign in with `PRESENTATION_PASSWORD` as:
 
 | Account | View |
 | --- | --- |
-| `hr.admin@meridian.example` | HR administrator |
-| `nur.hidayah@meridian.example` | Manager with five direct reports |
-| `kar.wai@meridian.example` | Employee who reports to the manager above |
+| `hr@meridian.example` | HR administrator |
+| `sarah@meridian.example` | Sarah Ahmad, Engineering Manager with five direct reports |
+| `ben@meridian.example` | Ben Wong, Software Engineer who reports to Sarah |
 
 The read-only `demo@meridian.example` account is loaded here too.
 
@@ -197,7 +197,7 @@ docker compose -f docker-compose.demo.yml --env-file .env.demo up -d --build
 ```
 
 Open http://localhost:5175 and choose **Use demo account**. Every `up` migrates the demo
-database and rebuilds Meridian Digital for today. To rebuild it again at any time, either
+database and rebuilds Meridian for today. To rebuild it again at any time, either
 re-run the setup service or call the reset endpoint the cron uses:
 
 ```bash
@@ -257,7 +257,7 @@ tracked file.
   `backend/src/database/migrate.ts`. Each runs in its own transaction under an advisory
   lock. Migrations are **never** run automatically when the API starts, and an applied
   migration is never edited: changes go in the next number.
-- **Seeders** load data. `presentationLoader.ts` writes Meridian Digital; it is used by
+- **Seeders** load data. `presentationLoader.ts` writes Meridian; it is used by
   `seedPresentation.ts` (the default environment, loaded once) and by `demoReset.ts`
   (the public demo, rebuilt from empty tables). `seedDemo.ts` builds the small company
   used by the database test suites. Each one refuses to run against the wrong database.

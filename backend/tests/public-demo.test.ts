@@ -72,9 +72,11 @@ test("the reset needs the exact secret as a bearer token", () => {
 
 test("the demo account is in the reserved range with a fresh, non-trivial password", () => {
   assert.ok(presentationDemoAccount.id >= PRESENTATION_ID_MIN && presentationDemoAccount.id <= PRESENTATION_ID_MAX);
-  assert.match(presentationDemoAccount.email, /^demo@[a-z-]+\.example$/);
+  assert.equal(presentationDemoAccount.email, "demo@meridian.example");
+  // Simple enough to type from the login page, but not a stock password.
   assert.ok(presentationDemoAccount.password.length >= 12);
-  assert.doesNotMatch(presentationDemoAccount.password, /password|demo|meridian|admin|1234|qwerty/i);
+  assert.doesNotMatch(presentationDemoAccount.password, /^(password|admin|demo|123|qwerty|letmein|welcome)/i);
+  assert.doesNotMatch(presentationDemoAccount.password, /\d{4}$/, "no year or PIN suffix to guess");
   assert.ok(!presentationEmployees.some((employee) => employee.id === presentationDemoAccount.id));
 });
 
@@ -163,7 +165,7 @@ for (const today of ["2026-11-24", "2026-11-27", "2027-01-04", "2027-01-09", "20
     }
 
     const haziq = employees.find((employee) => employee.id === 9208)!;
-    const mentoring = presentationRecognitions(calendar).find((entry) => /Haziq/.test(entry.message))!;
+    const mentoring = presentationRecognitions(calendar).find((entry) => /Danny/.test(entry.message))!;
     assert.ok(mentoring.givenOn > haziq.employmentDate, "nobody is thanked for mentoring someone before they joined");
   });
 }

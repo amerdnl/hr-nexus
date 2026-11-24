@@ -1,5 +1,5 @@
 #!/bin/sh
-# Rebuilds the isolated presentation environment: Meridian Digital Solutions Sdn. Bhd.
+# Rebuilds the isolated presentation environment: Meridian
 #
 #   scripts/presentation-reset.sh
 #

@@ -1,5 +1,5 @@
 /**
- * Rebuilds the public demo database from nothing: Meridian Digital as it stands
+ * Rebuilds the public demo database from nothing: Meridian as it stands
  * on the company's today.
  *
  * Used by the nightly reset endpoint (`/api/demo/reset`, called by Vercel Cron)

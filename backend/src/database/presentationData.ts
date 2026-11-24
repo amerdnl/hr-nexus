@@ -1,6 +1,6 @@
 /**
- * The presentation dataset: Meridian Digital Solutions Sdn. Bhd., a fictional
- * Kuala Lumpur product studio that looks as though it has run HR Nexus for
+ * The presentation dataset: Meridian, a fictional Kuala Lumpur software
+ * company that looks as though it has run HR Nexus for
  * months.
  *
  * Everything here is invented. Addresses use the `.invalid` top-level domain,
@@ -23,8 +23,8 @@ export const PRESENTATION_ID_MIN = 9200;
 export const PRESENTATION_ID_MAX = 9299;
 
 export const presentationCompany = {
-  name: "Meridian Digital Solutions Sdn. Bhd.",
-  shortName: "Meridian Digital",
+  name: "Meridian",
+  shortName: "Meridian",
   timezone: "Asia/Kuala_Lumpur",
   workingDays: [1, 2, 3, 4, 5],
   workStart: "09:00",
@@ -42,13 +42,13 @@ export interface PresentationDepartment {
 }
 
 export const presentationDepartments: PresentationDepartment[] = [
-  { name: "Leadership", description: "Company direction, and the heads of each department" },
-  { name: "Engineering", description: "Platform and application engineering, quality and delivery" },
-  { name: "Product & Design", description: "Product management, design and user research" },
-  { name: "People & Culture", description: "Hiring, onboarding, employee experience and policy" },
-  { name: "Finance", description: "Payroll operations, accounting and financial reporting" },
-  { name: "Sales & Partnerships", description: "New business, account management and partner programmes" },
-  { name: "Operations & Customer Success", description: "Service delivery, customer success and internal operations" },
+  { name: "Management", description: "The CEO" },
+  { name: "Engineering", description: "Builds and runs the software" },
+  { name: "Product", description: "Product, design and research" },
+  { name: "HR", description: "Hiring, onboarding and people" },
+  { name: "Finance", description: "Payroll and accounts" },
+  { name: "Sales", description: "New customers and accounts" },
+  { name: "Operations", description: "Customer support and office operations" },
 ];
 
 export interface PresentationEmployee {
@@ -80,56 +80,56 @@ export interface PresentationEmployee {
  * person, as they do in a real company.
  */
 export const presentationEmployees: PresentationEmployee[] = [
-  // ------------------------------------------------------------- Leadership
-  { id: 9201, employeeNumber: "MDS-001", fullName: "Azman bin Rahim", department: "Leadership", jobTitle: "Managing Director", status: "active", employmentDate: "2018-03-05", basicSalarySen: 3200000, allowanceSen: 420000, overtimeRateSen: 0 },
+  // ------------------------------------------------------------- Management
+  { id: 9201, employeeNumber: "EMP-001", fullName: "David Tan", department: "Management", jobTitle: "CEO", status: "active", employmentDate: "2018-03-05", basicSalarySen: 3200000, allowanceSen: 420000, overtimeRateSen: 0 },
 
   // ------------------------------------------------------------ Engineering
-  { id: 9202, employeeNumber: "MDS-002", fullName: "Lim Wei Sheng", department: "Engineering", jobTitle: "Head of Engineering", status: "active", employmentDate: "2019-01-14", basicSalarySen: 1780000, allowanceSen: 220000, overtimeRateSen: 0, managerId: 9201 },
+  { id: 9202, employeeNumber: "EMP-002", fullName: "Jason Lim", department: "Engineering", jobTitle: "Head of Engineering", status: "active", employmentDate: "2019-01-14", basicSalarySen: 1780000, allowanceSen: 220000, overtimeRateSen: 0, managerId: 9201 },
   // The manager the presentation walks through: a real reporting line, five reports.
-  { id: 9203, employeeNumber: "MDS-003", fullName: "Nur Hidayah binti Roslan", department: "Engineering", jobTitle: "Engineering Manager, Platform", status: "active", employmentDate: "2020-06-01", basicSalarySen: 1285000, allowanceSen: 150000, overtimeRateSen: 0, account: "employee", managerId: 9202 },
-  { id: 9204, employeeNumber: "MDS-004", fullName: "Arvind Menon", department: "Engineering", jobTitle: "Senior Software Engineer", status: "active", employmentDate: "2020-11-09", basicSalarySen: 1040000, allowanceSen: 95000, overtimeRateSen: 6900, managerId: 9203 },
+  { id: 9203, employeeNumber: "EMP-003", fullName: "Sarah Ahmad", department: "Engineering", jobTitle: "Engineering Manager", status: "active", employmentDate: "2020-06-01", basicSalarySen: 1285000, allowanceSen: 150000, overtimeRateSen: 0, account: "employee", managerId: 9202 },
+  { id: 9204, employeeNumber: "EMP-004", fullName: "Ravi Kumar", department: "Engineering", jobTitle: "Senior Engineer", status: "active", employmentDate: "2020-11-09", basicSalarySen: 1040000, allowanceSen: 95000, overtimeRateSen: 6900, managerId: 9203 },
   // The employee the presentation walks through, inside that manager's team.
-  { id: 9205, employeeNumber: "MDS-005", fullName: "Chong Kar Wai", department: "Engineering", jobTitle: "Software Engineer", status: "active", employmentDate: "2022-02-14", basicSalarySen: 785000, allowanceSen: 70000, overtimeRateSen: 5200, account: "employee", managerId: 9203 },
-  { id: 9206, employeeNumber: "MDS-006", fullName: "Siti Balqis binti Azmi", department: "Engineering", jobTitle: "Software Engineer", status: "active", employmentDate: "2022-09-05", basicSalarySen: 742000, allowanceSen: 65000, overtimeRateSen: 4900, managerId: 9203 },
-  { id: 9207, employeeNumber: "MDS-007", fullName: "Tan Yi Xuan", department: "Engineering", jobTitle: "QA Engineer", status: "active", employmentDate: "2023-03-13", basicSalarySen: 638000, allowanceSen: 55000, overtimeRateSen: 4250, managerId: 9203 },
-  { id: 9208, employeeNumber: "MDS-008", fullName: "Haziq bin Kamarul", department: "Engineering", jobTitle: "Junior Software Engineer", status: "probation", employmentDate: "2026-07-06", basicSalarySen: 452000, allowanceSen: 35000, overtimeRateSen: 3000, managerId: 9203, joinedWorkingDaysAgo: 30 },
-  { id: 9209, employeeNumber: "MDS-009", fullName: "Rebecca Anne Fernandez", department: "Engineering", jobTitle: "Engineering Manager, Applications", status: "active", employmentDate: "2021-04-12", basicSalarySen: 1245000, allowanceSen: 145000, overtimeRateSen: 0, managerId: 9202 },
-  { id: 9210, employeeNumber: "MDS-010", fullName: "Mohd Faiz bin Ibrahim", department: "Engineering", jobTitle: "Senior Software Engineer", status: "active", employmentDate: "2021-08-23", basicSalarySen: 995000, allowanceSen: 90000, overtimeRateSen: 6600, managerId: 9209 },
-  { id: 9211, employeeNumber: "MDS-011", fullName: "Yeoh Sze Ming", department: "Engineering", jobTitle: "Software Engineer", status: "active", employmentDate: "2023-10-02", basicSalarySen: 706000, allowanceSen: 62000, overtimeRateSen: 4700, managerId: 9209 },
-  { id: 9212, employeeNumber: "MDS-012", fullName: "Kavitha Raman", department: "Engineering", jobTitle: "DevOps Engineer", status: "active", employmentDate: "2022-05-16", basicSalarySen: 862000, allowanceSen: 78000, overtimeRateSen: 5750, managerId: 9209 },
+  { id: 9205, employeeNumber: "EMP-005", fullName: "Ben Wong", department: "Engineering", jobTitle: "Software Engineer", status: "active", employmentDate: "2022-02-14", basicSalarySen: 785000, allowanceSen: 70000, overtimeRateSen: 5200, account: "employee", managerId: 9203 },
+  { id: 9206, employeeNumber: "EMP-006", fullName: "Aisha Rahman", department: "Engineering", jobTitle: "Software Engineer", status: "active", employmentDate: "2022-09-05", basicSalarySen: 742000, allowanceSen: 65000, overtimeRateSen: 4900, managerId: 9203 },
+  { id: 9207, employeeNumber: "EMP-007", fullName: "Emily Tan", department: "Engineering", jobTitle: "QA Engineer", status: "active", employmentDate: "2023-03-13", basicSalarySen: 638000, allowanceSen: 55000, overtimeRateSen: 4250, managerId: 9203 },
+  { id: 9208, employeeNumber: "EMP-008", fullName: "Danny Ismail", department: "Engineering", jobTitle: "Junior Engineer", status: "probation", employmentDate: "2026-07-06", basicSalarySen: 452000, allowanceSen: 35000, overtimeRateSen: 3000, managerId: 9203, joinedWorkingDaysAgo: 30 },
+  { id: 9209, employeeNumber: "EMP-009", fullName: "Rachel Lee", department: "Engineering", jobTitle: "Engineering Manager", status: "active", employmentDate: "2021-04-12", basicSalarySen: 1245000, allowanceSen: 145000, overtimeRateSen: 0, managerId: 9202 },
+  { id: 9210, employeeNumber: "EMP-010", fullName: "Faiz Ali", department: "Engineering", jobTitle: "Senior Engineer", status: "active", employmentDate: "2021-08-23", basicSalarySen: 995000, allowanceSen: 90000, overtimeRateSen: 6600, managerId: 9209 },
+  { id: 9211, employeeNumber: "EMP-011", fullName: "Kevin Yeoh", department: "Engineering", jobTitle: "Software Engineer", status: "active", employmentDate: "2023-10-02", basicSalarySen: 706000, allowanceSen: 62000, overtimeRateSen: 4700, managerId: 9209 },
+  { id: 9212, employeeNumber: "EMP-012", fullName: "Priya Nair", department: "Engineering", jobTitle: "DevOps Engineer", status: "active", employmentDate: "2022-05-16", basicSalarySen: 862000, allowanceSen: 78000, overtimeRateSen: 5750, managerId: 9209 },
 
-  // ------------------------------------------------------- Product & Design
-  { id: 9213, employeeNumber: "MDS-013", fullName: "Lai Mun Yee", department: "Product & Design", jobTitle: "Head of Product & Design", status: "active", employmentDate: "2019-07-01", basicSalarySen: 1615000, allowanceSen: 190000, overtimeRateSen: 0, managerId: 9201 },
-  { id: 9214, employeeNumber: "MDS-014", fullName: "Danial Hakim bin Omar", department: "Product & Design", jobTitle: "Product Manager", status: "active", employmentDate: "2021-10-18", basicSalarySen: 1085000, allowanceSen: 105000, overtimeRateSen: 0, managerId: 9213 },
-  { id: 9215, employeeNumber: "MDS-015", fullName: "Grace Ooi Hui Shan", department: "Product & Design", jobTitle: "Senior Product Designer", status: "active", employmentDate: "2022-03-21", basicSalarySen: 918000, allowanceSen: 84000, overtimeRateSen: 0, managerId: 9213 },
-  { id: 9216, employeeNumber: "MDS-016", fullName: "Iskandar bin Jamal", department: "Product & Design", jobTitle: "Product Designer", status: "active", employmentDate: "2024-01-15", basicSalarySen: 672000, allowanceSen: 58000, overtimeRateSen: 0, managerId: 9215 },
-  { id: 9217, employeeNumber: "MDS-017", fullName: "Ng Jia Hui", department: "Product & Design", jobTitle: "UX Researcher", status: "active", employmentDate: "2023-06-05", basicSalarySen: 748000, allowanceSen: 64000, overtimeRateSen: 0, managerId: 9213 },
+  // ------------------------------------------------------- Product
+  { id: 9213, employeeNumber: "EMP-013", fullName: "Grace Lai", department: "Product", jobTitle: "Head of Product", status: "active", employmentDate: "2019-07-01", basicSalarySen: 1615000, allowanceSen: 190000, overtimeRateSen: 0, managerId: 9201 },
+  { id: 9214, employeeNumber: "EMP-014", fullName: "Omar Hakim", department: "Product", jobTitle: "Product Manager", status: "active", employmentDate: "2021-10-18", basicSalarySen: 1085000, allowanceSen: 105000, overtimeRateSen: 0, managerId: 9213 },
+  { id: 9215, employeeNumber: "EMP-015", fullName: "Mei Ooi", department: "Product", jobTitle: "Senior Designer", status: "active", employmentDate: "2022-03-21", basicSalarySen: 918000, allowanceSen: 84000, overtimeRateSen: 0, managerId: 9213 },
+  { id: 9216, employeeNumber: "EMP-016", fullName: "Adam Jamal", department: "Product", jobTitle: "Designer", status: "active", employmentDate: "2024-01-15", basicSalarySen: 672000, allowanceSen: 58000, overtimeRateSen: 0, managerId: 9215 },
+  { id: 9217, employeeNumber: "EMP-017", fullName: "Joyce Ng", department: "Product", jobTitle: "UX Researcher", status: "active", employmentDate: "2023-06-05", basicSalarySen: 748000, allowanceSen: 64000, overtimeRateSen: 0, managerId: 9213 },
 
-  // -------------------------------------------------------- People & Culture
-  { id: 9218, employeeNumber: "MDS-018", fullName: "Farah Izzati binti Hassan", department: "People & Culture", jobTitle: "Head of People & Culture", status: "active", employmentDate: "2019-09-02", basicSalarySen: 1520000, allowanceSen: 175000, overtimeRateSen: 0, managerId: 9201 },
-  { id: 9219, employeeNumber: "MDS-019", fullName: "Melissa Tan Sook Yee", department: "People & Culture", jobTitle: "People Operations Executive", status: "active", employmentDate: "2022-08-08", basicSalarySen: 615000, allowanceSen: 52000, overtimeRateSen: 4100, managerId: 9218 },
-  { id: 9220, employeeNumber: "MDS-020", fullName: "Ridzuan bin Salleh", department: "People & Culture", jobTitle: "Talent Acquisition Specialist", status: "active", employmentDate: "2023-11-13", basicSalarySen: 682000, allowanceSen: 58000, overtimeRateSen: 4550, managerId: 9218 },
-  { id: 9221, employeeNumber: "MDS-021", fullName: "Anisha Kaur", department: "People & Culture", jobTitle: "People Operations Assistant", status: "probation", employmentDate: "2026-08-03", basicSalarySen: 428000, allowanceSen: 32000, overtimeRateSen: 2850, managerId: 9219, joinedWorkingDaysAgo: 6 },
+  // -------------------------------------------------------- HR
+  { id: 9218, employeeNumber: "EMP-018", fullName: "Farah Hassan", department: "HR", jobTitle: "Head of HR", status: "active", employmentDate: "2019-09-02", basicSalarySen: 1520000, allowanceSen: 175000, overtimeRateSen: 0, managerId: 9201 },
+  { id: 9219, employeeNumber: "EMP-019", fullName: "Melissa Tan", department: "HR", jobTitle: "HR Executive", status: "active", employmentDate: "2022-08-08", basicSalarySen: 615000, allowanceSen: 52000, overtimeRateSen: 4100, managerId: 9218 },
+  { id: 9220, employeeNumber: "EMP-020", fullName: "Ryan Salleh", department: "HR", jobTitle: "Recruiter", status: "active", employmentDate: "2023-11-13", basicSalarySen: 682000, allowanceSen: 58000, overtimeRateSen: 4550, managerId: 9218 },
+  { id: 9221, employeeNumber: "EMP-021", fullName: "Anna Kaur", department: "HR", jobTitle: "HR Assistant", status: "probation", employmentDate: "2026-08-03", basicSalarySen: 428000, allowanceSen: 32000, overtimeRateSen: 2850, managerId: 9219, joinedWorkingDaysAgo: 6 },
 
   // ----------------------------------------------------------------- Finance
-  { id: 9222, employeeNumber: "MDS-022", fullName: "Ong Chee Keong", department: "Finance", jobTitle: "Finance Manager", status: "active", employmentDate: "2019-05-06", basicSalarySen: 1435000, allowanceSen: 160000, overtimeRateSen: 0, managerId: 9201 },
-  { id: 9223, employeeNumber: "MDS-023", fullName: "Nadhirah binti Zulkarnain", department: "Finance", jobTitle: "Payroll Executive", status: "active", employmentDate: "2021-12-06", basicSalarySen: 725000, allowanceSen: 62000, overtimeRateSen: 4800, managerId: 9222 },
-  { id: 9224, employeeNumber: "MDS-024", fullName: "Vimal Raj Krishnan", department: "Finance", jobTitle: "Accounts Executive", status: "active", employmentDate: "2023-02-20", basicSalarySen: 596000, allowanceSen: 48000, overtimeRateSen: 3950, managerId: 9222 },
-  { id: 9225, employeeNumber: "MDS-025", fullName: "Low Pei Shan", department: "Finance", jobTitle: "Finance Analyst", status: "active", employmentDate: "2024-07-08", basicSalarySen: 658000, allowanceSen: 54000, overtimeRateSen: 4350, managerId: 9222 },
+  { id: 9222, employeeNumber: "EMP-022", fullName: "Alan Ong", department: "Finance", jobTitle: "Finance Manager", status: "active", employmentDate: "2019-05-06", basicSalarySen: 1435000, allowanceSen: 160000, overtimeRateSen: 0, managerId: 9201 },
+  { id: 9223, employeeNumber: "EMP-023", fullName: "Nadia Aziz", department: "Finance", jobTitle: "Payroll Executive", status: "active", employmentDate: "2021-12-06", basicSalarySen: 725000, allowanceSen: 62000, overtimeRateSen: 4800, managerId: 9222 },
+  { id: 9224, employeeNumber: "EMP-024", fullName: "Vimal Raj", department: "Finance", jobTitle: "Accountant", status: "active", employmentDate: "2023-02-20", basicSalarySen: 596000, allowanceSen: 48000, overtimeRateSen: 3950, managerId: 9222 },
+  { id: 9225, employeeNumber: "EMP-025", fullName: "Peggy Low", department: "Finance", jobTitle: "Finance Analyst", status: "active", employmentDate: "2024-07-08", basicSalarySen: 658000, allowanceSen: 54000, overtimeRateSen: 4350, managerId: 9222 },
 
-  // ------------------------------------------------------ Sales & Partnerships
-  { id: 9226, employeeNumber: "MDS-026", fullName: "Marcus Teoh Wei Liang", department: "Sales & Partnerships", jobTitle: "Sales Director", status: "active", employmentDate: "2019-02-11", basicSalarySen: 1690000, allowanceSen: 240000, overtimeRateSen: 0, managerId: 9201 },
-  { id: 9227, employeeNumber: "MDS-027", fullName: "Sharifah binti Yahya", department: "Sales & Partnerships", jobTitle: "Senior Account Manager", status: "active", employmentDate: "2021-06-14", basicSalarySen: 952000, allowanceSen: 130000, overtimeRateSen: 0, managerId: 9226 },
-  { id: 9228, employeeNumber: "MDS-028", fullName: "Jonathan Lee Zhi Wei", department: "Sales & Partnerships", jobTitle: "Account Manager", status: "active", employmentDate: "2022-11-28", basicSalarySen: 788000, allowanceSen: 105000, overtimeRateSen: 0, managerId: 9226 },
-  { id: 9229, employeeNumber: "MDS-029", fullName: "Amirul Hakimi bin Nasir", department: "Sales & Partnerships", jobTitle: "Partnerships Executive", status: "active", employmentDate: "2024-03-04", basicSalarySen: 645000, allowanceSen: 72000, overtimeRateSen: 0, managerId: 9226 },
-  { id: 9230, employeeNumber: "MDS-030", fullName: "Chan Li Wen", department: "Sales & Partnerships", jobTitle: "Sales Development Representative", status: "active", employmentDate: "2025-01-13", basicSalarySen: 512000, allowanceSen: 60000, overtimeRateSen: 3400, managerId: 9227 },
+  // ------------------------------------------------------ Sales
+  { id: 9226, employeeNumber: "EMP-026", fullName: "Marcus Teoh", department: "Sales", jobTitle: "Head of Sales", status: "active", employmentDate: "2019-02-11", basicSalarySen: 1690000, allowanceSen: 240000, overtimeRateSen: 0, managerId: 9201 },
+  { id: 9227, employeeNumber: "EMP-027", fullName: "Sofia Yahya", department: "Sales", jobTitle: "Senior Account Manager", status: "active", employmentDate: "2021-06-14", basicSalarySen: 952000, allowanceSen: 130000, overtimeRateSen: 0, managerId: 9226 },
+  { id: 9228, employeeNumber: "EMP-028", fullName: "Jonathan Chua", department: "Sales", jobTitle: "Account Manager", status: "active", employmentDate: "2022-11-28", basicSalarySen: 788000, allowanceSen: 105000, overtimeRateSen: 0, managerId: 9226 },
+  { id: 9229, employeeNumber: "EMP-029", fullName: "Amir Nasir", department: "Sales", jobTitle: "Partnerships Executive", status: "active", employmentDate: "2024-03-04", basicSalarySen: 645000, allowanceSen: 72000, overtimeRateSen: 0, managerId: 9226 },
+  { id: 9230, employeeNumber: "EMP-030", fullName: "Lily Chan", department: "Sales", jobTitle: "Sales Executive", status: "active", employmentDate: "2025-01-13", basicSalarySen: 512000, allowanceSen: 60000, overtimeRateSen: 3400, managerId: 9227 },
 
-  // --------------------------------------------- Operations & Customer Success
-  { id: 9231, employeeNumber: "MDS-031", fullName: "Devi Suresh", department: "Operations & Customer Success", jobTitle: "Head of Operations & Customer Success", status: "active", employmentDate: "2020-02-17", basicSalarySen: 1480000, allowanceSen: 168000, overtimeRateSen: 0, managerId: 9201 },
-  { id: 9232, employeeNumber: "MDS-032", fullName: "Zulkifli bin Hamzah", department: "Operations & Customer Success", jobTitle: "Customer Success Manager", status: "active", employmentDate: "2021-09-06", basicSalarySen: 925000, allowanceSen: 88000, overtimeRateSen: 6150, managerId: 9231 },
-  { id: 9233, employeeNumber: "MDS-033", fullName: "Priya Lakshmi Naidu", department: "Operations & Customer Success", jobTitle: "Customer Success Executive", status: "active", employmentDate: "2023-08-14", basicSalarySen: 624000, allowanceSen: 52000, overtimeRateSen: 4150, managerId: 9232 },
+  // --------------------------------------------- Operations
+  { id: 9231, employeeNumber: "EMP-031", fullName: "Devi Suresh", department: "Operations", jobTitle: "Head of Operations", status: "active", employmentDate: "2020-02-17", basicSalarySen: 1480000, allowanceSen: 168000, overtimeRateSen: 0, managerId: 9201 },
+  { id: 9232, employeeNumber: "EMP-032", fullName: "Zul Hamzah", department: "Operations", jobTitle: "Support Manager", status: "active", employmentDate: "2021-09-06", basicSalarySen: 925000, allowanceSen: 88000, overtimeRateSen: 6150, managerId: 9231 },
+  { id: 9233, employeeNumber: "EMP-033", fullName: "Maya Naidu", department: "Operations", jobTitle: "Support Executive", status: "active", employmentDate: "2023-08-14", basicSalarySen: 624000, allowanceSen: 52000, overtimeRateSen: 4150, managerId: 9232 },
   // Leaving at the end of the month: the offboarding the presentation shows.
-  { id: 9234, employeeNumber: "MDS-034", fullName: "Wong Kah Meng", department: "Operations & Customer Success", jobTitle: "Operations Executive", status: "active", employmentDate: "2022-06-20", basicSalarySen: 668000, allowanceSen: 56000, overtimeRateSen: 4450, managerId: 9231 },
+  { id: 9234, employeeNumber: "EMP-034", fullName: "Kenny Chong", department: "Operations", jobTitle: "Operations Executive", status: "active", employmentDate: "2022-06-20", basicSalarySen: 668000, allowanceSen: 56000, overtimeRateSen: 4450, managerId: 9231 },
 ];
 
 /**
@@ -141,24 +141,25 @@ export const PRESENTATION_EMAIL_DOMAIN = "meridian.example";
 /** The HR administrator: an account, not a personnel record, as in a real company. */
 export const presentationAdmin = {
   id: PRESENTATION_ID_MIN,
-  email: `hr.admin@${PRESENTATION_EMAIL_DOMAIN}`,
+  email: `hr@${PRESENTATION_EMAIL_DOMAIN}`,
 };
 
 /** The manager and the employee the walkthrough signs in as. */
-export const presentationManagerAccount = { id: 9203, email: `nur.hidayah@${PRESENTATION_EMAIL_DOMAIN}` };
-export const presentationEmployeeAccount = { id: 9205, email: `kar.wai@${PRESENTATION_EMAIL_DOMAIN}` };
+export const presentationManagerAccount = { id: 9203, email: `sarah@${PRESENTATION_EMAIL_DOMAIN}` };
+export const presentationEmployeeAccount = { id: 9205, email: `ben@${PRESENTATION_EMAIL_DOMAIN}` };
 export const presentationEmployeeAccounts = [presentationManagerAccount, presentationEmployeeAccount];
 
 /**
  * The public demo account: an HR administrator who can open every module and
  * change nothing. `users.demo_read_only` makes the API refuse its writes, so
- * publishing this password is the point, not a leak. It was generated for this
- * demo alone and is used nowhere else; never reuse it.
+ * publishing this password is the point, not a leak. It is kept simple so a
+ * visitor can type it, belongs to this demo alone and is used nowhere else;
+ * never reuse it.
  */
 export const presentationDemoAccount = {
   id: 9290,
   email: `demo@${PRESENTATION_EMAIL_DOMAIN}`,
-  password: "uuve-pmyv-k9p4",
+  password: "meridian-demo",
 };
 
 /**
@@ -169,9 +170,9 @@ export const presentationDemoAccount = {
 export const presentationVacancies: Array<{
   id: number; employeeNumber: string; title: string; department: string; managerId: number; notes: string;
 }> = [
-  { id: 9240, employeeNumber: "POS-9240", title: "Platform Engineer", department: "Engineering", managerId: 9203, notes: "Mid-level hire for the platform team. Interviews in progress." },
-  { id: 9241, employeeNumber: "POS-9241", title: "Customer Success Executive", department: "Operations & Customer Success", managerId: 9232, notes: "Backfill ahead of Wong Kah Meng's departure." },
-  { id: 9242, employeeNumber: "POS-9242", title: "Head of Data", department: "Leadership", managerId: 9201, notes: "New role, approved for next quarter. Brief being written." },
+  { id: 9240, employeeNumber: "POS-9240", title: "Software Engineer", department: "Engineering", managerId: 9203, notes: "Mid-level hire for the platform team. Interviews in progress." },
+  { id: 9241, employeeNumber: "POS-9241", title: "Support Executive", department: "Operations", managerId: 9232, notes: "Backfill ahead of Kenny Chong's departure." },
+  { id: 9242, employeeNumber: "POS-9242", title: "Head of Data", department: "Management", managerId: 9201, notes: "New role, approved for next quarter. Brief being written." },
 ];
 
 /**
@@ -252,12 +253,12 @@ export const presentationProfiles: Array<{ employeeId: number; about: string; sk
 
 /** A little company-visible history, so a profile is not blank. */
 export const presentationTimeline: Array<{ employeeId: number; kind: "job_title_changed" | "department_changed" | "manager_changed"; occurredOn: string; title: string }> = [
-  { employeeId: 9203, kind: "job_title_changed", occurredOn: "2023-01-01", title: "Promoted to Engineering Manager, Platform" },
-  { employeeId: 9204, kind: "job_title_changed", occurredOn: "2023-07-01", title: "Promoted to Senior Software Engineer" },
-  { employeeId: 9210, kind: "job_title_changed", occurredOn: "2024-01-01", title: "Promoted to Senior Software Engineer" },
-  { employeeId: 9215, kind: "job_title_changed", occurredOn: "2024-04-01", title: "Promoted to Senior Product Designer" },
-  { employeeId: 9219, kind: "manager_changed", occurredOn: "2024-09-01", title: "Now reports to Farah Izzati binti Hassan" },
-  { employeeId: 9232, kind: "job_title_changed", occurredOn: "2023-03-01", title: "Promoted to Customer Success Manager" },
+  { employeeId: 9203, kind: "job_title_changed", occurredOn: "2023-01-01", title: "Promoted to Engineering Manager" },
+  { employeeId: 9204, kind: "job_title_changed", occurredOn: "2023-07-01", title: "Promoted to Senior Engineer" },
+  { employeeId: 9210, kind: "job_title_changed", occurredOn: "2024-01-01", title: "Promoted to Senior Engineer" },
+  { employeeId: 9215, kind: "job_title_changed", occurredOn: "2024-04-01", title: "Promoted to Senior Designer" },
+  { employeeId: 9219, kind: "manager_changed", occurredOn: "2024-09-01", title: "Now reports to Farah Hassan" },
+  { employeeId: 9232, kind: "job_title_changed", occurredOn: "2023-03-01", title: "Promoted to Support Manager" },
   { employeeId: 9227, kind: "job_title_changed", occurredOn: "2023-10-01", title: "Promoted to Senior Account Manager" },
 ];
 
@@ -402,14 +403,14 @@ export function presentationAnnouncements(cal: PresentationCalendar): Array<{
   const quarter = `Q${Math.floor((Number(today.slice(5, 7)) - 1) / 3) + 1}`;
   return [
     {
-      key: "welcome-anisha", title: "Welcome Anisha Kaur to People & Culture", priority: "normal", status: "published",
+      key: "welcome-anisha", title: "Welcome Anna Kaur to HR", priority: "normal", status: "published",
       publishedOn: anishaStart,
-      body: `Anisha joined us on ${formatShortDay(anishaStart)} as People Operations Assistant, working with Melissa on onboarding and employee records. She sits on Level 17 - do say hello.`,
+      body: `Anna joined us on ${formatShortDay(anishaStart)} as HR Assistant, working with Melissa on onboarding and employee records. She sits on Level 17 - do say hello.`,
     },
     {
-      key: "hiring-platform", title: "We are hiring: Platform Engineering and Customer Success", priority: "normal", status: "published",
+      key: "hiring-platform", title: "We are hiring: Engineering and Support", priority: "normal", status: "published",
       publishedOn: addDays(today, -18),
-      body: "Two roles are open: a mid-level platform engineer and a customer success executive. The referral bonus applies to both. Ridzuan has the briefs, and referrals go through the People & Culture team.",
+      body: "Two roles are open: a software engineer and a support executive. The referral bonus applies to both. Ryan has the details, and referrals go through HR.",
     },
     {
       key: "fire-drill", title: `Fire drill on ${formatDay(drill)}`, priority: "normal", status: "published",
@@ -433,12 +434,12 @@ export const presentationLifecycleTemplates: Array<{
   tasks: Array<{ title: string; instructions?: string; role: "employee" | "manager" | "hr"; offset: number }>;
 }> = [
   {
-    key: "onboarding", kind: "onboarding", name: "New joiner onboarding", description: "Everything a new colleague needs in their first month at Meridian Digital.",
+    key: "onboarding", kind: "onboarding", name: "New joiner onboarding", description: "Everything a new colleague needs in their first month at Meridian.",
     tasks: [
       { title: "Prepare laptop and accounts", instructions: "Raise the IT request at least three working days before the start date.", role: "hr", offset: -3 },
       { title: "Send the welcome pack", instructions: "Company handbook, benefits summary and the first-week schedule.", role: "hr", offset: -1 },
       { title: "First-day welcome and office tour", role: "manager", offset: 0 },
-      { title: "Set up payroll and statutory details", instructions: "Bank details, EPF and tax file number, collected through the People & Culture team.", role: "hr", offset: 1 },
+      { title: "Set up payroll and statutory details", instructions: "Bank details, EPF and tax file number, collected through HR.", role: "hr", offset: 1 },
       { title: "Meet the team and agree the first project", role: "manager", offset: 3 },
       { title: "Complete security and data-protection training", role: "employee", offset: 7 },
       { title: "Set first-quarter goals with your manager", role: "employee", offset: 14 },
@@ -470,12 +471,12 @@ export function presentationLifecyclePlans(cal: PresentationCalendar): Array<{
   const haziq = joinedOn(cal, 9208);
   const anisha = joinedOn(cal, 9221);
   return [
-    // Haziq joined six weeks ago: nearly through, with the goal-setting task and
+    // Danny joined six weeks ago: nearly through, with the goal-setting task and
     // the thirty-day check-in still open.
     { employeeId: 9208, template: "onboarding", startsOn: haziq, targetDate: addDays(haziq, 30), done: [1, 2, 3, 4, 5, 6] },
-    // Anisha joined last week: the later tasks are still ahead of her.
+    // Anna joined last week: the later tasks are still ahead of her.
     { employeeId: 9221, template: "onboarding", startsOn: anisha, targetDate: addDays(anisha, 30), done: [1, 2, 3, 4] },
-    // Kah Meng resigned; his last working day is the end of this month.
+    // Kenny resigned; his last working day is the end of this month.
     { employeeId: 9234, template: "offboarding", startsOn: addDays(today, -18), targetDate: addWorkingDays(today, 10), done: [1, 2], exitStatus: "resigned" },
   ];
 }
@@ -486,7 +487,7 @@ export function presentationRecognitions(cal: PresentationCalendar): Array<{
 }> {
   const { today, addDays } = cal;
   return [
-    { giver: 9203, receiver: 9204, category: "mentoring", message: "Thank you for pairing with Haziq every afternoon in his first fortnight. He is contributing already, and that is largely your doing.", visibility: "company", givenOn: addDays(today, -24) },
+    { giver: 9203, receiver: 9204, category: "mentoring", message: "Thank you for pairing with Danny every afternoon in his first fortnight. He is contributing already, and that is largely your doing.", visibility: "company", givenOn: addDays(today, -24) },
     { giver: 9209, receiver: 9212, category: "problem_solving", message: "You found the cause of the Friday night deployment failure in under an hour and wrote it up so it cannot happen again.", visibility: "company", givenOn: addDays(today, -33) },
     { giver: 9231, receiver: 9233, category: "customer_focus", message: "Kestrel Retail said your handling of their migration weekend was the best support they have had from any vendor.", visibility: "company", givenOn: addDays(today, -26) },
     { giver: 9218, receiver: 9219, category: "above_and_beyond", message: "You covered both onboarding cohorts while we were short-handed and neither joiner noticed a thing.", visibility: "company", givenOn: addDays(today, -21) },
@@ -542,7 +543,7 @@ export function presentationGoals(cal: PresentationCalendar): Array<{
       ],
     },
     {
-      owner: 9203, setBy: 9203, title: "Grow two engineers into senior scope", description: "Give Kar Wai and Siti Balqis work with real ownership, and the support to carry it.",
+      owner: 9203, setBy: 9203, title: "Grow two engineers into senior scope", description: "Give Ben and Aisha work with real ownership, and the support to carry it.",
       startsOn: addDays(today, -95), dueOn: addDays(today, 70), status: "active", progress: 35, visibility: "team",
       updates: [{ by: 9203, on: addDays(today, -16), from: 15, to: 35, note: "Both now lead their own workstream; reviewing progress at the mid-year cycle." }],
     },
@@ -595,27 +596,27 @@ export function presentationReviewCycles(cal: PresentationCalendar): Array<{
       reviews: [
         {
           employee: 9205,
-          self: [3, "Shipped the invoicing rewrite and picked up the reporting service when Arvind was away.", addDays(closedOpened, 9)],
-          manager: [4, "Kar Wai took on work outside his comfort zone twice this quarter and both landed well. Next: more design input earlier.", addDays(closedOpened, 23), 9203],
+          self: [3, "Shipped the invoicing rewrite and picked up the reporting service when Ravi was away.", addDays(closedOpened, 9)],
+          manager: [4, "Ben took on work outside his comfort zone twice this quarter and both landed well. Next: more design input earlier.", addDays(closedOpened, 23), 9203],
           response: ["Thank you. I would like to take the lead on the reporting work next.", addDays(closedOpened, 24)],
         },
         {
           employee: 9204,
           self: [4, "Led the pipeline migration and mentored two engineers through it.", addDays(closedOpened, 8)],
-          manager: [4, "Arvind is the reason the migration was uneventful. The mentoring is what I value most.", addDays(closedOpened, 22), 9203],
+          manager: [4, "Ravi is the reason the migration was uneventful. The mentoring is what I value most.", addDays(closedOpened, 22), 9203],
         },
       ],
     },
     {
       key: "current", name: open.name, periodStart: open.start, periodEnd: open.end,
       selfDueOn: addWorkingDays(today, 3), managerDueOn: addWorkingDays(today, 10),
-      status: "open", openedOn, departments: ["Engineering", "Product & Design"],
+      status: "open", openedOn, departments: ["Engineering", "Product"],
       reviews: [
         // Written already, so the cycle shows progress rather than an empty list.
         {
           employee: 9204,
           self: [4, "Pipeline work is on track and I have kept the on-call load off the rest of the team.", addDays(today, -7)],
-          manager: [4, "Arvind carries more than his share quietly. We agreed he will hand over half of on-call this quarter.", addDays(today, -5), 9203],
+          manager: [4, "Ravi carries more than his share quietly. We agreed he will hand over half of on-call this quarter.", addDays(today, -5), 9203],
         },
         // Waiting for the manager: this is what her widget counts.
         { employee: 9205, self: [4, "Billing latency is down by a third and the on-call handbook is nearly finished.", addDays(today, -4)] },
@@ -653,11 +654,11 @@ export const presentationDetails: Array<{
   // Addresses are deliberately fictional: "Contoh" is Malay for "example", and
   // no street or building below exists. Phone numbers use the unallocated
   // 03-0000 block, which cannot ring a real line.
-  { employeeId: 9203, address: "12-3A, Residensi Contoh, Jalan Contoh 3, 50450 Kuala Lumpur", dateOfBirth: "1989-04-17", emergencyContactName: "Roslan bin Ahmad", emergencyContactPhone: "+60 3-0000 0103" },
-  { employeeId: 9205, address: "8-12, Pangsapuri Contoh Indah, Jalan Contoh 8, 60000 Kuala Lumpur", dateOfBirth: "1995-11-02", emergencyContactName: "Chong Mei Fong", emergencyContactPhone: "+60 3-0000 0105" },
+  { employeeId: 9203, address: "12-3A, Residensi Contoh, Jalan Contoh 3, 50450 Kuala Lumpur", dateOfBirth: "1989-04-17", emergencyContactName: "Ali Ahmad", emergencyContactPhone: "+60 3-0000 0103" },
+  { employeeId: 9205, address: "8-12, Pangsapuri Contoh Indah, Jalan Contoh 8, 60000 Kuala Lumpur", dateOfBirth: "1995-11-02", emergencyContactName: "Mei Wong", emergencyContactPhone: "+60 3-0000 0105" },
   { employeeId: 9202, address: "27, Jalan Contoh Jaya 2, Taman Contoh, 50490 Kuala Lumpur", dateOfBirth: "1984-02-28" },
-  { employeeId: 9218, address: "5-8, Menara Contoh Residences, Jalan Contoh 11, 50470 Kuala Lumpur", dateOfBirth: "1986-07-09", emergencyContactName: "Hassan bin Idris", emergencyContactPhone: "+60 3-0000 0118" },
-  { employeeId: 9208, address: "Unit 14-2, Contoh Court, Jalan Contoh 21, 53300 Kuala Lumpur", dateOfBirth: "2002-01-26", emergencyContactName: "Kamarul bin Yusof", emergencyContactPhone: "+60 3-0000 0108" },
+  { employeeId: 9218, address: "5-8, Menara Contoh Residences, Jalan Contoh 11, 50470 Kuala Lumpur", dateOfBirth: "1986-07-09", emergencyContactName: "Hassan Idris", emergencyContactPhone: "+60 3-0000 0118" },
+  { employeeId: 9208, address: "Unit 14-2, Contoh Court, Jalan Contoh 21, 53300 Kuala Lumpur", dateOfBirth: "2002-01-26", emergencyContactName: "Kamal Ismail", emergencyContactPhone: "+60 3-0000 0108" },
   { employeeId: 9221, dateOfBirth: "2003-05-14", emergencyContactName: "Harjit Singh", emergencyContactPhone: "+60 3-0000 0121" },
   { employeeId: 9226, address: "19, Jalan Contoh Kiara 3, 50480 Kuala Lumpur", dateOfBirth: "1983-09-30" },
   { employeeId: 9231, address: "3-11, Contoh Villa, Jalan Contoh Kiara 5, 50480 Kuala Lumpur", emergencyContactName: "Suresh Menon", emergencyContactPhone: "+60 3-0000 0131" },

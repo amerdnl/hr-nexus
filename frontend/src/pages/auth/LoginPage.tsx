@@ -122,7 +122,7 @@ export default function LoginPage() {
             <div className="min-w-0 flex-1">
               <h2 id="demo-heading" className="font-semibold">Exploring the demo?</h2>
               <p className="mt-1 leading-5">
-                Meridian Digital is a fictional company. The demo account can open every
+                Meridian is a fictional company. The demo account can open every
                 module but can't change anything{demo.resetsDaily ? ", and the data resets every night" : ""}.
               </p>
               <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 font-mono text-xs">

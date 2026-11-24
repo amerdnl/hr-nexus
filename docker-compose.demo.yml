@@ -1,4 +1,4 @@
-# The public demo, run locally: Meridian Digital with a read-only demo sign-in.
+# The public demo, run locally: Meridian with a read-only demo sign-in.
 #
 #   cp .env.demo.example .env.demo     # then fill in the three secrets
 #   docker compose -f docker-compose.demo.yml --env-file .env.demo up -d --build
@@ -40,7 +40,7 @@ services:
       timeout: 5s
       retries: 10
 
-  # Migrates, then rebuilds Meridian Digital for today. The reset refuses any
+  # Migrates, then rebuilds Meridian for today. The reset refuses any
   # database holding people outside the demo's reserved range.
   demo-setup:
     build:

@@ -1,5 +1,5 @@
 /**
- * Loads the Meridian Digital presentation company.
+ * Loads the Meridian presentation company.
  *
  * SAFETY, before anything else. This script writes thousands of rows, so it is
  * built to refuse the wrong database rather than to be used carefully:
