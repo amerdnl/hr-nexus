@@ -4,19 +4,12 @@ export const AUTH_TOKEN_KEY = "hr_nexus_token";
 export const UNAUTHORIZED_EVENT = "hr-nexus:unauthorized";
 
 /**
- * Where the API lives when `VITE_API_BASE_URL` is not set: a developer running
- * `npm run dev` against the default Compose stack.
- *
- * It is a real environment's address, which is the danger. More than one HR
- * Nexus environment runs on this machine at once - the presentation company on
- * 5001 and the public demo on 5003 - so falling back silently
- * does not produce an app that is obviously broken. It produces an app that
- * works while talking to the wrong company's backend, and the sign-in failure
- * that follows looks like a credential problem rather than a wiring one.
- *
- * So the value is declared once, here, and its use is announced below.
+ * Where the API lives when `VITE_API_BASE_URL` is not set: the local Compose
+ * stack's backend. Docker Compose and the hosted build both set the variable,
+ * so this is only reached by a developer running `npm run dev` by hand, and its
+ * use is announced below so a wrong backend is one glance at the console away.
  */
-const FALLBACK_API_BASE_URL = "http://localhost:5001/api";
+const FALLBACK_API_BASE_URL = "http://localhost:5003/api";
 
 export const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? FALLBACK_API_BASE_URL;
 

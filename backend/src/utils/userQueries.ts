@@ -77,6 +77,7 @@ export interface UserRecord {
   role: UserRole;
   is_active: boolean;
   must_change_password: boolean;
+  demo_read_only: boolean;
 }
 
 export interface SafeUser {
@@ -202,7 +203,7 @@ export async function findUserRecordByEmail(
   // Matches the users_email_normalized_key expression exactly, so sign-in resolves
   // an account by the same identity the database enforces as unique.
   const result = await pool.query<UserRecord>(
-    `SELECT id, employee_id, email, password_hash, role, is_active, must_change_password
+    `SELECT id, employee_id, email, password_hash, role, is_active, must_change_password, demo_read_only
      FROM users
      WHERE lower(btrim(email)) = lower(btrim($1))
      LIMIT 1`,

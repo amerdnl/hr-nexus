@@ -138,20 +138,33 @@ export const presentationEmployees: PresentationEmployee[] = [
  */
 export const PRESENTATION_EMAIL_DOMAIN = "meridian.example";
 
-/** The HR administrator: an account, not a personnel record, as in a real company. */
+/**
+ * The HR administrator: an account, not a personnel record, as in a real company.
+ * It, the manager and the employee below exist so the data has someone who
+ * approved the leave, ran the payroll and wrote the announcements. None of them
+ * can sign in: their password hash is NO_SIGN_IN_HASH, which no password
+ * matches, and in demo mode the API refuses every account but the demo one.
+ */
 export const presentationAdmin = {
   id: PRESENTATION_ID_MIN,
   email: `hr@${PRESENTATION_EMAIL_DOMAIN}`,
 };
 
-/** The manager and the employee the walkthrough signs in as. */
+/** The manager and the employee whose own pages the data fills in (approvals, goals, notifications). */
 export const presentationManagerAccount = { id: 9203, email: `sarah@${PRESENTATION_EMAIL_DOMAIN}` };
 export const presentationEmployeeAccount = { id: 9205, email: `ben@${PRESENTATION_EMAIL_DOMAIN}` };
 export const presentationEmployeeAccounts = [presentationManagerAccount, presentationEmployeeAccount];
 
 /**
- * The public demo account: an HR administrator who can open every module and
- * change nothing. `users.demo_read_only` makes the API refuse its writes, so
+ * The password hash of every account except the demo one. It is not a bcrypt
+ * hash, so bcrypt.compare returns false for every password: these accounts have
+ * no usable credentials at all, not merely an unknown password.
+ */
+export const NO_SIGN_IN_HASH = "!no-sign-in";
+
+/**
+ * The public demo account, and the only account anyone can sign in with: an
+ * HR administrator who can open every module and change nothing. `users.demo_read_only` makes the API refuse its writes, so
  * publishing this password is the point, not a leak. It is kept simple so a
  * visitor can type it, belongs to this demo alone and is used nowhere else;
  * never reuse it.

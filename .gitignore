@@ -3,8 +3,7 @@ node_modules/
 
 .env
 *.env
-# Per-environment files such as .env.demo hold real secrets and end in the
-# environment's name, not in ".env", so the two patterns above never caught them.
+# Any other .env.* file (such as the Vercel CLI's .env.local) may hold secrets.
 .env.*
 !.env.example
 !**/.env.example

@@ -7,10 +7,7 @@
  * the database the URL actually connects to. The reset itself refuses any
  * database holding people or accounts outside the demo range; see demoReset.ts.
  *
- * PRESENTATION_PASSWORD, if set, becomes the password of the HR administrator,
- * manager and employee sign-ins, for capturing those views locally. Leave it
- * unset for a public demo: they then get a random password nobody knows, and
- * only the read-only demo sign-in can be used.
+ * The demo account is the only account that can sign in afterwards.
  */
 import pg from "pg";
 import { presentationDemoAccount } from "./presentationData.js";
@@ -36,12 +33,9 @@ const client = await pool.connect();
 try {
   const actual = (await client.query<{ name: string }>("SELECT current_database() AS name")).rows[0]!.name;
   if (actual !== expected) fail(`connected to "${actual}" but --database said "${expected}".`);
-  const summary = await resetDemoDatabase(client, { staffPassword: process.env.PRESENTATION_PASSWORD || undefined });
+  const summary = await resetDemoDatabase(client);
   console.log(JSON.stringify({ database: actual, ...summary }, null, 2));
-  console.log(`\nDemo sign-in (read-only): ${presentationDemoAccount.email} / ${presentationDemoAccount.password}`);
-  console.log(process.env.PRESENTATION_PASSWORD
-    ? "The admin, manager and employee sign-ins use PRESENTATION_PASSWORD."
-    : "The admin, manager and employee sign-ins have a random password that was not recorded.");
+  console.log(`\nThe one sign-in (read-only): ${presentationDemoAccount.email} / ${presentationDemoAccount.password}`);
 } catch (error) {
   console.error("Demo reset failed; the previous data is unchanged.", error instanceof Error ? error.message : error);
   process.exitCode = 1;

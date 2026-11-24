@@ -22,7 +22,6 @@
  * only a database holding nothing but the demo may receive.
  */
 import bcrypt from "bcryptjs";
-import { randomBytes } from "node:crypto";
 import type { PoolClient } from "pg";
 import { PRESENTATION_ID_MAX, PRESENTATION_ID_MIN, presentationDemoAccount } from "./presentationData.js";
 import { companyNow, loadPresentationCompany, type LoadSummary } from "./presentationLoader.js";
@@ -77,17 +76,12 @@ export async function assertDemoDatabase(client: PoolClient): Promise<void> {
 export interface DemoResetOptions {
   /** The moment to rebuild for. Defaults to now. */
   at?: Date;
-  /** Password for the HR administrator, manager and employee sign-ins. A random, unrecorded one when omitted. */
-  staffPassword?: string;
 }
 
 export async function resetDemoDatabase(client: PoolClient, options: DemoResetOptions = {}): Promise<LoadSummary & { durationMs: number }> {
   const started = Date.now();
   const now = companyNow(options.at);
-  const [staffPasswordHash, demoPasswordHash] = await Promise.all([
-    bcrypt.hash(options.staffPassword || randomBytes(24).toString("base64url"), 10),
-    bcrypt.hash(presentationDemoAccount.password, 10),
-  ]);
+  const demoPasswordHash = await bcrypt.hash(presentationDemoAccount.password, 10);
 
   await client.query("BEGIN");
   try {
@@ -110,7 +104,6 @@ export async function resetDemoDatabase(client: PoolClient, options: DemoResetOp
     const summary = await loadPresentationCompany(client, {
       today: now.date,
       nowMinutes: Math.max(now.minutes, DEMO_EARLIEST_AS_OF_MINUTES),
-      staffPasswordHash,
       demoPasswordHash,
     });
 

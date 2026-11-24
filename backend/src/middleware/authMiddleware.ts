@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import type { AuthenticatedUser, UserRole } from "../types/auth.js";
+import { isDemoMode } from "../utils/demoSecret.js";
 import { findSessionUserById } from "../utils/userQueries.js";
 import { isDemoRequestAllowed, refuseDemoWrite, requestPath } from "./demoReadOnly.js";
 
@@ -104,10 +105,13 @@ async function authenticate(
     };
 
     const currentUser = await findSessionUserById(userId);
+    // In the public demo only the demo account has a session at all, so even a
+    // correctly signed token for another account opens nothing.
     if (
       !currentUser ||
       currentUser.role !== claimed.role ||
-      currentUser.employeeId !== claimed.employeeId
+      currentUser.employeeId !== claimed.employeeId ||
+      (isDemoMode() && !currentUser.isDemo)
     ) {
       response.status(401).json({
         success: false,

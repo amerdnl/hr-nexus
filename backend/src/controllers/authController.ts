@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import type { Request, Response } from "express";
 import jwt, { type SignOptions } from "jsonwebtoken";
 import { actorFromUser, recordAudit, systemActor } from "../services/auditService.js";
+import { isDemoMode } from "../utils/demoSecret.js";
 import {
   findSafeUserById,
   findSessionUserById,
@@ -43,8 +44,12 @@ export async function login(
 
   const userRecord = await findUserRecordByEmail(email);
 
+  // In the public demo the read-only demo account is the only sign-in. Every
+  // other account is refused exactly like a wrong password, so the response
+  // does not reveal which other accounts exist.
   if (
     !userRecord ||
+    (isDemoMode() && !userRecord.demo_read_only) ||
     !(await bcrypt.compare(password, userRecord.password_hash))
   ) {
     // The attempted address is recorded; the password never is, not even its

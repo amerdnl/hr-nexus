@@ -1,10 +1,10 @@
--- Cross-module integrity for the presentation environment.
+-- Cross-module integrity for the Meridian demo data.
 --
---   docker exec -i hr-nexus-v2-migration-lab psql -U postgres -d hr_nexus_v3_presentation \
---     -Atq -f - < scripts/presentation-integrity.sql
+--   docker exec -i hr-nexus-demo-postgres psql -U postgres -d hr_nexus_public_demo \
+--     -Atq -f - < scripts/demo-integrity.sql
 --
 -- Read-only. Every row is "check|PASS|detail" or "check|FAIL|detail"; any FAIL means the
--- environment is not fit to present. The checks compare modules against each other rather
+-- demo data is not fit to show. The checks compare modules against each other rather
 -- than against the seed, so a coherent company is proved rather than assumed.
 \set ON_ERROR_STOP on
 WITH

@@ -1,11 +1,12 @@
 /**
  * The public demo, end to end against a real PostgreSQL server.
  *
- * Proves at the API, not in the interface, that the published demo account can
- * open every module and that each kind of change it must not make - settings,
+ * Proves at the API, not in the interface, that the published demo account is
+ * the only account that can sign in, that it can open every module, and that
+ * each kind of change it must not make - settings,
  * policies, its own email and password, users, deletions and every other write -
  * is refused and leaves the database exactly as it was. Also proves the nightly
- * reset: it needs the secret, undoes what other accounts changed, and refuses a
+ * reset: it needs the secret, undoes any change to the data, and refuses a
  * database that is not a demo.
  *
  * SAFETY. Runs only when HR_NEXUS_DEMO_TEST_SERVER_URL names a server, e.g. the
@@ -25,6 +26,7 @@ import { readFile } from "node:fs/promises";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
 import { test } from "node:test";
+import jwt from "jsonwebtoken";
 import pg from "pg";
 
 const serverUrl = process.env.HR_NEXUS_DEMO_TEST_SERVER_URL;
@@ -44,17 +46,19 @@ test("public demo: read-only account and nightly reset", { skip: !serverUrl }, a
     const { runMigrations } = await import("../src/database/migrations.js");
     await runMigrations(db, { mode: "apply", database: name });
 
-    const staffPassword = randomBytes(12).toString("base64url");
     const cronSecret = randomBytes(24).toString("hex");
+    const jwtSecret = randomBytes(32).toString("hex");
     Object.assign(process.env, {
-      DATABASE_URL: url.toString(), JWT_SECRET: randomBytes(32).toString("hex"),
+      DATABASE_URL: url.toString(), JWT_SECRET: jwtSecret,
       DEMO_MODE: "true", CRON_SECRET: cronSecret,
     });
 
     const { resetDemoDatabase } = await import("../src/database/demoReset.js");
-    const { presentationAdmin, presentationDemoAccount } = await import("../src/database/presentationData.js");
+    const {
+      presentationAdmin, presentationDemoAccount, presentationEmployeeAccount, presentationManagerAccount,
+    } = await import("../src/database/presentationData.js");
     const client = await db.connect();
-    try { await resetDemoDatabase(client, { staffPassword }); } finally { client.release(); }
+    try { await resetDemoDatabase(client); } finally { client.release(); }
 
     const { default: app } = await import("../src/app.js");
     appPool = (await import("../src/config/db.js")).default;
@@ -80,7 +84,6 @@ test("public demo: read-only account and nightly reset", { skip: !serverUrl }, a
     };
 
     const demo = await signIn(presentationDemoAccount.email, presentationDemoAccount.password);
-    const staff = await signIn(presentationAdmin.email, staffPassword);
 
     /** Every row of every table, hashed: proves "nothing changed", not just "these tables did not". */
     const fingerprint = async () => {
@@ -99,7 +102,37 @@ test("public demo: read-only account and nightly reset", { skip: !serverUrl }, a
     await t.test("the demo sign-in is an administrator flagged read-only", () => {
       assert.equal(demo.user.role, "admin");
       assert.equal(demo.user.isDemo, true);
-      assert.equal(staff.user.isDemo, false);
+    });
+
+    await t.test("no other account can sign in or hold a session", async () => {
+      const others = [presentationAdmin, presentationManagerAccount, presentationEmployeeAccount];
+      const accounts = await db.query<{ email: string; password_hash: string; demo_read_only: boolean }>(
+        "SELECT email, password_hash, demo_read_only FROM public.users ORDER BY id",
+      );
+      assert.deepEqual(
+        accounts.rows.filter((row) => row.demo_read_only).map((row) => row.email),
+        [presentationDemoAccount.email],
+        "the demo account is the only read-only account",
+      );
+      for (const row of accounts.rows.filter((account) => !account.demo_read_only)) {
+        assert.equal(row.password_hash, "!no-sign-in", `${row.email} has no usable password`);
+      }
+      for (const account of others) {
+        for (const password of [presentationDemoAccount.password, "!no-sign-in", "", "password"]) {
+          const result = await call("POST", "/auth/login", undefined, { email: account.email, password });
+          assert.ok([400, 401].includes(result.status), `${account.email} cannot sign in (${result.status})`);
+        }
+      }
+      // Even with a real password hash, demo mode refuses any account but the demo one.
+      const bcrypt = (await import("bcryptjs")).default;
+      await db.query("UPDATE public.users SET password_hash = $1 WHERE id = $2", [await bcrypt.hash("known-password", 4), presentationAdmin.id]);
+      const known = await call("POST", "/auth/login", undefined, { email: presentationAdmin.email, password: "known-password" });
+      assert.equal(known.status, 401, "a non-demo account is refused like a wrong password");
+      assert.equal(known.body.message, "Invalid email or password");
+      // And a correctly signed token for another account opens nothing.
+      const forged = jwt.sign({ role: "admin", employeeId: null }, jwtSecret, { subject: String(presentationAdmin.id), expiresIn: "5m" });
+      assert.equal((await call("GET", "/people", forged)).status, 401);
+      assert.equal((await call("POST", "/departments", forged, { name: "Visitors" })).status, 401);
     });
 
     await t.test("the demo account can open every module", async () => {
@@ -180,18 +213,16 @@ test("public demo: read-only account and nightly reset", { skip: !serverUrl }, a
       assert.equal((await call("POST", "/auth/logout", demo.token)).status, 200);
     });
 
-    await t.test("the same writes still work for an ordinary administrator", async () => {
-      const created = await call("POST", "/departments", staff.token, { name: "Visitors' Lounge", description: "Made by staff" });
-      assert.equal(created.status, 201, created.body.message ?? "");
-    });
-
     await t.test("the reset needs the secret, then restores the demo", async () => {
+      await db.query("INSERT INTO public.departments (name, description) VALUES ('Visitors'' Lounge', 'Changed behind the API')");
       assert.equal((await call("GET", "/demo/reset")).status, 401);
       assert.equal((await fetch(`${base}/demo/reset`, { headers: { Authorization: "Bearer not-the-secret-not-the-secret" } })).status, 401);
       const reset = await fetch(`${base}/demo/reset`, { headers: { Authorization: `Bearer ${cronSecret}` } });
       assert.equal(reset.status, 200);
       const gone = await db.query("SELECT count(*)::int AS n FROM public.departments WHERE name = 'Visitors'' Lounge'");
-      assert.equal(gone.rows[0].n, 0, "the staff change is undone");
+      assert.equal(gone.rows[0].n, 0, "the change is undone");
+      const hash = await db.query<{ password_hash: string }>("SELECT password_hash FROM public.users WHERE id = $1", [presentationAdmin.id]);
+      assert.equal(hash.rows[0]!.password_hash, "!no-sign-in", "the reset takes away the password set above");
       const unread = await db.query("SELECT count(*)::int AS n FROM public.notifications WHERE user_id = $1 AND read_at IS NULL", [presentationDemoAccount.id]);
       assert.ok(unread.rows[0].n > 0, "the demo account has fresh unread news again");
       await signIn(presentationDemoAccount.email, presentationDemoAccount.password);

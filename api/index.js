@@ -25498,7 +25498,7 @@ var require_utils5 = __commonJS({
     var nodeCrypto2 = require("crypto");
     module2.exports = {
       postgresMd5PasswordHash,
-      randomBytes: randomBytes5,
+      randomBytes: randomBytes4,
       deriveKey,
       sha256,
       hashByName,
@@ -25508,7 +25508,7 @@ var require_utils5 = __commonJS({
     var webCrypto = nodeCrypto2.webcrypto || globalThis.crypto;
     var subtleCrypto = webCrypto.subtle;
     var textEncoder = new TextEncoder();
-    function randomBytes5(length) {
+    function randomBytes4(length) {
       return webCrypto.getRandomValues(Buffer.alloc(length));
     }
     async function md52(string) {
@@ -113749,6 +113749,18 @@ async function listAudit(query, db = db_default) {
   return { rows: rows.rows, total: Number(totals.rows[0]?.count ?? 0) };
 }
 
+// src/utils/demoSecret.ts
+var import_node_crypto = require("node:crypto");
+var isDemoMode = () => process.env.DEMO_MODE === "true";
+function hasResetSecret(request, secret = process.env.CRON_SECRET) {
+  if (!secret || secret.length < 16) return false;
+  const header = request.headers.authorization ?? "";
+  if (!header.startsWith("Bearer ")) return false;
+  const given = Buffer.from(header.slice("Bearer ".length));
+  const wanted = Buffer.from(secret);
+  return given.length === wanted.length && (0, import_node_crypto.timingSafeEqual)(given, wanted);
+}
+
 // src/utils/userQueries.ts
 var isManagerExpression = `(
   u.employee_id IS NOT NULL AND EXISTS (
@@ -113844,7 +113856,7 @@ function toSafeUser(row) {
 }
 async function findUserRecordByEmail(email) {
   const result = await db_default.query(
-    `SELECT id, employee_id, email, password_hash, role, is_active, must_change_password
+    `SELECT id, employee_id, email, password_hash, role, is_active, must_change_password, demo_read_only
      FROM users
      WHERE lower(btrim(email)) = lower(btrim($1))
      LIMIT 1`,
@@ -113893,7 +113905,7 @@ async function login(request, response) {
     return;
   }
   const userRecord = await findUserRecordByEmail(email);
-  if (!userRecord || !await bcryptjs_default.compare(password, userRecord.password_hash)) {
+  if (!userRecord || isDemoMode() && !userRecord.demo_read_only || !await bcryptjs_default.compare(password, userRecord.password_hash)) {
     await recordAudit({
       actor: { ...systemActor, label: email, userId: null },
       action: "LOGIN_FAILED",
@@ -114067,7 +114079,7 @@ async function authenticate(request, response, next, allowPasswordChange) {
       role: decoded.role
     };
     const currentUser = await findSessionUserById(userId);
-    if (!currentUser || currentUser.role !== claimed.role || currentUser.employeeId !== claimed.employeeId) {
+    if (!currentUser || currentUser.role !== claimed.role || currentUser.employeeId !== claimed.employeeId || isDemoMode() && !currentUser.isDemo) {
       response.status(401).json({
         success: false,
         message: "Your session is no longer valid. Please sign in again."
@@ -114130,7 +114142,7 @@ var import_promises2 = require("node:fs/promises");
 var import_node_path2 = __toESM(require("node:path"), 1);
 
 // src/middleware/profileImageUpload.ts
-var import_node_crypto = require("node:crypto");
+var import_node_crypto2 = require("node:crypto");
 var import_node_fs = require("node:fs");
 var import_promises = require("node:fs/promises");
 var import_node_path = __toESM(require("node:path"), 1);
@@ -114160,7 +114172,7 @@ var upload = (0, import_multer.default)({
     // second unguarded mkdir on the boot path and defeats the handling above.
     destination: (_request, _file, callback) => callback(null, profileImagesDirectory),
     filename: (_request, file, callback) => {
-      callback(null, `${(0, import_node_crypto.randomUUID)()}${extensionsByMimeType[file.mimetype]}`);
+      callback(null, `${(0, import_node_crypto2.randomUUID)()}${extensionsByMimeType[file.mimetype]}`);
     }
   }),
   limits: { fileSize: 2 * 1024 * 1024, files: 1 },
@@ -118536,7 +118548,7 @@ var companySettingsRoutes_default = router8;
 var import_express9 = __toESM(require_express2(), 1);
 
 // src/services/importService.ts
-var import_node_crypto2 = require("node:crypto");
+var import_node_crypto3 = require("node:crypto");
 
 // src/utils/importMapping.ts
 var importFields = [
@@ -119625,7 +119637,7 @@ async function writeSummary(client, jobId, summary, status) {
   );
 }
 function generatePassword() {
-  return (0, import_node_crypto2.randomBytes)(16).toString("base64url");
+  return (0, import_node_crypto3.randomBytes)(16).toString("base64url");
 }
 var updatableColumns2 = [
   "full_name",
@@ -128640,9 +128652,6 @@ var analyticsRoutes_default = router19;
 // src/routes/demoRoutes.ts
 var import_express24 = __toESM(require_express2(), 1);
 
-// src/database/demoReset.ts
-var import_node_crypto3 = require("node:crypto");
-
 // src/database/presentationData.ts
 var PRESENTATION_ID_MIN = 9200;
 var PRESENTATION_ID_MAX = 9299;
@@ -128722,6 +128731,7 @@ var presentationAdmin = {
 var presentationManagerAccount = { id: 9203, email: `sarah@${PRESENTATION_EMAIL_DOMAIN}` };
 var presentationEmployeeAccount = { id: 9205, email: `ben@${PRESENTATION_EMAIL_DOMAIN}` };
 var presentationEmployeeAccounts = [presentationManagerAccount, presentationEmployeeAccount];
+var NO_SIGN_IN_HASH = "!no-sign-in";
 var presentationDemoAccount = {
   id: 9290,
   email: `demo@${PRESENTATION_EMAIL_DOMAIN}`,
@@ -129289,7 +129299,7 @@ async function addStatutoryLines(client, periodId) {
   }
 }
 async function loadPresentationCompany(client, options) {
-  const { today, nowMinutes, staffPasswordHash, demoPasswordHash } = options;
+  const { today, nowMinutes, demoPasswordHash } = options;
   const ledger = await client.query("SELECT version FROM public.schema_migrations ORDER BY version");
   const versions = ledger.rows.map((row) => row.version);
   if (!versions.includes("0023")) {
@@ -129333,31 +129343,6 @@ async function loadPresentationCompany(client, options) {
       presentationCompany.radiusMeters
     ]
   );
-  await client.query(
-    `DELETE FROM public.payroll_items WHERE record_id IN (
-       SELECT id FROM public.payroll_records WHERE employee_id BETWEEN $1 AND $2)`,
-    [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]
-  );
-  await client.query("DELETE FROM public.payroll_records WHERE employee_id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
-  for (const { year: periodYear, month } of months) {
-    await client.query("DELETE FROM public.payroll_periods WHERE period_year = $1 AND period_month = $2", [periodYear, month]);
-  }
-  for (const table of ["employee_compensation", "leave_entitlements", "leave_requests", "attendance", "employee_profiles"]) {
-    await client.query(`DELETE FROM public.${table} WHERE employee_id BETWEEN $1 AND $2`, [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
-  }
-  await client.query(
-    `DELETE FROM public.lifecycle_tasks WHERE plan_id IN (
-       SELECT id FROM public.lifecycle_plans WHERE employee_id BETWEEN $1 AND $2)`,
-    [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]
-  );
-  await client.query("DELETE FROM public.lifecycle_plans WHERE employee_id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
-  for (const table of ["lifecycle_templates", "announcements", "company_events", "company_holidays"]) {
-    await client.query(`DELETE FROM public.${table} WHERE created_by = $1`, [presentationAdmin.id]);
-  }
-  await client.query("UPDATE public.employees SET manager_id = NULL WHERE id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
-  await client.query("DELETE FROM public.users WHERE id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
-  await client.query("DELETE FROM public.users WHERE employee_id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
-  await client.query("DELETE FROM public.employees WHERE id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
   for (const department of presentationDepartments) {
     await client.query(
       `INSERT INTO public.departments (name, description) VALUES ($1, $2)
@@ -129428,13 +129413,13 @@ async function loadPresentationCompany(client, options) {
   await client.query(
     `INSERT INTO public.users (id, employee_id, email, password_hash, role, is_active, must_change_password)
      VALUES ($1, NULL, $2, $3, 'admin', TRUE, FALSE)`,
-    [presentationAdmin.id, presentationAdmin.email, staffPasswordHash]
+    [presentationAdmin.id, presentationAdmin.email, NO_SIGN_IN_HASH]
   );
   for (const account of presentationEmployeeAccounts) {
     await client.query(
       `INSERT INTO public.users (id, employee_id, email, password_hash, role, is_active, must_change_password)
        VALUES ($1, $1, $2, $3, 'employee', TRUE, FALSE)`,
-      [account.id, account.email, staffPasswordHash]
+      [account.id, account.email, NO_SIGN_IN_HASH]
     );
   }
   await client.query(
@@ -130149,12 +130134,7 @@ async function loadPresentationCompany(client, options) {
     notifications: notifications.length,
     auditEvents,
     preparedDashboardFor: presentationManagerAccount.email,
-    accounts: {
-      demo: presentationDemoAccount.email,
-      admin: presentationAdmin.email,
-      manager: presentationManagerAccount.email,
-      employee: presentationEmployeeAccount.email
-    }
+    signIn: presentationDemoAccount.email
   };
 }
 
@@ -130202,10 +130182,7 @@ async function assertDemoDatabase(client) {
 async function resetDemoDatabase(client, options = {}) {
   const started = Date.now();
   const now = companyNow(options.at);
-  const [staffPasswordHash, demoPasswordHash] = await Promise.all([
-    bcryptjs_default.hash(options.staffPassword || (0, import_node_crypto3.randomBytes)(24).toString("base64url"), 10),
-    bcryptjs_default.hash(presentationDemoAccount.password, 10)
-  ]);
+  const demoPasswordHash = await bcryptjs_default.hash(presentationDemoAccount.password, 10);
   await client.query("BEGIN");
   try {
     const lock = await client.query(
@@ -130225,7 +130202,6 @@ async function resetDemoDatabase(client, options = {}) {
     const summary = await loadPresentationCompany(client, {
       today: now.date,
       nowMinutes: Math.max(now.minutes, DEMO_EARLIEST_AS_OF_MINUTES),
-      staffPasswordHash,
       demoPasswordHash
     });
     await assertDemoDatabase(client);
@@ -130235,18 +130211,6 @@ async function resetDemoDatabase(client, options = {}) {
     await client.query("ROLLBACK").catch(() => void 0);
     throw error;
   }
-}
-
-// src/utils/demoSecret.ts
-var import_node_crypto4 = require("node:crypto");
-var isDemoMode = () => process.env.DEMO_MODE === "true";
-function hasResetSecret(request, secret = process.env.CRON_SECRET) {
-  if (!secret || secret.length < 16) return false;
-  const header = request.headers.authorization ?? "";
-  if (!header.startsWith("Bearer ")) return false;
-  const given = Buffer.from(header.slice("Bearer ".length));
-  const wanted = Buffer.from(secret);
-  return given.length === wanted.length && (0, import_node_crypto4.timingSafeEqual)(given, wanted);
 }
 
 // src/routes/demoRoutes.ts
@@ -130526,7 +130490,7 @@ async function getAttendanceStatistics(attendanceDate) {
 }
 
 // src/services/attendanceQrService.ts
-var import_node_crypto5 = require("node:crypto");
+var import_node_crypto4 = require("node:crypto");
 
 // node_modules/qrcode-generator/dist/qrcode.mjs
 var qrcode = function(typeNumber, errorCorrectionLevel) {
@@ -132164,7 +132128,7 @@ var stringToBytes2 = qrcode.stringToBytes;
 
 // src/services/attendanceQrService.ts
 var QR_PREFIX = "HRNEXUS1:";
-var hashToken = (token) => (0, import_node_crypto5.createHash)("sha256").update(token).digest("hex");
+var hashToken = (token) => (0, import_node_crypto4.createHash)("sha256").update(token).digest("hex");
 function normalizeToken(raw) {
   const trimmed = raw.trim();
   const withoutPrefix = trimmed.startsWith(QR_PREFIX) ? trimmed.slice(QR_PREFIX.length) : trimmed;
@@ -132172,7 +132136,7 @@ function normalizeToken(raw) {
 }
 async function issueChallenge(client, issuedByUserId, ttlSeconds = QR_TTL_SECONDS) {
   const ttl = Math.min(Math.max(Math.trunc(ttlSeconds), QR_TTL_MIN_SECONDS), QR_TTL_MAX_SECONDS);
-  const token = (0, import_node_crypto5.randomBytes)(16).toString("base64url");
+  const token = (0, import_node_crypto4.randomBytes)(16).toString("base64url");
   const payload = `${QR_PREFIX}${token}`;
   const inserted = await client.query(
     `INSERT INTO public.attendance_qr_challenges (token_hash, expires_at, issued_by)

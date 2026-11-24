@@ -95,11 +95,14 @@ function LauncherContent({
   featured,
   pathname,
   inputRef,
+  onClose,
 }: {
   sections: NavigationSection[];
   featured: NavigationItem[];
   pathname: string;
   inputRef: React.RefObject<HTMLInputElement | null>;
+  /** Closes the launcher: a visible way out, so Escape is never the only one. */
+  onClose: () => void;
 }) {
   const [query, setQuery] = useState("");
   const [showAll, setShowAll] = useState(false);
@@ -122,6 +125,14 @@ function LauncherContent({
 
   return (
     <div>
+      <button
+        type="button"
+        onClick={onClose}
+        className="-ml-2 mb-2 inline-flex min-h-10 items-center gap-2 rounded-lg px-2 text-sm font-medium text-fg-muted transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      >
+        <ArrowLeft size={16} aria-hidden="true" />
+        Back
+      </button>
       <label className="relative block">
         <span className="sr-only">Search pages</span>
         <Search size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-fg-subtle" aria-hidden="true" />
@@ -286,7 +297,16 @@ export default function AppLauncher() {
           }}
           className="absolute right-(--gutter) top-[calc(100%-0.5rem)] z-50 w-[22rem] rounded-[1.25rem] border border-line bg-elevated p-4 shadow-panel"
         >
-          <LauncherContent sections={sections} featured={featured} pathname={pathname} inputRef={inputRef} />
+          <LauncherContent
+            sections={sections}
+            featured={featured}
+            pathname={pathname}
+            inputRef={inputRef}
+            onClose={() => {
+              setIsOpen(false);
+              triggerRef.current?.focus();
+            }}
+          />
         </div>
       )}
 
@@ -297,7 +317,13 @@ export default function AppLauncher() {
           title="Apps"
           description={user.role === "admin" ? "Every area of HR Nexus you can open." : "Everything you can open."}
         >
-          <LauncherContent sections={sections} featured={featured} pathname={pathname} inputRef={inputRef} />
+          <LauncherContent
+            sections={sections}
+            featured={featured}
+            pathname={pathname}
+            inputRef={inputRef}
+            onClose={() => setIsOpen(false)}
+          />
         </Sheet>
       )}
     </div>

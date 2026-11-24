@@ -1,39 +1,60 @@
+# HR Nexus, run locally: the Meridian mock company with its one read-only sign-in.
+#
+#   cp .env.example .env     # then fill in the three secrets
+#   docker compose up -d --build
+#
+# Open http://localhost:5175 and choose "Use demo account"
+# (demo@meridian.example / meridian-demo). It is the only account that can sign in.
+#
+# Every `up` rebuilds the demo for today (the demo-setup service). To rebuild
+# it again later without restarting anything:
+#   docker compose run --rm demo-setup
+#
+# `docker compose down -v` throws the whole local demo away.
+#
+# Ports:
+#   frontend  http://localhost:5175
+#   API       http://localhost:5003/api
+#   Postgres  127.0.0.1:5436
+name: hr-nexus-demo
+
 services:
   postgres:
     image: postgres:17-alpine
-    container_name: hr-nexus-postgres
+    container_name: hr-nexus-demo-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: hr_nexus_v3_presentation
+      POSTGRES_DB: hr_nexus_public_demo
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
     ports:
-      - "5433:5432"
+      - "127.0.0.1:5436:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - demo_postgres_data:/var/lib/postgresql/data
       - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d hr_nexus_v3_presentation"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hr_nexus_public_demo"]
       interval: 5s
       timeout: 5s
       retries: 10
 
-  presentation-setup:
+  # Migrates, then rebuilds Meridian for today. The reset refuses any
+  # database holding people outside the demo's reserved range.
+  demo-setup:
     build:
       context: ./backend
-    container_name: hr-nexus-presentation-setup
+    container_name: hr-nexus-demo-setup
     environment:
-      MIGRATION_DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/hr_nexus_v3_presentation
-      PRESENTATION_DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/hr_nexus_v3_presentation
-      PRESENTATION_PASSWORD: ${PRESENTATION_PASSWORD}
+      MIGRATION_DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/hr_nexus_public_demo
+      DEMO_DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/hr_nexus_public_demo
     command:
       - /bin/sh
       - -c
       - >
         npx tsx src/database/migrate.ts apply
-        --database hr_nexus_v3_presentation &&
-        npx tsx src/database/seedPresentation.ts
-        --database hr_nexus_v3_presentation --skip-if-loaded
+        --database hr_nexus_public_demo &&
+        npx tsx src/database/resetDemo.ts
+        --database hr_nexus_public_demo
     depends_on:
       postgres:
         condition: service_healthy
@@ -42,34 +63,36 @@ services:
   backend:
     build:
       context: ./backend
-    container_name: hr-nexus-backend
+    container_name: hr-nexus-demo-backend
     restart: unless-stopped
     environment:
       PORT: 5000
-      FRONTEND_URL: http://localhost:5173
-      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/hr_nexus_v3_presentation
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+      FRONTEND_URL: http://localhost:5175
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/hr_nexus_public_demo
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-8h}
+      DEMO_MODE: "true"
+      CRON_SECRET: ${CRON_SECRET:?set CRON_SECRET in .env}
     ports:
-      - "5001:5000"
+      - "127.0.0.1:5003:5000"
     volumes:
       - ./backend:/app
       - /app/node_modules
     depends_on:
       postgres:
         condition: service_healthy
-      presentation-setup:
+      demo-setup:
         condition: service_completed_successfully
 
   frontend:
     build:
       context: ./frontend
-    container_name: hr-nexus-frontend
+    container_name: hr-nexus-demo-frontend
     restart: unless-stopped
     environment:
-      VITE_API_BASE_URL: http://localhost:5001/api
+      VITE_API_BASE_URL: http://localhost:5003/api
     ports:
-      - "5173:5173"
+      - "127.0.0.1:5175:5173"
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -77,4 +100,4 @@ services:
       - backend
 
 volumes:
-  postgres_data:
+  demo_postgres_data:

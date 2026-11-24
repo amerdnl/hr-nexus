@@ -2,11 +2,10 @@
  * Writes the Meridian company into a database, inside a transaction the
  * caller owns.
  *
- * Two callers use it: `seedPresentation.ts`, which loads a local presentation
- * environment from the command line, and `demoReset.ts`, which rebuilds the
- * public demo every night. Neither the loader nor anything it imports touches
- * the application's connection pool, so it can only ever write through the
- * client it is handed.
+ * Its one caller is `demoReset.ts`, which empties every table first and
+ * rebuilds the demo (every night on the hosted demo, on every `up` locally).
+ * Neither the loader nor anything it imports touches the application's
+ * connection pool, so it can only ever write through the client it is handed.
  *
  * TIME. The company's own today, in Asia/Kuala_Lumpur, decides what "now"
  * means: attendance today, who is away, what is overdue, which payroll months
@@ -21,6 +20,7 @@ import {
   PRESENTATION_ID_MAX,
   PRESENTATION_ID_MIN,
   formatMonth,
+  NO_SIGN_IN_HASH,
   presentationAdmin,
   presentationAnnouncements,
   presentationCompany,
@@ -148,8 +148,6 @@ export interface LoadOptions {
   today: string;
   /** Minutes after midnight that today's attendance is drawn as of. */
   nowMinutes: number;
-  /** bcrypt hash for the HR administrator, manager and employee sign-ins. */
-  staffPasswordHash: string;
   /** bcrypt hash for the read-only public demo sign-in. */
   demoPasswordHash: string;
 }
@@ -178,11 +176,12 @@ export interface LoadSummary {
   notifications: number;
   auditEvents: number;
   preparedDashboardFor: string | null;
-  accounts: { demo: string; admin: string; manager: string; employee: string };
+  /** The one account that can sign in. */
+  signIn: string;
 }
 
 export async function loadPresentationCompany(client: PoolClient, options: LoadOptions): Promise<LoadSummary> {
-  const { today, nowMinutes, staffPasswordHash, demoPasswordHash } = options;
+  const { today, nowMinutes, demoPasswordHash } = options;
   const ledger = await client.query<{ version: string }>("SELECT version FROM public.schema_migrations ORDER BY version");
   const versions = ledger.rows.map((row) => row.version);
   if (!versions.includes("0023")) {
@@ -228,35 +227,6 @@ export async function loadPresentationCompany(client: PoolClient, options: LoadO
       presentationCompany.officeLatitude, presentationCompany.officeLongitude, presentationCompany.radiusMeters,
     ],
   );
-
-  // ---------------------------------------------------- clear previous run
-  // Only rows owned by the reserved range. A full rebuild (the demo reset, or
-  // presentation-reset.sh) starts from empty tables and finds nothing here.
-  await client.query(
-    `DELETE FROM public.payroll_items WHERE record_id IN (
-       SELECT id FROM public.payroll_records WHERE employee_id BETWEEN $1 AND $2)`,
-    [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX],
-  );
-  await client.query("DELETE FROM public.payroll_records WHERE employee_id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
-  for (const { year: periodYear, month } of months) {
-    await client.query("DELETE FROM public.payroll_periods WHERE period_year = $1 AND period_month = $2", [periodYear, month]);
-  }
-  for (const table of ["employee_compensation", "leave_entitlements", "leave_requests", "attendance", "employee_profiles"]) {
-    await client.query(`DELETE FROM public.${table} WHERE employee_id BETWEEN $1 AND $2`, [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
-  }
-  await client.query(
-    `DELETE FROM public.lifecycle_tasks WHERE plan_id IN (
-       SELECT id FROM public.lifecycle_plans WHERE employee_id BETWEEN $1 AND $2)`,
-    [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX],
-  );
-  await client.query("DELETE FROM public.lifecycle_plans WHERE employee_id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
-  for (const table of ["lifecycle_templates", "announcements", "company_events", "company_holidays"]) {
-    await client.query(`DELETE FROM public.${table} WHERE created_by = $1`, [presentationAdmin.id]);
-  }
-  await client.query("UPDATE public.employees SET manager_id = NULL WHERE id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
-  await client.query("DELETE FROM public.users WHERE id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
-  await client.query("DELETE FROM public.users WHERE employee_id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
-  await client.query("DELETE FROM public.employees WHERE id BETWEEN $1 AND $2", [PRESENTATION_ID_MIN, PRESENTATION_ID_MAX]);
 
   // ----------------------------------------------------------- departments
   for (const department of presentationDepartments) {
@@ -320,19 +290,20 @@ export async function loadPresentationCompany(client: PoolClient, options: LoadO
   }
 
   // ------------------------------------------------------------- accounts
-  // One HR administrator, one manager and one employee, plus the public demo
-  // sign-in. Everyone else is a personnel record without a sign-in, as in a
-  // real company.
+  // One HR administrator, one manager and one employee, so the data has people
+  // who approved, ran and wrote things; none of them can sign in (NO_SIGN_IN_HASH).
+  // The public demo account is the only sign-in. Everyone else is a personnel
+  // record without an account, as in a real company.
   await client.query(
     `INSERT INTO public.users (id, employee_id, email, password_hash, role, is_active, must_change_password)
      VALUES ($1, NULL, $2, $3, 'admin', TRUE, FALSE)`,
-    [presentationAdmin.id, presentationAdmin.email, staffPasswordHash],
+    [presentationAdmin.id, presentationAdmin.email, NO_SIGN_IN_HASH],
   );
   for (const account of presentationEmployeeAccounts) {
     await client.query(
       `INSERT INTO public.users (id, employee_id, email, password_hash, role, is_active, must_change_password)
        VALUES ($1, $1, $2, $3, 'employee', TRUE, FALSE)`,
-      [account.id, account.email, staffPasswordHash],
+      [account.id, account.email, NO_SIGN_IN_HASH],
     );
   }
   // An administrator who can see everything and change nothing: the API
@@ -942,11 +913,6 @@ export async function loadPresentationCompany(client: PoolClient, options: LoadO
     notifications: notifications.length,
     auditEvents,
     preparedDashboardFor: presentationManagerAccount.email,
-    accounts: {
-      demo: presentationDemoAccount.email,
-      admin: presentationAdmin.email,
-      manager: presentationManagerAccount.email,
-      employee: presentationEmployeeAccount.email,
-    },
+    signIn: presentationDemoAccount.email,
   };
 }
