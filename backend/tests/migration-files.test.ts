@@ -51,7 +51,7 @@ test("comment-only revisions changed no executable SQL", async () => {
   for (const [version, revision] of Object.entries(COMMENT_ONLY_REVISIONS)) {
     const migration = migrations.find((entry) => entry.version === version);
     assert.ok(migration, `migration ${version} exists`);
-    assert.notEqual(migration.checksum, revision.previousChecksum, `${version} was actually revised`);
+    assert.ok(!revision.previousChecksums.includes(migration.checksum), `${version} was actually revised`);
     assert.equal(
       createHash("sha256").update(executableSql(migration.sql)).digest("hex"),
       revision.executableSha256,

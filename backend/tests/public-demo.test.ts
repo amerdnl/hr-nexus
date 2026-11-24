@@ -25,7 +25,45 @@ import {
   presentationVacancies,
   reviewQuarters,
 } from "../src/database/presentationData.js";
+import * as dataset from "../src/database/presentationData.js";
 import { payrollMonths, presentationCalendar } from "../src/database/presentationLoader.js";
+
+/**
+ * Ids 9300-9399 once held another organisation's chart. The reset only ever
+ * writes what presentationData.ts describes, and refuses (then rolls back) any
+ * database holding rows outside 9200-9299, so it can never write such a row.
+ * This proves the first half: nothing it can write carries an identifier
+ * outside the demo's own range, on any day it is rebuilt. The integration test
+ * proves the second.
+ */
+test("the demo dataset only ever uses identifiers in 9200-9299", () => {
+  const ids: Array<[string, number]> = [];
+  const collect = (value: unknown, path: string) => {
+    if (Array.isArray(value)) value.forEach((item, index) => collect(item, `${path}[${index}]`));
+    else if (value && typeof value === "object") {
+      for (const [key, child] of Object.entries(value)) {
+        if (typeof child === "number" && /(^id$|Id$|^owner$|^employee$|^manager$)/.test(key)) ids.push([`${path}.${key}`, child]);
+        else collect(child, `${path}.${key}`);
+      }
+    }
+  };
+  for (const day of ["2026-01-05", "2026-06-30", "2026-11-24", "2027-02-28"]) {
+    const cal = presentationCalendar(day);
+    for (const [name, value] of Object.entries(dataset)) {
+      if (typeof value === "function") {
+        let produced: unknown;
+        try { produced = (value as (calendar: unknown) => unknown)(cal); } catch { continue; }
+        collect(produced, `${name}(${day})`);
+      } else {
+        collect(value, name);
+      }
+    }
+  }
+  assert.ok(ids.length > 100, `found ${ids.length} identifiers to check`);
+  for (const [where, id] of ids) {
+    assert.ok(id >= PRESENTATION_ID_MIN && id <= PRESENTATION_ID_MAX, `${where} = ${id} is outside the demo range`);
+  }
+});
 
 test("a demo account may read anything", () => {
   for (const method of ["GET", "HEAD", "OPTIONS", "get"]) {

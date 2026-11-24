@@ -7,11 +7,10 @@
 -- rows are not involved. The runner owns the transaction and sets lock_timeout=5s
 -- / statement_timeout=60s.
 --
--- WHY THIS EXISTS. An org chart taken from a customer's own chart is mostly
--- positions, not people: "Senior Engineer (open)" is a seat, and "External
--- Legal - Example Law" is a firm on retainer. Until now every employees row read as
--- a real, employed person, so loading such a chart would have made the product
--- assert twenty-odd colleagues who do not exist. The column lets the row carry
+-- WHY THIS EXISTS. An org chart often shows positions as well as people: an
+-- open "Senior Engineer" seat is a seat, and an outside law firm is a firm on
+-- retainer. Until now every employees row read as a real, employed person, so
+-- such a chart would have made the product assert colleagues who do not exist. The column lets the row carry
 -- what it actually is, and lets the interface say so, instead of leaving the
 -- distinction in a document nobody reads next to the chart.
 --

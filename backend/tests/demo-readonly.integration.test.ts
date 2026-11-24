@@ -230,6 +230,21 @@ test("public demo: read-only account and nightly reset", { skip: !serverUrl }, a
       assert.equal(info.body.data.email, presentationDemoAccount.email);
     });
 
+    await t.test("the reset refuses a database holding ids 9300-9399, and writes none itself", async () => {
+      const own = await db.query("SELECT count(*)::int AS n FROM public.employees WHERE id NOT BETWEEN 9200 AND 9299");
+      assert.equal(own.rows[0].n, 0, "the reset wrote nothing outside the demo range");
+      await db.query(
+        "INSERT INTO public.employees (id, employee_number, full_name, employment_status) VALUES (9300, 'OLD-1', 'An old position', 'active')",
+      );
+      const client = await db.connect();
+      try {
+        await assert.rejects(resetDemoDatabase(client), { code: "NOT_A_DEMO_DATABASE" });
+      } finally { client.release(); }
+      const kept = await db.query("SELECT count(*)::int AS n FROM public.employees");
+      assert.ok(kept.rows[0].n > 1, "nothing was truncated");
+      await db.query("DELETE FROM public.employees WHERE id = 9300");
+    });
+
     await t.test("the reset refuses a database that holds anyone outside the demo", async () => {
       await db.query(
         "INSERT INTO public.employees (id, employee_number, full_name, employment_status) VALUES (1, 'REAL-1', 'A real person', 'active')",

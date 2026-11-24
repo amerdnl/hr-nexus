@@ -145,26 +145,39 @@ export function executableSql(sql: string): string {
 }
 
 /**
- * Checksums a migration file held before a comment-only edit.
+ * Checksums a migration file held before comment-only edits.
  *
  * An applied migration is never changed. Its comments, though, are notes for
- * reviewers, and a note that named a client had to go. Each entry records the
- * file's previous byte checksum, so a database migrated before the edit still
- * verifies, and the hash of its executable SQL, which
- * `migration-files.test.ts` recomputes from the current file to prove the edit
- * touched nothing the server runs.
+ * reviewers, and notes that described one specific organisation's chart had to
+ * go. Each entry lists every earlier byte checksum of the file, so a database
+ * migrated before any of the edits still verifies, and the hash of its
+ * executable SQL, which `migration-files.test.ts` recomputes from the current
+ * file to prove the edits touched nothing the server runs.
  */
-export const COMMENT_ONLY_REVISIONS: Record<string, { previousChecksum: string; executableSha256: string }> = {
+export const COMMENT_ONLY_REVISIONS: Record<string, { previousChecksums: string[]; executableSha256: string }> = {
+  "0018": {
+    previousChecksums: ["8c1d7a276838603380f3a2e449d0612ce98276a61d4f00abf2762f844175ac87"],
+    executableSha256: "2077d0f683d47fc6b9ad50836f1725a35055ead321a6ecab0f223a5b31987a9a",
+  },
   "0020": {
-    previousChecksum: "5747c896fb77207f0da948aa9200f612998e5590a558fc7013ef08d586c54f2c",
+    previousChecksums: [
+      "5747c896fb77207f0da948aa9200f612998e5590a558fc7013ef08d586c54f2c",
+      "16859ea9405b261c952cc3b21b2571639fc25129a41842856204d2c23544469a",
+    ],
     executableSha256: "b52794c23494d4d7e1306cab2bab1b6c5c8af6a8456c7edf12fa403bbd48a463",
   },
   "0021": {
-    previousChecksum: "e1252eaca6b48c05a300bfe70e1d4fbb7269653da8adcf4d2d01de5fccded1a5",
+    previousChecksums: [
+      "e1252eaca6b48c05a300bfe70e1d4fbb7269653da8adcf4d2d01de5fccded1a5",
+      "52329e1d031ca995bf838e0eac42cf61a301e6a35cee2923f4ba735d19d380a3",
+    ],
     executableSha256: "f8bc01113185daf036b8173d4e4233969da80ef603164f257d068c05530e35af",
   },
   "0022": {
-    previousChecksum: "007d709fdbea50f9ab02dae2c57adb050303810f077189cdc4e0e220c4313b49",
+    previousChecksums: [
+      "007d709fdbea50f9ab02dae2c57adb050303810f077189cdc4e0e220c4313b49",
+      "4feb747fd281109304bf240f2e76d396a83fa1566e5732095cbb2aaacdbd3963",
+    ],
     executableSha256: "3753d6151a2f6c6dc7993f5bf51ed77e805e5d4d5f1dad083870b8d8203d5243",
   },
 };
@@ -208,7 +221,7 @@ function verifyHistory(migrations: Migration[], applied: AppliedMigration[]): vo
     const file = migrations[index];
     const checksumMatches = file !== undefined && (
       file.checksum === row.checksum ||
-      COMMENT_ONLY_REVISIONS[file.version]?.previousChecksum === row.checksum
+      COMMENT_ONLY_REVISIONS[file.version]?.previousChecksums.includes(row.checksum) === true
     );
     if (!file || file.version !== row.version || file.filename !== row.filename || !checksumMatches) {
       throw new MigrationError(`Applied migration ${row.version} is missing, reordered, renamed or has a checksum mismatch`, "HISTORY_MISMATCH");

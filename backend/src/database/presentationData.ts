@@ -76,7 +76,7 @@ export interface PresentationEmployee {
 /**
  * Thirty-four people across seven departments and four levels: the managing
  * director, six department heads, five managers and team leads, and the
- * individual contributors who do the work. Salaries vary by level and by
+ * people who do the hands-on work. Salaries vary by level and by
  * person, as they do in a real company.
  */
 export const presentationEmployees: PresentationEmployee[] = [

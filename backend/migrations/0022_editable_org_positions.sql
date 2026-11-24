@@ -10,9 +10,9 @@
 -- WHY OCCUPANCY IS SEPARATE FROM position_kind. position_kind says what a row
 -- *is* - a person employed here, a seat on the chart, or an outside firm.
 -- Occupancy says whether the seat is *taken*. They are different questions and
--- conflating them is how a product ends up inventing people: told that the Head
--- of Compliance post is filled, a single flag would tempt the loader to create
--- an employee to fill it. Here the post stays a post, marked 'filled_unnamed',
+-- conflating them is how a product ends up inventing people: told that a
+-- department head's post is filled, a single flag would tempt the loader to
+-- create an employee to fill it. Here the post stays a post, marked 'filled_unnamed',
 -- and the chart says "filled, employee details not entered" until an
 -- administrator assigns a real person. Nobody is fabricated to satisfy a column.
 --
@@ -25,8 +25,8 @@
 -- rest of the product runs on: team scope, leave approval, who may see whose
 -- attendance. It must stay single-valued or those rules become ambiguous. But a
 -- real organisation has people who genuinely answer to more than one person -
--- interns who report to every executive above them - and drawing only one
--- of those lines is a false chart. So the extra lines live here, are shown on
+-- a trainee shared between two leads, say - and drawing only one of those
+-- lines is a false chart. So the extra lines live here, are shown on
 -- the chart, and are deliberately invisible to every operational rule.
 
 DO $preflight$

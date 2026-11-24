@@ -5,13 +5,12 @@
 -- involved. The runner owns the transaction and sets lock_timeout=5s /
 -- statement_timeout=60s.
 --
--- WHY. A chart drawn by hand carries more than its boxes of people. A source
--- chart can have a reference box between two columns listing the four streams its
--- business development function sells into. It names no post and describes
--- nobody, so it must never become an employee record - that would invent four
--- jobs out of a caption. But dropping it leaves a hole exactly where the author
--- put something, on a chart that is going back to him to check. So it is stored
--- as what it is: a label with a position, drawn as a note and never as a card.
+-- WHY. A drawn chart carries more than its boxes of people: a caption, a
+-- grouping title or a reference list placed between columns. It names no post
+-- and describes nobody, so it must never become an employee record - that would
+-- invent jobs out of a caption. But dropping it leaves a hole exactly where the
+-- author put something. So it is stored as what it is: a label with a position,
+-- drawn as a note and never as a card.
 --
 -- WHY NOT IN org_chart_source_layout. That table's primary key is an employee,
 -- because every row in it is one. A note has no employee and never will, and

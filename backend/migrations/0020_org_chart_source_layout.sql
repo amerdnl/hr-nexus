@@ -7,24 +7,23 @@
 -- statement_timeout=60s.
 --
 -- WHY THIS IS NOT COLUMNS ON employees. This is not a fact about an employee. It
--- is a fact about one drawing: where a box sat on the page of the chart that a
--- customer handed over. A company that never imported a chart has none of it,
+-- is a fact about one drawing: where a box sat on the page of an imported chart.
+-- A company that never imported a chart has none of it,
 -- and an employee who moves department does not acquire coordinates. Keeping it
 -- in its own table means the employees row stays a description of a person or a
 -- post, and a chart can be re-imported or dropped without rewriting it.
 --
 -- WHY COORDINATES ARE KEPT AT ALL. An org chart drawn by an automatic layout is
 -- correct and unrecognisable: it puts the boxes where the algorithm likes, which
--- is never where the author put them. When the whole point is to hand the chart
--- back to the person who drew it and ask "is this right?", it has to look like
--- the thing they drew. The source coordinates are the only record of that, so
+-- is never where the author put them. An imported chart has to look like the
+-- thing that was drawn. The source coordinates are the only record of that, so
 -- they are kept and the renderer places the cards with them. They are layout,
 -- never hierarchy: employees.manager_id remains the only statement about who
 -- reports to whom, and nothing here is read by any authorisation check.
 --
 -- WHY A SECOND TABLE FOR LINKS. A chart can draw a line that a reporting line
--- cannot hold. A hand-drawn chart can run two lines out of one intern box, one
--- into each of two managers; employees.manager_id holds one. Rather than throw the
+-- cannot hold. A drawn chart can run two lines out of one box, one into each
+-- of two managers; employees.manager_id holds one. Rather than throw the
 -- second away or invent a second manager column, it is recorded here as what it
 -- is - a line on the source drawing - and the chart draws it as a reference,
 -- visibly different from the reporting line it is not.

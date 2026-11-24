@@ -73,7 +73,7 @@ function buildTree(nodes: OrgNode[]): Tree {
       tops.push(node);
     }
   }
-  // Managers before individual contributors, then by name, so each level reads
+  // Managers before people who lead nobody, then by name, so each level reads
   // as "who runs what" first.
   const order = (a: OrgNode, b: OrgNode) =>
     Number(children.has(b.id)) - Number(children.has(a.id)) || a.fullName.localeCompare(b.fullName);
